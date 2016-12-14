@@ -1,0 +1,24 @@
+{
+  "name": "chat-controller",
+  "version": "0.1.0",
+  "description": "Controller app to handle scalable chat",
+  "main": "index.js",
+  "scripts": {
+    "testscript": "echo \"Error: no test specified\" && exit 1",
+    "start": "node chat/delivery.controller.js"
+  },
+  "keywords": [
+    "redis"
+  ],
+  "contributors": [
+    {
+      "name": "Gobinda Thakur",
+      "email": "gobinda.thakur@outlook.com",
+      "url": "www.gobindathakur.com"
+    }
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "redis": "^2.6.3"
+  }
+}

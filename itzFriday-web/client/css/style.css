@@ -1,0 +1,9 @@
+body
+{
+	margin: 0px 0px 0px 0px;
+	padding: 0px 0px 0px 0px;
+	background: #E0F2F1;
+}
+
+li:nth-child(odd) { background: #eee; padding: 10px; }
+li:nth-child(even) { background: #dffddc; padding: 10px; }

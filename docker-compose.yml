@@ -1,0 +1,64 @@
+version: "2"
+services:
+  web:
+    image: itzfriday:0.1.0
+    build: './itzfriday-web'
+    expose:
+      - 3000
+    links:
+      - db
+      - chatctrl
+      - droid
+    environment:
+       MONGO_URL: 'mongodb://db/itzfridayDB'
+       REDIS_URL: 'redis://redis'
+    networks:
+      - front-tier
+      - back-tier
+  chatctrl:
+    image: chat-ctrl:0.1.0
+    build: './chat-controller'
+    links:
+      - redis
+    environment:
+       REDIS_URL: 'redis://redis'
+    networks:
+      - back-tier
+  droid:
+    image: droid:0.1.0
+    build: './droid'
+    links:
+      - redis
+    environment:
+       REDIS_URL: 'redis://redis'
+    networks:
+      - back-tier
+  db:
+    image: mongo:3.0.14
+    ports:
+      - 27017:27017
+    networks:
+      - back-tier
+  redis:
+    image: redis:3.0.7
+    ports:
+      - 6379:6379
+    networks:
+      - back-tier
+  lb:
+    image: dockercloud/haproxy:1.2.1
+    ports:
+      - 80:80
+    links:
+      - web
+    networks:
+      - front-tier
+      - back-tier
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+networks:
+  front-tier:
+    driver: bridge
+  back-tier:
+    driver: bridge
+

@@ -1,0 +1,21 @@
+{
+  "name": "bob",
+  "version": "0.1.0",
+  "description": "App for managing project and team collaboration",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./redis/GitBotSubscriber.js"
+  },
+  "contributors": [
+    {
+      "name": "Apurv Tiwari",
+      "email": "apt.sharp@gmail.com"
+    }
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "redis": "^2.6.3",
+    "socket.io": "^1.7.1",
+    "superagent": "^3.0.0"
+  }
+}
