@@ -60,9 +60,9 @@ class ChatWindow extends Component {
               <ChatText chatTextMessages = {chats[i]}/>
             </li>);
           }
-           
+
     return(
-        <Paper zDepth={5} style={styles.chatBoxStyle}>
+        <Paper zDepth={2} style={styles.chatBoxStyle}>
           <ul style= {styles.messageList}>
                 {listView}
           </ul>

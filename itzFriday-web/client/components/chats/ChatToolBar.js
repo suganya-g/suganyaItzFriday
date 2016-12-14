@@ -21,7 +21,7 @@ const styles = {
 		margin: '0px 0px 0px 0px',
 		background: "white",
 		width: "100%",
-		textIndent: '20px',	
+		textIndent: '20px',
 	},
 	toolbarText: {
 		color: "#004d40"
@@ -55,13 +55,13 @@ class ChatToolBar extends Component {
 		const viewName = "View "+name+ "'s profile";
 		const viewChanel = "View "+name+ "'s channels";
 		return (
-			<Paper zDepth={1}>
+			<Paper zDepth={2}>
 				<Toolbar style={styles.toolbarStyle}>
 					<ToolbarGroup firstChild={true}>
 						<ToolbarTitle text={name} style={styles.toolbarText}/>
 					</ToolbarGroup>
 					<ToolbarGroup>
-						{this.props.identifier === 'channel' ? 
+						{this.props.identifier === 'channel' ?
 							<IconMenu
     							iconButtonElement={<IconButton><SettingsIcon /></IconButton>}
     							anchorOrigin={{horizontal: 'left', vertical: 'top'}}
@@ -74,7 +74,7 @@ class ChatToolBar extends Component {
 								<MenuItem primaryText={muteText} />
 								<Divider />
 								<MenuItem primaryText={leaveText} />
-    						</IconMenu> : 
+    						</IconMenu> :
     						<IconMenu
     							iconButtonElement={<IconButton><SettingsIcon /></IconButton>}
     							anchorOrigin={{horizontal: 'left', vertical: 'top'}}
@@ -87,7 +87,7 @@ class ChatToolBar extends Component {
 								<MenuItem primaryText={muteText} />
     						</IconMenu>
     					}
-    					{this.props.identifier === 'channel' ? 
+    					{this.props.identifier === 'channel' ?
     						<IconMenu
     							iconButtonElement={<IconButton><i className="material-icons">chrome_reader_mode</i></IconButton>}
     							anchorOrigin={{horizontal: 'left', vertical: 'top'}}
@@ -100,7 +100,7 @@ class ChatToolBar extends Component {
 								<MenuItem primaryText="Suganya" rightIcon={<CommunicationChatBubble />}/>
 								<MenuItem primaryText="Ruchika" rightIcon={<CommunicationChatBubble />}/>
 								<MenuItem primaryText="Vikram" rightIcon={<CommunicationChatBubble />}/>
-    						</IconMenu> : 
+    						</IconMenu> :
     						''
     					}
     					<ToolbarSeparator />

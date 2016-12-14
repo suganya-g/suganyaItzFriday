@@ -37,25 +37,29 @@ const styles = {
 		margin: '0px 0px 0px 0px',
 		padding: '5px 5px 5px 5px',
 		background: "#e0f2f1",
-		marginLeft:'85px'
+	},
+	drawer : {
+		backgroundColor: "#004D40",
+		width:"250px",
+		position: "relative",
+		height:window.innerHeight,
+	},
+	leftPane : {
+		width:"250px",
+		position: "relative",
+		float:'left',
+		margin: '0px 0px 0px 0px',
+		padding: '0px 0px 0px 0px',
+	},
+	rightPane : {
+		position:'relative',
+		float: 'left',
+		margin: '0px 0px 0px 0px',
+		padding: '0px 0px 0px 0px',
 	},
 	appBar : {
 		color: 'white',
-		paddingLeft:'200px',
-		backgroundColor: '#004D40',
-		width: '*'
-	},
-	projectList : {
-		color: 'white',
-		width: '150px',
-		float: 'left',
-		height: window.innerHeight,
-		margin: '0px 0px 0px 0px',
-		padding: '2px 2px 2px 2px'
-	},
-	projectListItem : {
-		marginTop: '20px',
-		color: '#424242',
+		backgroundColor: '#004D40'
 	},
 	listItem : {
 		color: '#004D40',
@@ -189,7 +193,7 @@ export default class LoggedInLayout extends React.Component
 		this.setState({appBarTitle: currentProject});
 		this.changeChannelState(groups);
 		this.changeMessageState(members);
-		this.props.router.replace("chat/?name=KickBot&identifier=message");
+		this.props.router.replace("chat/?name=Droid&identifier=message");
 	};
 	changeChannelState (channels)
 	{
@@ -239,8 +243,6 @@ export default class LoggedInLayout extends React.Component
 		this.setState({mainMenuOpen: false});
 	}
 
-
-
 	render() {
 		const isLogged = Auth.loggedIn();
 		projectList =[];
@@ -253,7 +255,7 @@ export default class LoggedInLayout extends React.Component
 							 onClick={()=>this.openThisProject(event)}
 							 nestedItems={[
 								 <div style={{backgroundColor:'white'}}>
-								 <Link to={"chat/"+"?name=KickBot&identifier=message"} style={styles.listItem} onTouchTap={() => this.handleChat('KickBot','message')}><ListItem key="friday" id="friday" style={styles.listItem} leftAvatar={<Avatar style={{height:'30', backgroundColor:'transparent'}} src={this.state.imageLogoUrl} alt="Friday" />}><strong>ItzfridayBot</strong></ListItem></Link>
+								 <Link to={"chat/"+"?name=Droid&identifier=message"} style={styles.listItem} onTouchTap={() => this.handleMessageChange('Droid')}><ListItem key="friday" id="friday" style={styles.listItem} leftAvatar={<Avatar style={{height:'30', backgroundColor:'transparent'}} src={this.state.imageLogoUrl} alt="Friday" />}><strong>Droid</strong></ListItem></Link>
 								 <Divider />
 								<ChannelList nameCompressor={this.nameCompressor} channels={this.state.channels} changeChannel={this.handleChannelChange} appBarTitle={this.state.appBarTitle}/>
 								<Divider />
@@ -265,23 +267,21 @@ export default class LoggedInLayout extends React.Component
 		return (
 			<MuiThemeProvider>
 			<div style={styles.rootContainer}>
+			<div className="leftPane" style={styles.leftPane}>
 			{isLogged ?
-			<Drawer
-          docked={true}
-          width={230}
-					containerStyle={{backgroundColor: "#004D40"}}
-          open={this.state.open}
-          onRequestChange={(open) => this.setState({open})}
-        >
-      <div style={{marginTop:"10px",textAlign:"center"}}><strong style={{textDecoration: "underline" , color: "white"}}>PROJECTS</strong></div>
+			<Paper style={styles.drawer} zDepth={2}>
+      <div style={{textAlign:"center"}}><strong style={{textDecoration: "underline" , color: "white"}}>PROJECTS</strong></div>
       <br/>
 		  <List>
 			{projectList}
 			</List>
-			</Drawer>: ''}
+			</Paper>: ''}
+			</div>
+      <div className="rightpane" style={styles.rightPane}>
 			{isLogged ?
 			<AppBar title={this.state.appBarTitle} style={styles.appBar}
-			zDepth={3}
+			zDepth={2}
+			iconElementLeft ={<span/>}
 				iconElementRight={
 					<span id="toggleMainMenu">
 					<IconMenu
@@ -305,6 +305,7 @@ export default class LoggedInLayout extends React.Component
 
 					<div id="content" style={styles.container}>
 					{this.props.children}
+					</div>
 					</div>
 					</div>
 					</MuiThemeProvider>

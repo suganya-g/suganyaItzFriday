@@ -10,11 +10,10 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 const styles = {
 	paper: {
-		marginLeft: '35px',
+		height:'90%',
+		width:'100%',
 		background: "white",
-		width: '100%',
-		textIndent: '20px',
-		height: '608px'		
+		textIndent: '20px'
 	},
 	listItem : {
 		color: '#607D8B',
@@ -37,10 +36,10 @@ export default class NotificationsBoard extends React.Component
 		let lastIndexOfNotifications = notifications.length - 1;
 		for(let index in notifications)
 		{
-			note.push(<ListItem onTouchTap={() => this.displayNotification(notifications[index])}>{notifications[index]}</ListItem>);
+			note.push(<ListItem style={{'width':'100%'}} onTouchTap={() => this.displayNotification(notifications[index])}>{notifications[index]}</ListItem>);
 			if(index < lastIndexOfNotifications)
-				note.push(<Divider />);
-			
+				note.push(<ListItem disabled = {true} style={{cursor:'default'}}><Divider style={{'width':'100%'}}/></ListItem>);
+
 		}
 	}
 	displayNotification(name)
@@ -49,15 +48,15 @@ export default class NotificationsBoard extends React.Component
 
 
 	}
-                
+
 	render()
 	{
-		
+
 		return (
 			<Grid>
 			<Paper id="notificationsBoard" style={styles.paper}>
 				<Row>
-				<List style={{'width':'100%','overflowY':'scroll'}}>
+				<List style={{'width':'100%'}}>
 				{note}
 				</List>
 				</Row>

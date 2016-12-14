@@ -16,8 +16,8 @@ import InviteAccept from './createProject/InviteAccept';
 import SendInvite from './sendInvite/SendInvite';
 import BuddyAvatar from './buddyAvatar/BuddyAvatar';
 import NotificationsBoard from './notificationsBoard/NotificationsBoard';
-import Auth from './../services/auth.service.js'
-
+import Auth from './../services/auth.service.js';
+import ManageTeam from './team/ManageTeam';
 class App extends Component {
 	constructor(props)
 	{
@@ -72,6 +72,7 @@ class App extends Component {
 						<Route path="addChannel/" component={AddChannel} onEnter={this.requireAuth.bind(this)}></Route>
 						<Route path="profile/" component={Profile} onEnter={this.requireAuth.bind(this)}></Route>
 						<Route path="buddy/" component={BuddyAvatar} onEnter={this.requireAuth.bind(this)}></Route>
+						<Route path="manageTeam/" component={ManageTeam} onEnter={this.requireAuth.bind(this)}></Route>
 					</Route>
 				</Router>
 			)
