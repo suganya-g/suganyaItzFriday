@@ -15,13 +15,14 @@ import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import Paper from 'material-ui/Paper';
 import Files from './../files/Files';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import Auth from './../../services/auth.service.js'
 
 const styles = {
 	toolbarStyle: {
 		margin: '0px 0px 0px 0px',
 		background: "white",
 		width: "100%",
-		textIndent: '20px',
+		textIndent: '20px',	
 	},
 	toolbarText: {
 		color: "#004d40"
@@ -35,7 +36,30 @@ var pageNewlyRendered = true;
 class ChatToolBar extends Component {
 	constructor(props) {
 		super(props);
-		console.log(this.props.participants);
+		this.state = {
+			name : this.props.name,
+
+		}
+	}
+
+	componentWillReceiveProps(nextProps) {
+		if(this.state.name !== nextProps.name) {
+			this.setState({name : nextProps.name});
+			var userJoined = {};
+    		if(nextProps.identifier === 'message') {
+      			userJoined = {
+        			user: Auth.getNameFromToken(),
+        			destination: 'Friday@'+nextProps.name
+      			}
+    		}else if(nextProps.identifier === 'channel') {
+      			userJoined = {
+        			user: Auth.getNameFromToken(userJoined),
+        			destination: 'Friday#'+nextProps.name
+      			}
+    		}
+			this.props.joinUser(userJoined);
+
+		} 
 	}
 
 	showFiles = (which) =>
@@ -47,21 +71,21 @@ class ChatToolBar extends Component {
 	}
 
 	render() {
-		const name = this.props.name;
+		//const name = this.props.name;
 		const identifier = this.props.identifier;
 		const participants = this.props.participants;
-		const muteText = "Mute "+name;
-		const leaveText = "Leave "+name;
-		const viewName = "View "+name+ "'s profile";
-		const viewChanel = "View "+name+ "'s channels";
+		const muteText = "Mute "+this.state.name;
+		const leaveText = "Leave "+this.state.name;
+		const viewName = "View "+this.state.name+ "'s profile";
+		const viewChanel = "View "+this.state.name+ "'s channels";
 		return (
-			<Paper zDepth={2}>
+			<Paper zDepth={1}>
 				<Toolbar style={styles.toolbarStyle}>
 					<ToolbarGroup firstChild={true}>
-						<ToolbarTitle text={name} style={styles.toolbarText}/>
+						<ToolbarTitle text={this.state.name} style={styles.toolbarText}/>
 					</ToolbarGroup>
 					<ToolbarGroup>
-						{this.props.identifier === 'channel' ?
+						{this.props.identifier === 'channel' ? 
 							<IconMenu
     							iconButtonElement={<IconButton><SettingsIcon /></IconButton>}
     							anchorOrigin={{horizontal: 'left', vertical: 'top'}}
@@ -74,7 +98,7 @@ class ChatToolBar extends Component {
 								<MenuItem primaryText={muteText} />
 								<Divider />
 								<MenuItem primaryText={leaveText} />
-    						</IconMenu> :
+    						</IconMenu> : 
     						<IconMenu
     							iconButtonElement={<IconButton><SettingsIcon /></IconButton>}
     							anchorOrigin={{horizontal: 'left', vertical: 'top'}}
@@ -87,7 +111,7 @@ class ChatToolBar extends Component {
 								<MenuItem primaryText={muteText} />
     						</IconMenu>
     					}
-    					{this.props.identifier === 'channel' ?
+    					{this.props.identifier === 'channel' ? 
     						<IconMenu
     							iconButtonElement={<IconButton><i className="material-icons">chrome_reader_mode</i></IconButton>}
     							anchorOrigin={{horizontal: 'left', vertical: 'top'}}
@@ -100,7 +124,7 @@ class ChatToolBar extends Component {
 								<MenuItem primaryText="Suganya" rightIcon={<CommunicationChatBubble />}/>
 								<MenuItem primaryText="Ruchika" rightIcon={<CommunicationChatBubble />}/>
 								<MenuItem primaryText="Vikram" rightIcon={<CommunicationChatBubble />}/>
-    						</IconMenu> :
+    						</IconMenu> : 
     						''
     					}
     					<ToolbarSeparator />

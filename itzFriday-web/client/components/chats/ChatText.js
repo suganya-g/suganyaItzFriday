@@ -45,12 +45,9 @@ const styles = {
 class ChatText extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      message: this.props.chatTextMessages
-    }
   }
   render() {
-    const messages = this.state.message;
+    const messages = this.props.chatTextMessages;
     const avtar = "https://twitter.com/@"+messages.user+"/profile_image?size=original";
     return(
       <div>

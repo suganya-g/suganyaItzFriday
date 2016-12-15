@@ -19,18 +19,6 @@ class ChatBox extends Component {
     }
   }
   componentDidMount() {
-    var userJoined = '';
-    if(this.props.location.query.identifier === "message") {
-      userJoined = {
-        user: Auth.getNameFromToken(),
-        destination: 'Friday@'+this.props.location.query.name
-      }
-    }else if(this.props.location.query.identifier === "channel") {
-      userJoined = {
-        user: Auth.getNameFromToken(),
-        destination: 'Friday#'+this.props.location.query.name
-      }
-    }
     socket = sockets.getSocketConnection();
     socket.on('error', this._socketConnectionError.bind(this));
     socket.on('connected', this._getConnectedUser.bind(this));
@@ -38,29 +26,26 @@ class ChatBox extends Component {
     socket.on('send:message', this._recieveMessage.bind(this));
     socket.on('notify', this._notifyUser.bind(this));
   }
-  componentWillMount() {
-
-  }
 	render() {
 		return (
 				<Grid>
         			<Row>
           				<Col xs={12} sm={12} md={12} lg={12}>
-                        <ChatToolBar name={this.props.location.query.name} identifier={this.props.location.query.identifier} participants={this.state.participants}/> 
+                        <ChatToolBar name={this.props.location.query.name} identifier={this.props.location.query.identifier} participants={this.state.participants} joinUser={this.joinConversation.bind(this)}/> 
                   </Col>
         			</Row>
         			<Row>
           				<Col xs={12} sm={12} md={12} lg={12}>
-                    <ChatWindow name={Auth.getNameFromToken()} chatMessages={this.state.chatMessages} addMessage={this.addChatMessages.bind(this)} userTyped={this.state.userTyping} notifyTypingUser={this.notifyTyping.bind(this)}/>
+                    <ChatWindow chatMessages={this.state.chatMessages} addMessage={this.addChatMessages.bind(this)} userTyped={this.state.userTyping} notifyTypingUser={this.notifyTyping.bind(this)}/>
                   </Col>
         			</Row>
       			</Grid>
 			)
 	}
 
-  _notifyUser(user) {
-    if(user !== undefined) {
-      this.setState({userTyping: user});
+  _notifyUser(userTyping) {
+    if(userTyping !== undefined) {
+      this.setState({userTyping: userTyping});
     }
   }
   _recieveMessage(message) {
@@ -69,8 +54,15 @@ class ChatBox extends Component {
     this.setState({chatMessages});
   }
   notifyTyping() {
-    console.log(Auth.getNameFromToken());
-    socket.emit('notify', Auth.getNameFromToken());
+    var typingUser = {
+      destination:'Friday#'+this.props.location.query.name, 
+      author: Auth.getNameFromToken()
+    }
+    socket.emit('notify', typingUser);
+  }
+  joinConversation(userJoined) {
+    this.setState({chatMessages:''});
+    //socket.emit('user:join', userJoined);
   }
   addChatMessages(message) {
     if(this.props.location.query.identifier === "message") {
@@ -88,16 +80,16 @@ class ChatBox extends Component {
         destination: 'Friday#'+this.props.location.query.name
       }
     }
+    //chatMessages.push(sendingMessage);
     socket.emit('send:message', sendingMessage);
-    chatMessages.push(sendingMessage);
     this.setState({chatMessages});
   }
   _getConnectedUser(user) {
-    //socket.emit('user:join', userJoined);
+    socket.emit('user:join', "Friday");
     console.log(user);
   }
-  _getJoinedUser(userJoined) {
-    console.log(userJoined.user+' has subscibed to '+userJoined.destination);
+  _getJoinedUser(joinedUser) {
+    console.log(joinedUser.user+' has joined to '+joinedUser.destination);
   }
   _socketConnectionError(err) {
     console.log(err)

@@ -5,6 +5,7 @@ import Formsy from 'formsy-react';
 import FormsyText from 'formsy-material-ui/lib/FormsyText';
 import IconButton from 'material-ui/IconButton';
 import ContentSend from 'material-ui/svg-icons/content/send';
+import Auth from './../../services/auth.service.js'
 
 const styles = {
 	inputArea: {
@@ -42,8 +43,7 @@ class ChatInput extends Component {
 		  this.refs.chat.setState({value: ''});
   	}
     notifyTypingUser() {
-      if(this.props.userName !== this.props.userTyped) {
-        console.log(this.props.userTyped);
+      if(this.props.userTyped.author !== Auth.getNameFromToken()) {
         this.props.notifyTyping();
         this.setState({userTyping: this.props.userTyped});
       }else{
@@ -55,6 +55,7 @@ class ChatInput extends Component {
   	}
 
 	render() {
+    const typingUser = this.state.userTyping;
 		return(
 			<Formsy.Form
                     onValid={this.enableButton.bind(this)}
@@ -63,9 +64,9 @@ class ChatInput extends Component {
                     onInvalidSubmit={this.notifyFormError.bind(this)}
                   >
             <Grid>
-            {this.state.userTyping !== '' ?
+            {typingUser !== '' ?
             <Row>
-              <Col xs={12}><h5>{this.state.userTyping} is typing...</h5></Col>
+              <Col xs={12}><h5>{typingUser.message}</h5></Col>
             </Row>: ''
           }
               <Row>

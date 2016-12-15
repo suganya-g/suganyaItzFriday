@@ -52,7 +52,6 @@ class ChatWindow extends Component {
   }
 
   render() {
-    const userName = this.props.name;
     const chats = this.props.chatMessages;
     let listView = []
       for(let i=0; i < chats.length; i ++) {
@@ -60,14 +59,14 @@ class ChatWindow extends Component {
               <ChatText chatTextMessages = {chats[i]}/>
             </li>);
           }
-
+           
     return(
-        <Paper zDepth={2} style={styles.chatBoxStyle}>
+        <Paper zDepth={5} style={styles.chatBoxStyle}>
           <ul style= {styles.messageList}>
                 {listView}
           </ul>
           <div style={styles.actionBar}>
-            <ChatInput addChat={this.props.addMessage} userName={userName} notifyTyping={this.props.notifyTypingUser} userTyped={this.props.userTyped}/>
+            <ChatInput addChat={this.props.addMessage} notifyTyping={this.props.notifyTypingUser} userTyped={this.props.userTyped}/>
           </div>
         </Paper>
       )

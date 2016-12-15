@@ -297,12 +297,12 @@ function fetchJsonObject(message)
 	{
 		if(message === "")
 		{
-			intents.push("call GitBot");
+			intents.push("callGitBot");
 			return "Invalid string";
 		}
 		else
 		{
-			intents.push("random input");	//default
+			intents.push("randomInput");	//default
 			return "Invalid string";	
 		}
 	}
@@ -487,19 +487,23 @@ gitBotSubscriber.on("message",function( channel, message)
 				console.log("\ncommand to assign issue ");//NOTE:	//not working cuz of asyn
 				if(jsonObject.owner === '' || jsonObject.owner.length<2)
 			    {
-			    	console.log("\nError: Project owner invalid/not specified!");
+			    	console.log("Error: Project owner invalid/not specified!");
+					gitBotPublisher.publish("delivery2","Error: Project owner invalid/not specified!");
 			    }
 			    else if(jsonObject.repo === '')
 			    {
-			    	console.log("\nError: Repository name not specified!");
+			    	console.log("Error: Repository name not specified!");
+					gitBotPublisher.publish("delivery2","Error: Repository name not specified!");
 			    }
 		    	else if(jsonObject.number === '')
 				{
-					console.log("\nError : Issue number not specified!");
+					console.log("Error : Issue number not specified!");
+					gitBotPublisher.publish("delivery2","Error: Issue number not specified!");
 				}
 				else if(jsonObject.assignees === '')
 				{
-					console.log("\nError : Assignees not specified!");
+					console.log("Error : Assignees not specified!");
+					gitBotPublisher.publish("delivery2","Error: Assignees not specified!");
 				}
 				else
 				{
@@ -507,10 +511,12 @@ gitBotSubscriber.on("message",function( channel, message)
 					if(err)
 					{
 						console.log(err.toString());
+						gitBotPublisher.publish("delivery2",err);
 					}
 					else
 					{
 						console.log("Issue "+res.body.number +" has been assigned to : "+jsonObject.assignees);
+						gitBotPublisher.publish("delivery2",res);
 					}
 				});
 			}
@@ -521,18 +527,22 @@ gitBotSubscriber.on("message",function( channel, message)
 				if(jsonObject.owner === '' || jsonObject.owner.length<2)
 			    {
 			    	console.log("Error: Project owner invalid/not specified!");
+					gitBotPublisher.publish("delivery2","Error: Project owner invalid/not specified!");
 			    }
 			    else if(jsonObject.repo === '')
 			    {
 			    	console.log("Error: Repository name not specified!");
+					gitBotPublisher.publish("delivery2","Error: Repository name not specified!");
 			    }
 		    	else if(jsonObject.number === '')
 				{
-					console.log("\nError : Issue number not specified!");
+					console.log("Error : Issue number not specified!");
+					gitBotPublisher.publish("delivery2","Error : Issue number not specified!");
 				}
 				else if(jsonObject.body === '')
 				{
-					console.log("\nError : Comment not specified!");
+					console.log("Error : Comment not specified!");
+					gitBotPublisher.publish("delivery2","Error : Comment not specified!");
 				}
 				else
 				{
@@ -540,10 +550,12 @@ gitBotSubscriber.on("message",function( channel, message)
 					if(err)
 					{
 						console.log(err.toString());
+						gitBotPublisher.publish("delivery2",err);
 					}
 					else
 					{
 						console.log("Comment has been posted successfully on issue " + jsonObject.number);
+						gitBotPublisher.publish("delivery2",res);
 					}
 				});
 			}
@@ -554,14 +566,17 @@ gitBotSubscriber.on("message",function( channel, message)
 				if(jsonObject.owner === '' || jsonObject.owner.length<2)
 			    {
 			    	console.log("Error: Project owner invalid/not specified!");
+					gitBotPublisher.publish("delivery2","Error: Project owner invalid/not specified!");
 			    }
 			    else if(jsonObject.repo === '')
 			    {
 			    	console.log("Error: Repository name not specified!");
+					gitBotPublisher.publish("delivery2","Error: Repository name not specified!");
 			    }
 		    	else if(jsonObject.number === '')
 				{
-					console.log("\nError : Issue number not specified!");
+					console.log("Error : Issue number not specified!");
+					gitBotPublisher.publish("delivery2","Error : Issue number not specified!");
 				}
 				else
 				{
@@ -569,10 +584,12 @@ gitBotSubscriber.on("message",function( channel, message)
 					if(err)
 					{
 						console.log(err.toString());
+						gitBotPublisher.publish("delivery2",err);
 					}
 					else
 					{
 						console.log("Issue "+jsonObject.number +" has been closed!");
+						gitBotPublisher.publish("delivery2",res);
 					}
 				});
 			}
@@ -583,14 +600,17 @@ gitBotSubscriber.on("message",function( channel, message)
 			if(jsonObject.owner === '' || jsonObject.owner.length<2)
 		    {
 		    	console.log("Error: Project owner invalid/not specified!");
+				gitBotPublisher.publish("delivery2","Error: Project owner invalid/not specified!");
 		    }
 		    else if(jsonObject.repo === '')
 		    {
 		    	console.log("Error: Repository name not specified!");
+				gitBotPublisher.publish("delivery2","Error: Repository name not specified!");
 		    }
 		    else if(jsonObject.title === '')
 		    {
-		    	console.log("Error: Title not present in the information!")
+		    	console.log("Error: Title not present in the information!");
+				gitBotPublisher.publish("delivery2","Error: Title not present in the information!");
 		    }
 		    else
 		    {
@@ -600,20 +620,23 @@ gitBotSubscriber.on("message",function( channel, message)
 						if(res.toString().match(/not found/gi))
 						{
 							console.log("Error : Project not found!");
+							gitBotPublisher.publish("delivery2","Error : Project not found!");
 						}
 						else if(res.toString().match(/unprocessable entity/gi))
 						{	
 							console.log("Error : Input string is not in the correct format!");
+							gitBotPublisher.publish("delivery2","Error : Input string is not in the correct format!");
 						}
 						else
 						{
 							console.log(err.toString());
+							gitBotPublisher.publish("delivery2",err);
 						}
 					}
 					else
 					{
 						console.log("Issue has been created with id : "+res);
-						gitBotPublisher.publish("delivery2","Issue has been created with id : "+res);
+						gitBotPublisher.publish("delivery2",res);
 					}
 				});
 			}	
@@ -621,12 +644,18 @@ gitBotSubscriber.on("message",function( channel, message)
 
 			case "createProject":
 				if(jsonObject.owner === '' )
+				{
 					console.log("Error : Owner name invalid/not present");
+					gitBotPublisher.publish("delivery2","Error : Owner name invalid/not present");
+				}	
 				else if(jsonObject.repo === '' )
+				{
 					console.log("Error : Project information not present");
+					gitBotPublisher.publish("delivery2","Error : Project information not present");
+				}
 				else
 				{
-					console.log("\nCommand to Create Project");
+					//function to create project
 				}	
 			break;
 
@@ -635,18 +664,22 @@ gitBotSubscriber.on("message",function( channel, message)
 				if(jsonObject.owner === '' || jsonObject.owner.length<2)
 			    {
 			    	console.log("Error: Project owner invalid/not specified!");
+					gitBotPublisher.publish("delivery2","Error: Project owner invalid/not specified!");
 			    }
 			    else if(jsonObject.repo === '')
 			    {
 			    	console.log("Error: Repository name not specified!");
+					gitBotPublisher.publish("delivery2","Error: Repository name not specified!");
 			    }
 			   	else if(jsonObject.number === '')
 				{
-					console.log("\nError : Issue number not specified!");
+					console.log("Error : Issue number not specified!");
+					gitBotPublisher.publish("delivery2","Error : Issue number not specified!");
 				}
 				else if(jsonObject.labels === '')
 				{
-					console.log("\nError : Labels not specified!");
+					console.log("Error : Labels not specified!");
+					gitBotPublisher.publish("delivery2","Error : Labels not specified!");
 				}
 				else
 				{
@@ -654,10 +687,12 @@ gitBotSubscriber.on("message",function( channel, message)
 					if(err)
 					{
 						console.log(err.toString());
+						gitBotPublisher.publish("delivery2",err);
 					}
 					else
 					{
 						console.log("Issue "+jsonObject.number +" has been labelled as : "+jsonObject.labels);
+						gitBotPublisher.publish("delivery2",res);
 					}
 				});
 			}
@@ -668,10 +703,12 @@ gitBotSubscriber.on("message",function( channel, message)
 				if(jsonObject.owner === '' || jsonObject.owner.length<2)
 			    {
 			    	console.log("Error: Project owner invalid/not specified!");
+					gitBotPublisher.publish("delivery2","Error: Project owner invalid/not specified!");
 			    }
 			    else if(jsonObject.repo === '')
 			    {
-			    	console.log("Error: Repository name not specified!");r
+			    	console.log("Error: Repository name not specified!");
+					gitBotPublisher.publish("delivery2","Error: Repository name not specified!");
 			    }
 				else
 				{
@@ -679,21 +716,25 @@ gitBotSubscriber.on("message",function( channel, message)
 					if(err)
 					{
 						console.log(err.toString());
+						gitBotPublisher.publish("delivery2",err);
 					}
 					else
 					{
 						console.log(res);	//returns json of issues
+						gitBotPublisher.publish("delivery2",res);
 					}
 				});
 			}
 			break;
 			
-			case "call GitBot":
+			case "callGitBot":
 				console.log("\nHello! How can I help you?");
+				gitBotPublisher.publish("delivery2","Hello! How can I help you?");
 			break;
 		
-			case "random":
+			case "randomInput":
 				console.log("\nSorry, but I am unable to understand you.");
+				gitBotPublisher.publish("delivery2","Sorry, but I am unable to understand you.");
 		}
 	}
 });
