@@ -16,8 +16,10 @@ import Divider from 'material-ui/Divider';
 import Avatar from 'material-ui/Avatar';
 import SocialNotifications from 'material-ui/svg-icons/social/notifications';
 import SocialPerson from 'material-ui/svg-icons/social/person';
+import ActionAccountBox from 'material-ui/svg-icons/action/account-box';
 import ImageDehaze from 'material-ui/svg-icons/image/dehaze';
 import ContentAddCircle from 'material-ui/svg-icons/content/add-circle';
+import FileFolder from 'material-ui/svg-icons/file/folder';
 import HardwareTv from 'material-ui/svg-icons/hardware/tv';
 import NavigationExpandLess from 'material-ui/svg-icons/navigation/expand-less';
 import ImageTagFaces from 'material-ui/svg-icons/image/tag-faces';
@@ -37,29 +39,27 @@ const styles = {
 		margin: '0px 0px 0px 0px',
 		padding: '5px 5px 5px 5px',
 		background: "#e0f2f1",
+		float:'left'
 	},
 	drawer : {
 		backgroundColor: "#004D40",
 		width:"250px",
 		position: "relative",
 		height:window.innerHeight,
+		overflowY : 'auto',
 	},
 	leftPane : {
 		width:"250px",
-		position: "relative",
 		float:'left',
 		margin: '0px 0px 0px 0px',
 		padding: '0px 0px 0px 0px',
-	},
-	rightPane : {
-		position:'relative',
-		float: 'left',
-		margin: '0px 0px 0px 0px',
-		padding: '0px 0px 0px 0px',
+		clear: 'left'
 	},
 	appBar : {
 		color: 'white',
-		backgroundColor: '#004D40'
+		width: (window.innerWidth-250),
+		backgroundColor: '#004D40',
+		float: 'left'
 	},
 	listItem : {
 		color: '#004D40',
@@ -243,7 +243,7 @@ export default class LoggedInLayout extends React.Component
 		projectList =[];
 		for (let index in projects)
 		 {
-			 projectList.push(<ListItem style={{color:'white'}} primaryText={projects[index].name}
+			 projectList.push(<ListItem leftIcon={<FileFolder />} style={{color:'white'}} primaryText={projects[index].name}
 							 onNestedListToggle={this.handleNestedListToggle.bind(this,index)}
 							 open={this.state.openIndex===index}
 							 primaryTogglesNestedList={true}
@@ -259,22 +259,23 @@ export default class LoggedInLayout extends React.Component
 							 </div>
 						 ]} />);
 		}
+
 		return (
 			<MuiThemeProvider>
 			<div style={styles.rootContainer}>
+
 			<div className="leftPane" style={styles.leftPane}>
 			{isLogged ?
-			<Paper style={styles.drawer} zDepth={2}>
-      <div style={{textAlign:"center"}}><strong style={{textDecoration: "underline" , color: "white"}}>PROJECTS</strong></div>
-      <br/>
+			<Paper id="projectList" style={styles.drawer} zDepth={2}>
 		  <List>
 			{projectList}
 			</List>
 			</Paper>: ''}
 			</div>
-      <div className="rightpane" style={styles.rightPane}>
+
 			{isLogged ?
-			<AppBar title={this.state.appBarTitle} style={styles.appBar}
+			<div>
+			<AppBar id='appbar' title={this.state.appBarTitle} titleStyle={{textAlign:'center'}} style={styles.appBar}
 			zDepth={2}
 			iconElementLeft ={<span/>}
 				iconElementRight={
@@ -283,26 +284,37 @@ export default class LoggedInLayout extends React.Component
       iconButtonElement={<IconButton onTouchTap={this.toggleMainMenu}>	<SettingsIcon color={grey50} /></IconButton>}
       anchorOrigin={{horizontal: 'left', vertical: 'top'}}
       targetOrigin={{horizontal: 'left', vertical: 'top'}}>
+      <List>
+			<ListItem primaryText="Account Settings" id="accountSettings" key="accountSettings" primaryTogglesNestedList={true} style={styles.listItem}
+			nestedItems={[
+				<Link to={"profile/"} style={{textDecoration:"none"}}>
+				<ListItem
+							key={1}
+							primaryText="Profile"
+							leftIcon={<ActionAccountBox />} />
+        </Link>,
+				<Link to={"buddy/"} style={{textDecoration:"none"}}>
+				<ListItem
+              key={2}
+              primaryText="Droid settings"
+							leftAvatar={<Avatar style={{backgroundColor:'transparent',width:'30px'}} src={this.state.imageLogoUrl} alt="Friday" />} />
+				</Link>
+			]} />
 
-			<MenuItem id="accountSettings" key="accountSettings" style={styles.listItem}>
-				<strong>Account settings</strong>
-				</MenuItem>
-				<MenuItem id="notificationSettings" key="notificationSettings" style={styles.listItem} onTouchTap={this.closeMainMenu}>
-				<strong>Notification settings</strong>
-				</MenuItem>
-				<MenuItem id="signOut" key="signOut" style={styles.listItem} onTouchTap={this.signOut}>
-				<strong>Sign out</strong>
-				</MenuItem>
+				<ListItem primaryText="Notification Settings" id="notificationSettings" key="notificationSettings" style={styles.listItem} onTouchTap={this.closeMainMenu}/>
+				<ListItem primaryText="Sign Out" id="signOut" key="signOut" style={styles.listItem} onTouchTap={this.signOut} />
+				</List>
 					</IconMenu>
 					</span>
 				}
-				iconStyleLeft={{cursor: 'pointer'}}/>: ''}
+				iconStyleLeft={{cursor: 'pointer'}}/>
+				</div>: ''}
 
 					<div id="content" style={styles.container}>
 					{this.props.children}
 					</div>
 					</div>
-					</div>
+
 					</MuiThemeProvider>
 					);
 }
