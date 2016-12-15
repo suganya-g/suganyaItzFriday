@@ -94,9 +94,30 @@ export default class LoggedInLayout extends React.Component
 		listKey = 0;
 		messages = [];
 		channels = [];
-		projectList = [];
+		projects = [
+				{
+					name:'Friday',
+					channels:["General","Acolyte"],
+					messages:["Gobinda Thakur","Apurv Tiwari","Ruchika Saklani","Suganya Gopal","Ankit Aggarwal","Vikram Marshmallow"]
+				},
+				{
+					name:'Samarth',
+					channels:["General","Developers"],
+					messages:["Amol Tiwari","Ankit Kumar Vashisht","Shinder Pal Singh","Ritesh","Kumari Devi","Hari Prasad","Prerna Kukreti"]
+				},
+				{
+					name:'Quiztack',
+					channels:["General","Backend"],
+					messages:["Vishant Sharma","Kirti Jalan","Dhivya Lakshmi","Lal Jose","Srinivasan","Nitin Verma"]
+				},
+				{
+					name:'Oxygen',
+					channels:['General','Designers'],
+					messages:["Sreenidhi","Toolika Srivastava","Nanda","Shipra Joshi","Bala","Divyanshu Sharma"]
+				},
+		];
 
-		projects = ['Friday','Samarth','Semantic Web Inducer', 'QuizArt'];
+
 		currentProject = 'Friday';
 
 		this.state = {
@@ -166,33 +187,7 @@ export default class LoggedInLayout extends React.Component
 
 		currentProject = event.target.innerText ;
 		console.log(currentProject);
-		messages = [];
-		channels = [];
-
-		if( currentProject === 'Friday')
-		{
-			members=["Gobinda Thakur","Apurv Tiwari","Ruchika Saklani","Suganya Gopal","Ankit Aggarwal","Vikram Marshmallow"];
-			groups=["General","Acolyte"];
-		}
-		else if( currentProject === 'Samarth' )
-		{
-			members=["Amol Tiwari","Ankit Kumar Vashisht","Shinder Pal Singh","Ritesh","Kumari Devi","Hari Prasad","Prerna Kukreti"];
-			groups=["General","Developers"];
-		}
-		else if( currentProject === 'Semantic Web Inducer' )
-		{
-			members=["Sreenidhi","Toolika Srivastava","Nanda","Shipra Joshi","Bala","Divyanshu Sharma"];
-			groups=["General","Designers"];
-		}
-		else
-		{
-			members=["Vishant Sharma","Kirti Jalan","Dhivya Lakshmi","Lal Jose","Srinivasan","Nitin Verma"];
-			groups=["General","Backend"];
-		}
-
 		this.setState({appBarTitle: currentProject});
-		this.changeChannelState(groups);
-		this.changeMessageState(members);
 		this.props.router.replace("chat/?name=Droid&identifier=message");
 	};
 	changeChannelState (channels)
@@ -248,7 +243,7 @@ export default class LoggedInLayout extends React.Component
 		projectList =[];
 		for (let index in projects)
 		 {
-			 projectList.push(<ListItem style={{color:'white'}} primaryText={projects[index]}
+			 projectList.push(<ListItem style={{color:'white'}} primaryText={projects[index].name}
 							 onNestedListToggle={this.handleNestedListToggle.bind(this,index)}
 							 open={this.state.openIndex===index}
 							 primaryTogglesNestedList={true}
@@ -257,9 +252,9 @@ export default class LoggedInLayout extends React.Component
 								 <div style={{backgroundColor:'white'}}>
 								 <Link to={"chat/"+"?name=Droid&identifier=message"} style={styles.listItem} onTouchTap={() => this.handleMessageChange('Droid')}><ListItem key="friday" id="friday" style={styles.listItem} leftAvatar={<Avatar style={{height:'30', backgroundColor:'transparent'}} src={this.state.imageLogoUrl} alt="Friday" />}><strong>Droid</strong></ListItem></Link>
 								 <Divider />
-								<ChannelList nameCompressor={this.nameCompressor} channels={this.state.channels} changeChannel={this.handleChannelChange} appBarTitle={this.state.appBarTitle}/>
+								<ChannelList nameCompressor={this.nameCompressor} channels={projects[index].channels} changeChannel={this.handleChannelChange} appBarTitle={this.state.appBarTitle}/>
 								<Divider />
-								 <MessageList nameCompressor={this.nameCompressor} messages={this.state.messages} changeMessage={this.handleMessageChange} appBarTitle={this.state.appBarTitle}/>
+								 <MessageList nameCompressor={this.nameCompressor} messages={projects[index].messages} changeMessage={this.handleMessageChange} appBarTitle={this.state.appBarTitle}/>
 							 <Divider />
 							 </div>
 						 ]} />);
