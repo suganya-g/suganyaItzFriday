@@ -46,28 +46,30 @@ class ChatText extends Component {
   constructor(props) {
     super(props);
   }
+
   render() {
-    const messages = this.props.chatTextMessages;
-    const avtar = "https://twitter.com/@"+messages.user+"/profile_image?size=original";
+    const message = this.props.chatTextMessages;
+    const avtar = "https://twitter.com/@"+message.user+"/profile_image?size=original";
     return(
       <div>
-      { messages !== undefined || messages !== null ?
+      { message !== undefined || message !== null ?
       <div>
         <div style = {styles.profilePic}>
                   <img src={avtar} style = {styles.imageStyle}/>
                 </div>
                 <div style={styles.messageTextDisplay}>
                   <div style={styles.messageData}>
-                  <span style={styles.author}>{messages.author}</span>
-                  <span style={styles.timestamp}>{messages.timeStamp}</span>
+                  <span style={styles.author}>{message.author}</span>
+                  <span style={styles.timestamp}>{message.timeStamp}</span>
                 </div>
-                  <p style={styles.messageBody}>{messages.message}</p>
+                  <p style={styles.messageBody}>{message.message}</p>
                 </div>
       </div> : ''
     }
     </div>
       )
   }
+
 }
 
 export default ChatText;

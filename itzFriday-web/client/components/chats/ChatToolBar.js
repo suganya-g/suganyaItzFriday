@@ -38,28 +38,9 @@ class ChatToolBar extends Component {
 		super(props);
 		this.state = {
 			name : this.props.name,
+			project: this.props.project
 
 		}
-	}
-
-	componentWillReceiveProps(nextProps) {
-		if(this.state.name !== nextProps.name) {
-			this.setState({name : nextProps.name});
-			var userJoined = {};
-    		if(nextProps.identifier === 'message') {
-      			userJoined = {
-        			user: Auth.getNameFromToken(),
-        			destination: 'Friday@'+nextProps.name
-      			}
-    		}else if(nextProps.identifier === 'channel') {
-      			userJoined = {
-        			user: Auth.getNameFromToken(userJoined),
-        			destination: 'Friday#'+nextProps.name
-      			}
-    		}
-			this.props.joinUser(userJoined);
-
-		} 
 	}
 
 	showFiles = (which) =>
@@ -69,6 +50,22 @@ class ChatToolBar extends Component {
 		,
 		document.getElementById('dialog'));
 	}
+
+	/*componentDidMount() {
+		var userJoined = {};
+    	if(this.props.identifier === 'message') {
+      		userJoined = {
+        		user: Auth.getNameFromToken(),
+        		destination: this.props.project+'@'+this.props.name
+      		}
+    	}else if(this.props.identifier === 'channel') {
+      		userJoined = {
+        		user: Auth.getNameFromToken(userJoined),
+        		destination: this.props.project+'#'+this.props.name
+      		}
+    	}
+		this.props.joinUser(userJoined);
+	}*/
 
 	render() {
 		//const name = this.props.name;
@@ -82,7 +79,7 @@ class ChatToolBar extends Component {
 			<Paper zDepth={1}>
 				<Toolbar style={styles.toolbarStyle}>
 					<ToolbarGroup firstChild={true}>
-						<ToolbarTitle text={this.state.name} style={styles.toolbarText}/>
+						<ToolbarTitle text={this.props.name} style={styles.toolbarText}/>
 					</ToolbarGroup>
 					<ToolbarGroup>
 						{this.props.identifier === 'channel' ? 
