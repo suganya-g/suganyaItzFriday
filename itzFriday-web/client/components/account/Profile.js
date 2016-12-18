@@ -116,14 +116,24 @@ export default class Profile extends React.Component {
                              onValidSubmit={ this.submitForm }
                              onInvalidSubmit={ this.notifyFormError }>
                   <FormsyText
-                              label="Full Name"
-                              name="name"
+                              label="First Name"
+                              name="fname"
                               validations="isWords"
                               validationError="Please use letters"
                               required
-                              hintText="Full Name"
+                              hintText="First Name"
                               updateImmediately
-                              floatingLabelText="Full Name" />
+                              floatingLabelText="First Name" />
+                  <br />
+                  <FormsyText
+                              label="Last Name"
+                              name="lname"
+                              validations="isWords"
+                              validationError="Please use letters"
+                              required
+                              hintText="Last Name"
+                              updateImmediately
+                              floatingLabelText="Last Name" />
                   <br/>
                   <FormsyText
                               name="contact"
