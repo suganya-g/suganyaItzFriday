@@ -19,12 +19,18 @@ import SocialPerson from 'material-ui/svg-icons/social/person';
 import ActionAccountBox from 'material-ui/svg-icons/action/account-box';
 import ImageDehaze from 'material-ui/svg-icons/image/dehaze';
 import ContentAddCircle from 'material-ui/svg-icons/content/add-circle';
+import AVRecentActors from 'material-ui/svg-icons/av/recent-actors';
+import FileFolderShared from 'material-ui/svg-icons/file/folder-shared';
+import ActionPowerSettingsNew from 'material-ui/svg-icons/action/power-settings-new';
+import ContentDrafts from 'material-ui/svg-icons/content/drafts';
+import ContentRemoveCircle from 'material-ui/svg-icons/content/remove-circle';
 import FileFolder from 'material-ui/svg-icons/file/folder';
 import HardwareTv from 'material-ui/svg-icons/hardware/tv';
 import NavigationExpandLess from 'material-ui/svg-icons/navigation/expand-less';
 import ImageTagFaces from 'material-ui/svg-icons/image/tag-faces';
 import ChannelList from './../../conversation/ChannelList';
 import MessageList from './../../conversation/MessageList';
+import ManageTeam from './../../sendInvite/SendInvite';
 import Auth from '../../../services/auth.service.js';
 //styling
 const styles = {
@@ -58,7 +64,7 @@ const styles = {
 	appBar : {
 		color: 'white',
 		width: (window.innerWidth-250),
-		backgroundColor: '#004D40',
+		backgroundColor: '#00695C',
 		float: 'left'
 	},
 	listItem : {
@@ -97,23 +103,23 @@ export default class LoggedInLayout extends React.Component
 		projects = [
 				{
 					name:'Friday',
-					channels:["General","Acolyte"],
-					messages:["Gobinda Thakur","Apurv Tiwari","Ruchika Saklani","Suganya Gopal","Ankit Aggarwal","Vikram Marshmallow"]
+					channels:[{name:"General",id: 0},{name:"Acolyte",id:1}],
+					messages:[{name:"Gobinda Thakur",id:0},{name:"Apurv Tiwari",id:1},{name:"Ruchika Saklani",id:2},{name:"Suganya Gopal",id:3},{name:"Ankit Aggarwal",id:4},{name:"Vikram Marshmallow",id:5}]
 				},
 				{
 					name:'Samarth',
-					channels:["General","Developers"],
-					messages:["Amol Tiwari","Ankit Kumar Vashisht","Shinder Pal Singh","Ritesh","Kumari Devi","Hari Prasad","Prerna Kukreti"]
+					channels:[{name:"General",id:0},{name:"Developers",id:1}],
+					messages:[{name:"Amol Tiwari",id:0},{name:"Ankit Kumar Vashisht",id:1},{name:"Shinder Pal Singh",id:2},{name:"Ritesh",id:3},{name:"Kumari Devi",id:4},{name:"Hari Prasad",id:5},{name:"Prerna Kukreti",id:6}]
 				},
 				{
 					name:'Quiztack',
-					channels:["General","Backend"],
-					messages:["Vishant Sharma","Kirti Jalan","Dhivya Lakshmi","Lal Jose","Srinivasan","Nitin Verma"]
+					channels:[{name:"General",id:0},{name:"Backend",id:1}],
+					messages:[{name:"Vishant Sharma",id:0},{name:"Kirti Jalan",id:1},{name:"Dhivya Lakshmi",id:2},{name:"Lal Jose",id:3},{name:"Srinivasan",id:4},{name:"Nitin Verma",id:5}]
 				},
 				{
 					name:'Oxygen',
-					channels:['General','Designers'],
-					messages:["Sreenidhi","Toolika Srivastava","Nanda","Shipra Joshi","Bala","Divyanshu Sharma"]
+					channels:[{name:'General',id:0},{name:'Designers',id:1}],
+					messages:[{name:"Sreenidhi",id:0},{name:"Toolika Srivastava",id:1},{name:"Nanda",id:2},{name:"Shipra Joshi",id:3},{name:"Bala",id:4},{name:"Divyanshu Sharma",id:5}]
 				},
 		];
 
@@ -146,7 +152,10 @@ export default class LoggedInLayout extends React.Component
 		this.setTitleToNotifications = this.setTitleToNotifications.bind(this);
 		this.nameCompressor = this.nameCompressor.bind(this);
 	}
+  componentDidMount()
+	{
 
+	}
 	nameCompressor(name)
 	{
 		let temp = name.split(' ');
@@ -187,6 +196,7 @@ export default class LoggedInLayout extends React.Component
 
 		currentProject = event.target.innerText ;
 		console.log(currentProject);
+		localStorage['project']=currentProject;
 		this.setState({appBarTitle: currentProject});
 		this.props.router.replace("chat/?name=Droid&identifier=message");
 	};
@@ -281,11 +291,11 @@ export default class LoggedInLayout extends React.Component
 				iconElementRight={
 					<span id="toggleMainMenu">
 					<IconMenu
-      iconButtonElement={<IconButton onTouchTap={this.toggleMainMenu}>	<SettingsIcon color={grey50} /></IconButton>}
+      iconButtonElement={<IconButton onTouchTap={this.toggleMainMenu}>	<ImageDehaze color={grey50} /></IconButton>}
       anchorOrigin={{horizontal: 'left', vertical: 'top'}}
       targetOrigin={{horizontal: 'left', vertical: 'top'}}>
       <List>
-			<ListItem primaryText="Account Settings" id="accountSettings" key="accountSettings" primaryTogglesNestedList={true} style={styles.listItem}
+			<ListItem leftIcon={<AVRecentActors/>} primaryText="Account Settings" id="accountSettings" key="accountSettings" primaryTogglesNestedList={true} style={styles.listItem}
 			nestedItems={[
 				<Link to={"profile/"} style={{textDecoration:"none"}}>
 				<ListItem
@@ -301,8 +311,19 @@ export default class LoggedInLayout extends React.Component
 				</Link>
 			]} />
 
-				<ListItem primaryText="Notification Settings" id="notificationSettings" key="notificationSettings" style={styles.listItem} onTouchTap={this.closeMainMenu}/>
-				<ListItem primaryText="Sign Out" id="signOut" key="signOut" style={styles.listItem} onTouchTap={this.signOut} />
+			<ListItem leftIcon={<FileFolderShared/>} primaryText="Manage Project Team" id="manageTeam" key="manageTeam" style={styles.listItem} onTouchTap={this.closeMainMenu} primaryTogglesNestedList={true} nestedItems={[
+					<ListItem
+								key={1}
+								primaryText="Invite People"
+								leftIcon={<ContentDrafts />} />,
+					<Link to={"manageTeam/"} style={{textDecoration:'none'}}>
+					<ListItem
+					       key={2}
+					       primaryText="Remove People"
+								leftIcon={<ContentRemoveCircle />} />
+				  </Link>
+				]}/>
+				<ListItem leftIcon={<ActionPowerSettingsNew />} primaryText="Sign Out" id="signOut" key="signOut" style={styles.listItem} onTouchTap={this.signOut} />
 				</List>
 					</IconMenu>
 					</span>
