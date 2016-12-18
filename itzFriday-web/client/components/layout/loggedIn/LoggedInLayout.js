@@ -194,11 +194,8 @@ export default class LoggedInLayout extends React.Component
 	openThisProject (event)
 	{
 		currentProject = event.target.innerText ;
-<<<<<<< HEAD
 		console.log(currentProject);
 		localStorage['project']=currentProject;
-=======
->>>>>>> 7dad4c189afd9bc0782f2165a492ad60b2d99a6f
 		this.setState({appBarTitle: currentProject});
 		this.props.router.replace('chat/?project='+currentProject+'&name=Droid&identifier=message');
 	};
