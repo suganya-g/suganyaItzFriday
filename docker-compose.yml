@@ -2,7 +2,7 @@ version: "2"
 services:
   web:
     image: itzfriday:0.1.0
-    build: './itzfriday-web'
+    build: './itzFriday-web'
     expose:
       - 3000
     links:
@@ -61,4 +61,3 @@ networks:
     driver: bridge
   back-tier:
     driver: bridge
-
