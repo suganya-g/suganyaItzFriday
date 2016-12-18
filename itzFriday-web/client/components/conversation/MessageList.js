@@ -14,7 +14,7 @@ import Divider from 'material-ui/Divider';
 import Avatar from 'material-ui/Avatar';
 
 import SocialNotifications from 'material-ui/svg-icons/social/notifications';
-import SocialPerson from 'material-ui/svg-icons/social/person';
+import CommunicationChat from 'material-ui/svg-icons/communication/chat';
 import ImageDehaze from 'material-ui/svg-icons/image/dehaze';
 import ContentAddCircle from 'material-ui/svg-icons/content/add-circle';
 import HardwareTv from 'material-ui/svg-icons/hardware/tv';
@@ -87,7 +87,7 @@ export default class MessageList extends React.Component
 		messages=[];
 		for( let index in groups)
 		{
-			messages.push(<ListItem style={styles.linkItem} onTouchTap={() => this.displayMessage(groups[index])} leftIcon={<SocialPerson />}>{this.compressName(groups[index])}</ListItem>);
+			messages.push(<ListItem style={styles.linkItem} onTouchTap={() => this.displayMessage(groups[index].name)} leftAvatar={<Avatar>{groups[index].name.substring(0,1)}</Avatar>} rightIcon={<CommunicationChat />}>{this.compressName(groups[index].name)}</ListItem>);
 		}
 	}
 
@@ -104,7 +104,7 @@ export default class MessageList extends React.Component
 		messages=[];
 		for( let index in groups)
 		{
-			messages.push(<ListItem style={styles.linkItem} onTouchTap={() => this.displayMessage(groups[index])} leftIcon={<SocialPerson />}>{this.compressName(groups[index])}</ListItem>);
+			messages.push(<ListItem style={styles.linkItem} onTouchTap={() => this.displayMessage(groups[index].name)} leftAvatar={<Avatar>{groups[index].name.substring(0,1)}</Avatar>} rightIcon={<CommunicationChat />}>{this.compressName(groups[index].name)}</ListItem>);
 		}
 		messages.push(<Divider/>);
 	}
