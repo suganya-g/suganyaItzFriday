@@ -3,13 +3,20 @@ import ReactDOM from 'react-dom';
 import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar';
 import MenuItem from 'material-ui/MenuItem';
 import Divider from 'material-ui/Divider';
-import IconButton from 'material-ui/IconButton'
+import IconButton from 'material-ui/IconButton';
 import SettingsIcon from 'material-ui/svg-icons/action/settings';
 import ActionDescription from 'material-ui/svg-icons/action/description';
 import AvLibraryBooks from 'material-ui/svg-icons/av/library-books';
 import ActionHelp from 'material-ui/svg-icons/action/help';
+import SocialPerson from 'material-ui/svg-icons/social/person';
+import SocialGroup from 'material-ui/svg-icons/social/group';
+import SocialPersonAdd from 'material-ui/svg-icons/social/person-add';
+import MapsDirectionsRun from 'material-ui/svg-icons/maps/directions-run';
+import ActionSpeakerNotesOff from 'material-ui/svg-icons/action/speaker-notes-off';
+import ActionGroupWork from 'material-ui/svg-icons/action/group-work';
 import ViewList from 'material-ui/svg-icons/action/view-list';
 import IconMenu from 'material-ui/IconMenu';
+import ActionChromeReaderMode from 'material-ui/svg-icons/action/chrome-reader-mode';
 import CommunicationChatBubble from 'material-ui/svg-icons/communication/chat-bubble';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import Paper from 'material-ui/Paper';
@@ -17,12 +24,13 @@ import Files from './../files/Files';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Auth from './../../services/auth.service.js'
 
+
 const styles = {
 	toolbarStyle: {
 		margin: '0px 0px 0px 0px',
 		background: "white",
 		width: "100%",
-		textIndent: '20px',	
+		textIndent: '20px',
 	},
 	toolbarText: {
 		color: "#004d40"
@@ -50,8 +58,7 @@ class ChatToolBar extends Component {
 		,
 		document.getElementById('dialog'));
 	}
-
-	/*componentDidMount() {
+/*componentDidMount() {
 		var userJoined = {};
     	if(this.props.identifier === 'message') {
       		userJoined = {
@@ -82,46 +89,44 @@ class ChatToolBar extends Component {
 						<ToolbarTitle text={this.props.name} style={styles.toolbarText}/>
 					</ToolbarGroup>
 					<ToolbarGroup>
-						{this.props.identifier === 'channel' ? 
+						{this.props.identifier === 'channel' ?
 							<IconMenu
     							iconButtonElement={<IconButton><SettingsIcon /></IconButton>}
     							anchorOrigin={{horizontal: 'left', vertical: 'top'}}
     							targetOrigin={{horizontal: 'left', vertical: 'top'}}
   							>
 
-								<MenuItem primaryText="Invite member to join" />
-								<MenuItem primaryText="View channel details" />
-								<Divider />
-								<MenuItem primaryText={muteText} />
-								<Divider />
-								<MenuItem primaryText={leaveText} />
-    						</IconMenu> : 
+								<MenuItem leftIcon={<SocialPersonAdd />} primaryText="Invite member to join" />
+								<MenuItem leftIcon={<MapsDirectionsRun />} primaryText={leaveText} />
+    						</IconMenu> :
     						<IconMenu
     							iconButtonElement={<IconButton><SettingsIcon /></IconButton>}
     							anchorOrigin={{horizontal: 'left', vertical: 'top'}}
     							targetOrigin={{horizontal: 'left', vertical: 'top'}}
   							>
 
-								<MenuItem primaryText={viewName} />
-								<MenuItem primaryText={viewChanel} />
+								<MenuItem leftIcon={<SocialPerson />} primaryText={viewName} />
+								<MenuItem leftIcon={<SocialGroup />} primaryText={viewChanel} />
 								<Divider />
-								<MenuItem primaryText={muteText} />
+								<MenuItem leftIcon={<ActionSpeakerNotesOff />} primaryText={muteText} />
     						</IconMenu>
     					}
-    					{this.props.identifier === 'channel' ? 
+    					{this.props.identifier === 'channel' ?
     						<IconMenu
-    							iconButtonElement={<IconButton><i className="material-icons">chrome_reader_mode</i></IconButton>}
+    							iconButtonElement={<IconButton><ActionChromeReaderMode /></IconButton>}
     							anchorOrigin={{horizontal: 'left', vertical: 'top'}}
     							targetOrigin={{horizontal: 'left', vertical: 'top'}}
   							>
-  								<MenuItem primaryText="Team Members"/>
+
+  							<MenuItem leftIcon={<ActionGroupWork />} primaryText="Channel Members" id="channelMembers" key="channelMembers"/>
+								<Divider />
 								<MenuItem primaryText="Ankit" rightIcon={<CommunicationChatBubble />}/>
 								<MenuItem primaryText="Apurv" rightIcon={<CommunicationChatBubble />}/>
 								<MenuItem primaryText="Gobinda" rightIcon={<CommunicationChatBubble />}/>
 								<MenuItem primaryText="Suganya" rightIcon={<CommunicationChatBubble />}/>
 								<MenuItem primaryText="Ruchika" rightIcon={<CommunicationChatBubble />}/>
 								<MenuItem primaryText="Vikram" rightIcon={<CommunicationChatBubble />}/>
-    						</IconMenu> : 
+    						</IconMenu> :
     						''
     					}
     					<ToolbarSeparator />
