@@ -23,10 +23,10 @@ const errorMessages = {
 };
 
 const styles = {
-  loginStyle: {
-    marginTop: window.innerHeight / 4.5,
-    marginLeft: "auto",
-    marginRight: "auto"
+  cardStyle: {
+    position:'absolute',
+    top:'25%',
+    left:'10%'
   },
   errorStyle: {
     color: 'red'
@@ -85,11 +85,11 @@ export default class Login extends React.Component {
       }
     };
     return (
-      <Grid>
+      <Grid style={styles.cardStyle}>
         <Col xs={ 12 }>
         <Card
-              zDepth={ 2 }
-              style={ styles.loginStyle }>
+
+              zDepth={ 2 }>
           <Row center="xs">
             <Formsy.Form
                          onValid={ this.enableButton }
