@@ -16,7 +16,7 @@ const redisUrl = process.env.REDIS_URL || 'redis://localhost';
 		sub.on('message', function(channel, message) {
 			var data = JSON.parse(message);
 			pub.publish(data.destination, message);
-		})
+		});
 
 		/*this.unsubscribe = function() {
 			this.sub.unsubscribe('send:message');

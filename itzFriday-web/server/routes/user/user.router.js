@@ -17,7 +17,6 @@ userRouter.post('/login', function(req, res) {
             message:"user/password not found"
         });
   	}
-  	console.log(user);
   	if(user) {
   		if(user.checkPassword(password)){
         console.log(user.fullName);
@@ -29,8 +28,8 @@ userRouter.post('/login', function(req, res) {
   		}else {
   		// create a user a new user
 			var testUser = new userAccount({
-          fullName: 'Suganya',
-    			username: 'suganya@gmail.com',
+          fullName: 'Ruchika',
+    			username: 'ruchika@gmail.com',
     			password: 'abcdefgh',
     			role: 'User'
 			});

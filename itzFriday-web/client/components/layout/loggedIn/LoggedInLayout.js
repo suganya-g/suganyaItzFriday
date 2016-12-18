@@ -193,12 +193,14 @@ export default class LoggedInLayout extends React.Component
 
 	openThisProject (event)
 	{
-
 		currentProject = event.target.innerText ;
+<<<<<<< HEAD
 		console.log(currentProject);
 		localStorage['project']=currentProject;
+=======
+>>>>>>> 7dad4c189afd9bc0782f2165a492ad60b2d99a6f
 		this.setState({appBarTitle: currentProject});
-		this.props.router.replace("chat/?name=Droid&identifier=message");
+		this.props.router.replace('chat/?project='+currentProject+'&name=Droid&identifier=message');
 	};
 	changeChannelState (channels)
 	{
@@ -212,13 +214,13 @@ export default class LoggedInLayout extends React.Component
 
 	handleChannelChange(name)
 	{
-		this.props.router.replace('/chat/?name='+name+'&identifier=channel');
+		this.props.router.replace('/chat/?project='+this.state.appBarTitle+'&name='+name+'&identifier=channel');
 		this.closeMainMenu();
 	}
 
 	handleMessageChange(name)
 	{
-		this.props.router.replace('/chat/?name='+name+'&identifier=message');
+		this.props.router.replace('/chat/?project='+this.state.appBarTitle+'&name='+name+'&identifier=message');
 		this.closeMainMenu();
 	}
 
@@ -260,7 +262,7 @@ export default class LoggedInLayout extends React.Component
 							 onClick={()=>this.openThisProject(event)}
 							 nestedItems={[
 								 <div style={{backgroundColor:'white'}}>
-								 <Link to={"chat/"+"?name=Droid&identifier=message"} style={styles.listItem} onTouchTap={() => this.handleMessageChange('Droid')}><ListItem key="friday" id="friday" style={styles.listItem} leftAvatar={<Avatar style={{height:'30', backgroundColor:'transparent'}} src={this.state.imageLogoUrl} alt="Friday" />}><strong>Droid</strong></ListItem></Link>
+								 <Link to={'chat/?project='+this.state.appBarTitle+'&name=Droid&identifier=message'} style={styles.listItem} onTouchTap={() => this.handleMessageChange('Droid')}><ListItem key="friday" id="friday" style={styles.listItem} leftAvatar={<Avatar style={{height:'30', backgroundColor:'transparent'}} src={this.state.imageLogoUrl} alt="Friday" />}><strong>Droid</strong></ListItem></Link>
 								 <Divider />
 								<ChannelList nameCompressor={this.nameCompressor} channels={projects[index].channels} changeChannel={this.handleChannelChange} appBarTitle={this.state.appBarTitle}/>
 								<Divider />
