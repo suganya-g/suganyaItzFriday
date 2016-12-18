@@ -7,6 +7,7 @@ import Paper from 'material-ui/Paper';
 import IconButton from 'material-ui/IconButton';
 import ContentAddCircleOutline from 'material-ui/svg-icons/content/add-circle-outline';
 import ActionAccountCircle from 'material-ui/svg-icons/action/account-circle';
+import SocialPersonAdd from 'material-ui/svg-icons/social/person-add';
 import Chip from 'material-ui/Chip';
 import Avatar from 'material-ui/Avatar';
 import {Grid, Row, Col} from 'react-flexbox-grid'
@@ -25,15 +26,19 @@ const styles = {
 		},
       chip: {
         margin: 4,
-      },
+	      },
       wrapper: {
         display: 'flex',
         flexWrap: 'wrap',
       },
       paperStyle:{
-    	height:window.innerHeight,
-    	padding:10,
-    	width:"100%"
+    	position:'absolute',
+			top:'20%',
+			bottom:'20%',
+			left:'20%',
+			right:'20%',
+			width:'60%',
+			height:'60%'
       }
     };
 export default class SendInvite extends React.Component
@@ -77,6 +82,8 @@ export default class SendInvite extends React.Component
 	    return (
 	  	<Chip
 	        key={data.key}
+					backgroundColor='#607D8B'
+					labelColor='white'
 	        onRequestDelete={() => this.handleRequestDelete(data.key)}
 	        style={styles.chip}>
 	        <Avatar icon={<ActionAccountCircle/>}/>
@@ -130,13 +137,17 @@ export default class SendInvite extends React.Component
 	{
 		return(<Grid>
 		<Paper style={styles.paperStyle}>
+			<div style={{textAlign:'center'}}>
 			<Row center="xs">
-			<h3 style={{color:'#607D8B'}}>Invite Team Members</h3>
+			<SocialPersonAdd style={{color:'#004D40',width:'100px',height:'100px'}} />
+			<h1 style={{color:'#004D40'}}>Join Us!</h1>
 			</Row>
-
+			<Row center="xs">
+			<h4 style={{color:'#004D40'}}>Add new members to your team!</h4>
+			</Row>
 			<Row center="xs">
 			<TextField type="email"
-			floatingLabelText="Email Address"
+			floatingLabelText="Invite by Email"
 			onChange={this.handleAdd}
 			errorText={this.state.errorMsg}/>
 			<IconButton tooltip="Add" style={{marginTop: '20px'}}
@@ -145,10 +156,16 @@ export default class SendInvite extends React.Component
 				<ContentAddCircleOutline/>
 			</IconButton>
 			</Row>
-
+      <br />
 			<Row center="xs">
-			<div id="chipArea" style={{marginLeft:90,paddingTop:25,paddingBottom:50}}></div>
+			{
+			(this.state.chipData.length)>=3?
+			<div id="chipArea" style={{width:'50%',height:'150px',overflowY: 'auto'}}></div>
+			:
+			<div id="chipArea"></div>
+			}
 			</Row>
+			<br />
 			<Row center="xs">
 			<RaisedButton
                           label="Skip"
@@ -165,6 +182,7 @@ export default class SendInvite extends React.Component
                           disabled={this.state.addbuttonState}/>
 
 			</Row>
+			</div>
         </Paper>
 				</Grid>);
 	}
