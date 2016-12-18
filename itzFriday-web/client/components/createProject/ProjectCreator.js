@@ -2,6 +2,7 @@ import React from 'react';
 import RaisedButton from 'material-ui/RaisedButton';
 import Formsy from 'formsy-react';
 import Paper from 'material-ui/Paper';
+import MapsPersonPin from 'material-ui/svg-icons/maps/person-pin';
 import {blue500} from 'material-ui/styles/colors';
 import FormsyText from 'formsy-material-ui/lib/FormsyText';
 import {Grid, Row, Col} from 'react-flexbox-grid';
@@ -18,10 +19,13 @@ import Request from 'superagent';
  }
   const styles={
     	paperStyle: {
-      	width: '100%',
-      	margin: 'auto',
-      	padding: '10px',	
-      	height: window.innerHeight,
+        position:'absolute',
+        top:'5%',
+        right:'20%',
+        left:'20%',
+        bottom:'5%',
+        width:'60%',
+        height:'90%'
     	}
 }
  var pass={};
@@ -39,7 +43,7 @@ export default class ProjectCreator extends React.Component{
 	this.state = {canSubmit:false,errorMsg:''};
 	this.handleChange=this.handleChange.bind(this);
 	}
-  
+
 	handleChange()
 	{
 		this.setState({errorMsg:''})
@@ -74,30 +78,39 @@ console.log(data)
   }
 
 	render(){
-   		return(	
+   		return(
 		  <Grid>
 		  <Paper style={styles.paperStyle}>
 		  <Row>
-		  <div  style={{margin:'auto'}}>
 		  <Col xs={12} sm={12} md={12} lg={12}>
 		    <Formsy.Form
             onValid={this.enableButton}
             onInvalid={this.disableButton}
             onValidSubmit={this.submitForm}
             onInvalidSubmit={this.notifyFormError}>
-            <div>
-			<div>
-			<strong><h3 style={{color:'#607D8B'}}>Enter your details</h3></strong>
-			</div>
+            <div style={{textAlign:'center'}}>
+            <br />
+
+      <MapsPersonPin style={{color:'#004D40',width:'80px',height:'80px'}} />
+			<strong><h2 style={{color:'#004D40'}}>Personal Info</h2></strong>
+
     		<FormsyText
-              		  name="FullName"
+              		  name="FirstName"
               		  onChange={this.handleChange}
-    			      hintText="Full Name"
+    			      hintText="First Name"
     			      validations="isWords"
                       validationError={errorMessages.wordsError}
               		  required
-				      floatingLabelText="Full name"
+				      floatingLabelText="First Name"
 				      updateImmediately/><br />
+              <FormsyText
+                          name="LastName"
+                          onChange={this.handleChange}
+                      hintText="Last Name"
+                      validations="isWords"
+                            validationError={errorMessages.wordsError}
+                    floatingLabelText="Last Name(Optional)"
+                    updateImmediately/><br />
 
 			<FormsyText
 					  name="Email"
@@ -131,20 +144,19 @@ console.log(data)
 				      type="password"
 				      validationError={errorMessages.confirmPasswordError}
 				      required
-				      floatingLabelText="Confirm Password"	
+				      floatingLabelText="Confirm Password"
 				      updateImmediately/><br />
-			 
-            <RaisedButton 
+           <br />
+            <RaisedButton
                 type="submit"
                 label="Continue"
                 primary={true}
                 labelColor="white"
                 disabled={!this.state.canSubmit}/>
-    
+
               </div>
          </Formsy.Form>
         </Col>
-        </div>
         </Row>
         </Paper>
         </Grid>
