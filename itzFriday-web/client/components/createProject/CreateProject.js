@@ -4,7 +4,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import ActionAccountCircle from 'material-ui/svg-icons/action/account-circle';
 import TextField from 'material-ui/TextField';
 import Paper from 'material-ui/Paper';
-import {grey400,cyan50,red500,grey500,grey100,blueGrey100,blueGrey50} from 'material-ui/styles/colors';
+import {grey400,cyan50,red500,grey500,grey100,blueGrey100,blueGrey50,pink800} from 'material-ui/styles/colors';
 import {Grid, Row, Col} from 'react-flexbox-grid'
 import Avatar from 'material-ui/Avatar';
 import {Link} from 'react-router';
@@ -14,9 +14,13 @@ import Request from 'superagent';
 
 const styles ={
   paperStyle:{backgroundColor:blueGrey50,
-    height:window.innerHeight,
-    padding:10,
-    width:"100%"
+    position:'absolute',
+    left:'5%',
+    right:'5%',
+    top:'5%',
+    bottom:'5%',
+    width:'90%',
+    height:'90%'
   },
 };
 
