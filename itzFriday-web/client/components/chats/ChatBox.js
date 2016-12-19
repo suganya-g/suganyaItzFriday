@@ -93,10 +93,16 @@ class ChatBox extends Component {
     }else if(this.props.location.query.identifier === "channel") {
       var sendingMessage = {
         author: Auth.getNameFromToken(),
-        //source: this.props.location.query.project+'#'+this.props.location.query.name,
         message: message.chatText,
         timeStamp: message.chatTime,
-        destination: this.props.location.query.project+'#'+this.props.location.query.name
+        destination: ''
+      }
+      if(message.chatText.match(/@Droid/i)) {
+        sendingMessage.destination = this.props.location.query.project+'#Droid'+'/'+this.props.location.query.name;
+        sendingMessage.message = message.chatText.replace(/@droid/i, '');
+        chatMessages.push(sendingMessage);
+      }else {
+        sendingMessage.destination = this.props.location.query.project+'#'+this.props.location.query.name
       }
     }
     //chatMessages.push(sendingMessage);
@@ -105,18 +111,36 @@ class ChatBox extends Component {
   }
 
   _filterMessages(messages) {
-    if(messages && this.props.location.query.identifier === 'channel' && this.props.location.query.name !== 'Droid') {
+    console.log(messages);
+    if(messages && this.props.location.query.identifier === 'channel') {
       var names = messages.destination.split('#');
-      if(names[1] && (names[1] === this.props.location.query.name) && (names[0] === this.props.location.query.project)){
+      if(names[1] && names[1].match(/Droid/)) {
+        var channelName = names[1].split('/');
+        if(channelName && (channelName[0] === this.props.location.query.name) && (names[0] === this.props.location.query.project)) {
+          if(messages.message.type && messages.message.type === 'string') {
+            messages.message = messages.message.content;
+            chatMessages.push(messages);
+          }else {
+            chatMessages.push(messages);
+          }
+        }
+      }else if(names[1] && (names[1] === this.props.location.query.name) && (names[0] === this.props.location.query.project)){
         chatMessages.push(messages);
       }
-    }else if(messages && this.props.location.query.identifier === 'message' && this.props.location.query.name !== 'Droid') {
+    }else if(messages && this.props.location.query.identifier === 'message') {
       var names = messages.destination.split('@');
       if(names[1]) {
         var users = names[1].split('/');
-        if(names[1] && (users[0].split(' ')[0] === Auth.getNameFromToken()) && (users[1] === (this.props.location.query.name).split(' ')[0]) && (names[0] === this.props.location.query.project)){
+        if(users && names[1] && (users[0].split(' ')[0] === Auth.getNameFromToken()) && (names[0] === this.props.location.query.project) && (users[1] === 'Droid')) {
+          if(messages.message.type && messages.message.type === 'string') {
+            messages.message = messages.message.content;
+            chatMessages.push(messages);
+          }else {
+            chatMessages.push(messages);
+          }
+        }else if(names[1] && (users[0].split(' ')[0] === Auth.getNameFromToken()) && (users[1] === (this.props.location.query.name).split(' ')[0]) && (names[0] === this.props.location.query.project) && (users[1] !== 'Droid')){
           chatMessages.push(messages);
-        }else if(names[1] && (users[0].split(' ')[0] === (this.props.location.query.name).split(' ')[0]) && (users[1] === Auth.getNameFromToken()) && (names[0] === this.props.location.query.project)){
+        }else if(names[1] && (users[0].split(' ')[0] === (this.props.location.query.name).split(' ')[0]) && (users[1] === Auth.getNameFromToken()) && (names[0] === this.props.location.query.project) && (users[1] !== 'Droid')){
           chatMessages.push(messages);
         }
       }

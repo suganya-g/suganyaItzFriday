@@ -14,9 +14,8 @@ module.exports = function (socket) {
 	socket.on('user:join', function(project) {
     console.log("in user joined"+project);
     sub.psubscribe(project+"*"); 
-    //socket.join(joinedUser.destination);
-		//socket.broadcast.emit('user:join', joinedUser);
 	});
+  
 	// broadcast a user's message to other users
   	socket.on('send:message', function (data) {
       var chatToPublish = JSON.stringify({
@@ -26,7 +25,11 @@ module.exports = function (socket) {
         timeStamp:data.timeStamp, 
         message:data.message
       });
-  		pub.publish('delivery', chatToPublish);
+      if(data.destination.match(/@Droid\//)) {
+        pub.publish(data.destination, chatToPublish);
+      } else {
+        pub.publish('delivery', chatToPublish);
+      }
   	});
       
 
@@ -45,4 +48,5 @@ module.exports = function (socket) {
         var chatData = JSON.parse(message);
         socket.emit(chatData.method, chatData);
   });
+
 }

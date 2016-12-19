@@ -6,6 +6,22 @@ const createIssue = function (owner,repo,authToken,title,body,labels,assignees,c
         "state": "open"
     };
 
+    if(!owner)
+    {
+        callback({type:"string", content: "Error: Owner Not Present"}, null);
+        return
+    }
+    else if(!repo)
+    {
+        callback({type:"string", content: "Error: Repository Not Present"}, null);
+        return
+    }
+    else if(!title)
+    {
+        callback({type:"string", content: "Error: Issue Title Not Present"}, null);
+        return
+    }
+
     jsonObj.title = title;
 
     if(body !== '')
@@ -25,10 +41,10 @@ const createIssue = function (owner,repo,authToken,title,body,labels,assignees,c
     .end(function(error,response){
         if(error)
         {
-            callback(error,response);
+            callback({type:"string", content: error.toString()}, null);
             return
         }
-         callback(null, response.body.number);
+         callback(null, {type:"string", content: "Issue has been opened with number "+response.body.number+'.'});
     });
     return 
 }

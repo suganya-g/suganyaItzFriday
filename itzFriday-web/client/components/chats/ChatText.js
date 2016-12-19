@@ -49,7 +49,7 @@ class ChatText extends Component {
 
   render() {
     const message = this.props.chatTextMessages;
-    const avtar = "https://twitter.com/@"+message.user+"/profile_image?size=original";
+    const avtar = "https://twitter.com/@"+message.author+"/profile_image?size=original";
     return(
       <div>
       { message !== undefined || message !== null ?
