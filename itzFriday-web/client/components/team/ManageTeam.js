@@ -9,6 +9,7 @@ import Chip from 'material-ui/Chip';
 import Avatar from 'material-ui/Avatar';
 import {Grid, Row, Col} from 'react-flexbox-grid'
 import RaisedButton from 'material-ui/RaisedButton';
+import SocialPeopleOutline from 'material-ui/svg-icons/social/people-outline';
 import {grey400,cyan50,red500,grey500,grey100,blueGrey100,blueGrey50,teal100} from 'material-ui/styles/colors';
 import AutoComplete from 'material-ui/AutoComplete';
 
@@ -17,7 +18,6 @@ var previous="blank";
 var counter=0;
 var c=0;
 var mydata=[];
-var validExpre=/^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$/i;
 
 const styles = {
 		button: {
@@ -29,14 +29,11 @@ const styles = {
       wrapper: {
         display: 'flex',
         flexWrap: 'wrap',
-      },
-      paperStyle:{
-    	height:window.innerHeight,
-    	padding:10,
-    	width:"100%"
       }
     };
- const members=['Govind@gmail.com','Ruchika@gmail.com','Vikram@gmail.com','Apurv@gmail.com','suganya@gmail.com','kirti@gmail.com','nitin@gmail.com','prerna@gmail.com','shipra@gmail.com'];
+ var members=[];
+
+
 export default class ManageTeam extends React.Component
 {
 	constructor(props)
@@ -46,10 +43,29 @@ export default class ManageTeam extends React.Component
 		this.handleAddClick=this.handleAddClick.bind(this);
 		this.state={email:'',addIconState:true,addbuttonState:true,errorMsg:'',chipData:[],checkbox:true,searchText:''}
 		this.sendInvite=this.sendInvite.bind(this);
-	}	
-
+	}
+	componentWillMount()
+  {
+ 	 if(localStorage['project']==='Friday')
+ 		{
+ 			members=["Gobinda Thakur","Apurv Tiwari","Ruchika Saklani","Suganya Gopal","Ankit Aggarwal","Vikram Marshmallow"];
+ 		}
+ 		else if(localStorage['project']==='Samarth')
+ 		{
+ 			members=["Amol Tiwari","Ankit Kumar Vashisht","Shinder Pal Singh","Ritesh","Kumari Devi","Hari Prasad","Prerna Kukreti"];
+ 		}
+ 		else if(localStorage['project']==='Quiztack')
+ 		{
+ 			members=["Vishant Sharma","Kirti Jalan","Dhivya Lakshmi","Lal Jose","Srinivasan","Nitin Verma"];
+ 		}
+ 		else
+ 			{
+ 			members=["Sreenidhi","Toolika Srivastava","Nanda","Shipra Joshi","Bala","Divyanshu Sharma"];
+ 			}
+ 			console.log("members are "+members+" from "+localStorage['project']);
+  }
 	handleAdd(event)
-	{	
+	{
 		var search=document.getElementById('searchtext').value
 		this.setState({email:search})
 		if(search!='')
@@ -61,7 +77,7 @@ export default class ManageTeam extends React.Component
 		}
 
 	}
-	handleRequestDelete = (key) => 
+	handleRequestDelete = (key) =>
 	{
 	    this.chipData = this.state.chipData;
 	    const chipToDelete = this.chipData.map((chip) => chip.key).indexOf(key);
@@ -76,7 +92,7 @@ export default class ManageTeam extends React.Component
 							</div>
 						</MuiThemeProvider>,document.getElementById('chipArea'));
 	};
-	renderChip=(data)=> 
+	renderChip=(data)=>
 	{
 	    return (
 	  	<Chip
@@ -90,8 +106,6 @@ export default class ManageTeam extends React.Component
 	handleAddClick()
 	{
 		var exists=false;
-		if(validExpre.test(this.state.email))
-	    {	
 	    	for(var j=0;j<this.state.chipData.length;j++)
 	    	{
 	    		if(this.state.chipData[j].label==this.state.email)
@@ -114,14 +128,10 @@ export default class ManageTeam extends React.Component
       						</MuiThemeProvider>,document.getElementById('chipArea'));
       		}
       		 else
-      		{ 	
+      		{
       			this.setState({errorMsg:"Email already Entered"});
       		}
-	    }
-	    else if(!validExpre.test(this.state.email))
-	    	this.setState({errorMsg:"Invalid Email Address"})
-	    else
-	    	this.setState({errorMsg:"Email already Entered"})
+
 	    this.refs['autocomplete'].setState({searchText:''});
 
 	}
@@ -129,10 +139,12 @@ export default class ManageTeam extends React.Component
 	{
 		mydata=this.state.chipData;
 		console.log(mydata);
-		console.log(members);
+
+
+			console.log(members);
 		var len=members.length;
 		for(var i=0;i<len;i++)
-		{	
+		{
 
 			for(var j=0;j<mydata.length;j++)
 			{
@@ -151,9 +163,13 @@ export default class ManageTeam extends React.Component
 		// this.props.router.replace('login/');
 	}
 	render()
-	{	
+	{
 		return(<Grid>
-		<Paper style={styles.paperStyle}>
+		<Paper>
+		<br />
+		<Row center="xs">
+	<SocialPeopleOutline style={{color:'#607D8B',width:'100px',height:'100px'}} />
+		</Row>
 			<Row center="xs">
 			<h3 style={{color:'#607D8B'}}>ManageTeam</h3>
 			</Row>
@@ -173,7 +189,7 @@ export default class ManageTeam extends React.Component
 				disabled={this.state.addIconState}
 				onClick={this.handleAddClick}>
 				<ContentAddCircleOutline/>
-			</IconButton>			
+			</IconButton>
 
 			</Row>
 			<br/>
@@ -185,21 +201,22 @@ export default class ManageTeam extends React.Component
 			}
 			</Row>
 			<br/>
-			
+
       <Row center="xs">
-      <RaisedButton 
+      <RaisedButton
           label="Close"
           backgroundColor='#4CAF50'
           labelColor="white"/>
-          
-      <RaisedButton 
+
+      <RaisedButton
           label="Remove"
           backgroundColor='#4CAF50'
           labelColor="white"
+					style={{marginLeft:'10px'}}
           onClick={this.sendInvite}/>
-          
+
       </Row>
-			
+  <br />
         </Paper>
 				</Grid>);
 	}

@@ -14,7 +14,7 @@ import Divider from 'material-ui/Divider';
 import Avatar from 'material-ui/Avatar';
 
 import SocialNotifications from 'material-ui/svg-icons/social/notifications';
-import SocialPerson from 'material-ui/svg-icons/social/person';
+import SocialGroup from 'material-ui/svg-icons/social/group';
 import ImageDehaze from 'material-ui/svg-icons/image/dehaze';
 import ContentAddCircle from 'material-ui/svg-icons/content/add-circle';
 import HardwareTv from 'material-ui/svg-icons/hardware/tv';
@@ -85,7 +85,7 @@ export default class ChannelList extends React.Component
 		channels=[];
 		for( let index in groups)
 		{
-			channels.push(<ListItem style={styles.linkItem} onTouchTap={() => this.displayChannel(groups[index])} leftIcon={<SocialPerson />}>{this.compressName(groups[index])}</ListItem>);
+			channels.push(<ListItem style={styles.linkItem} onTouchTap={() => this.displayChannel(groups[index].name)} leftIcon={<SocialGroup />}>{this.compressName(groups[index].name)}</ListItem>);
 		}
 		channels.push(<Divider />);
 		channels.push(<Link to={"addChannel/"} style={styles.linkItem} ><ListItem key={-1} leftIcon={<ContentAddCircle />}>Create channel</ListItem></Link>);
@@ -104,7 +104,7 @@ export default class ChannelList extends React.Component
 		channels=[];
 		for( let index in groups)
 		{
-			channels.push(<ListItem style={styles.linkItem} onTouchTap={() => this.displayChannel(groups[index])} leftIcon={<SocialPerson />}>{this.compressName(groups[index])}</ListItem>);
+			channels.push(<ListItem style={styles.linkItem} onTouchTap={() => this.displayChannel(groups[index].name)} leftIcon={<SocialGroup />}>{this.compressName(groups[index].name)}</ListItem>);
 		}
 		channels.push(<Divider />);
 		channels.push(<Link to={"addChannel/"} style={styles.linkItem} ><ListItem key={-1} style={styles.linkItem} leftIcon={<ContentAddCircle />}>Create channel</ListItem></Link>);
