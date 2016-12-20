@@ -1,0 +1,7 @@
+node_modules
+test
+README.md
+gulpfile.js
+webpack.config.js
+LICENCE
+bower.json
