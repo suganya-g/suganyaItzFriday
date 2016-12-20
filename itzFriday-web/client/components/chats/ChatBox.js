@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import {Grid, Row, Col} from 'react-flexbox-grid';
 import ChatToolBar from './ChatToolBar';
 import ChatWindow from './ChatWindow';
-import sockets from './../../services/socket.service.js'
-import Auth from './../../services/auth.service.js'
+import sockets from './../../services/socket.service.js';
+import Auth from './../../services/auth.service.js';
+import ListText from './../listText/ListText';
 
 var name = ''; 
 var chatMessages = [];
@@ -110,32 +111,48 @@ class ChatBox extends Component {
     this.setState({chatMessages});
   }
 
-  _filterMessages(messages) {
+  _filterMessages(messages) 
+  {
     console.log(messages);
-    if(messages && this.props.location.query.identifier === 'channel') {
+    if(messages && this.props.location.query.identifier === 'channel') 
+    {
       var names = messages.destination.split('#');
-      if(names[1] && names[1].match(/Droid/)) {
+      if(names[1] && names[1].match(/Droid/)) 
+      {
         var channelName = names[1].split('/');
-        if(channelName && (channelName[0] === this.props.location.query.name) && (names[0] === this.props.location.query.project)) {
-          if(messages.message.type && messages.message.type === 'string') {
+        if(channelName && (channelName[0] === this.props.location.query.name) && (names[0] === this.props.location.query.project)) 
+        {
+          if(messages.message.type === 'string') 
+          {
             messages.message = messages.message.content;
             chatMessages.push(messages);
-          }else {
+          }
+          else        //its a json
+          {
+            messages.message = <ListText issues={messages.message.content}/>;
             chatMessages.push(messages);
           }
         }
-      }else if(names[1] && (names[1] === this.props.location.query.name) && (names[0] === this.props.location.query.project)){
+      }else if(names[1] && (names[1] === this.props.location.query.name) && (names[0] === this.props.location.query.project))
+      {
         chatMessages.push(messages);
       }
-    }else if(messages && this.props.location.query.identifier === 'message') {
+    }
+    else if(messages && this.props.location.query.identifier === 'message') 
+    {
       var names = messages.destination.split('@');
       if(names[1]) {
         var users = names[1].split('/');
-        if(users && names[1] && (users[0].split(' ')[0] === Auth.getNameFromToken()) && (names[0] === this.props.location.query.project) && (users[1] === 'Droid')) {
-          if(messages.message.type && messages.message.type === 'string') {
+        if(users && names[1] && (users[0].split(' ')[0] === Auth.getNameFromToken()) && (names[0] === this.props.location.query.project) && (users[1] === 'Droid')) 
+        {
+          if(messages.message.type === 'string') 
+          {
             messages.message = messages.message.content;
             chatMessages.push(messages);
-          }else {
+          }
+          else 
+          {
+            messages.message = <ListText issues={messages.message.content}/>;
             chatMessages.push(messages);
           }
         }else if(names[1] && (users[0].split(' ')[0] === Auth.getNameFromToken()) && (users[1] === (this.props.location.query.name).split(' ')[0]) && (names[0] === this.props.location.query.project) && (users[1] !== 'Droid')){

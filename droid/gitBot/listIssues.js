@@ -11,11 +11,6 @@ const listIssues = function (owner,repo,authToken,issueNumber,callback)
         callback({error: true, type:"string", content: "Error: Repository Not Present"}, null);
         return
     }
-    else if(!issueNumber)
-    {
-        callback({error: true, type:"string", content: "Error: Issue Number Not Present"}, null);
-        return
-    }
 
     console.log(issueNumber);
     var uri = 'https://api.github.com/repos/'+owner+'/'+repo+'/issues';

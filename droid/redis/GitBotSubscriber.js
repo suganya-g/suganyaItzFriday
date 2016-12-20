@@ -329,7 +329,7 @@ function fetchJsonObject(message)
 
 	if(keyString.length === 0)
 	{
-		if(message === "" || message.match(/hello/gi))
+		if(message === "" || message.match(/hello/gi) || message.match(/hi/gi) || message.match(/whats up/gi) || message.match(/sup/gi) || message.match(/wassup/gi))
 		{
 			intents.push({intent:"hello", priority:0});
 			return "conversation";
@@ -537,7 +537,7 @@ gitBotSubscriber.on("pmessage",function(count, channel, message)
 
 	//FETCH JSON DATA
 	jsonObject = fetchJsonObject(message);	//set processFurther to false on error
-	jsonObject.authToken = 'c4fd2b41168b387f19ab75d8aa643ae892710c22';
+	jsonObject.authToken = '0c52e6994e60ff02620248ac94da7a83d8c6a2ca';
 
 	//SORT EXECUTION SEQUENCE IN THE ORDER OF CONTEXT
 	intents.sort(function(a,b){
