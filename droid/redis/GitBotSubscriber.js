@@ -4,10 +4,10 @@ var assignIssue = require("../gitBot/assignIssue");
 var labelIssue = require("../gitBot/labelIssue");
 var closeIssue = require("../gitBot/closeIssue");
 var listIssues = require("../gitBot/listIssues");
+//var greetings = require("../conversation/greetings");
 var commentOnIssue = require("../gitBot/commentOnIssue");
 
 const redisUrl = process.env.REDIS_URL || 'redis://localhost';
-var gitBotSubscriber = redis.createClient(redisUrl);
 var gitBotPublisher = redis.createClient(redisUrl);
 /*
 droid:
@@ -312,7 +312,7 @@ function asyncDataHandler(error,result)
 function fetchJsonObject(message)
 {
 	let json = {
-	"owner": "",
+	"authToken": "",
 	"repo" : "",
 	"number" : "",
 	"title" : "",
@@ -327,120 +327,110 @@ function fetchJsonObject(message)
 	let repo = '';
 	let temp = '';
 
-	if(keyString.length === 0)
+	
+	if(message === "" || message.match(/hello/gi) || message.match(/hi/gi) || message.match(/whats up/gi) || message.match(/sup/gi) || message.match(/wassup/gi))
 	{
-		if(message === "" || message.match(/hello/gi))
-		{
-			intents.push({intent:"hello", priority:0});
-			return "conversation";
-		}
-		else if(message.match(/how/) && message.match(/are/) && message.match(/you/))
-		{
-			intents.push({intent:"howAreYou", priority:1});
-			return "conversation";
-		}
-		else
-		{
-			intents.push({intent:"randomInput", priority:0});	//default
-			return "Invalid string";	
-		}
+		json.body=message;
+	}
+	else if(message.match(/how/) && message.match(/are/) && message.match(/you/))
+	{
+		json.body=message;
 	}
 	else if(keyString.length === 1 && valueString === null)	//atleast one intent (list all issues)
 	{
-		return "List all issues";
+		json.body=message;
 	}
 	else
 	{	
 		//fetch the values
 		valueString = message.match(/(\s"[.\w-_&@!?,'\/[\]\s(){}]+")|((\s*@[\w-_/,]+)+)|(\s#[0-9]+)/gi);
-
-		// FETCH MANDATORY DETAILS //
-
-		// fetch project details if creating project //
-		project = valueString[0].match(/\s@[\w]{2}[\w-_/]+/);
-		if( project !== null)
+		if(valueString !== '' && valueString !== null && valueString !== undefined)
 		{
-			project = project.toString().split('/');
-			owner = project[0].replace('@','').trim();
-			if(project[1] !== undefined && project[1] !== null)
+			// FETCH MANDATORY DETAILS //
+
+			// fetch project details if creating project //
+			project = valueString[0].match(/\s@[\w]{2}[\w-_/]+/);
+			if(project !== null)
 			{
-				repo = project[1].trim();
-				json.repo = repo;
+				project = project.toString().replace('@','').trim();
+				json.repo = project;
 			}
-			json.owner = owner;
-		}
 
-		//FETCH OPTIONAL DETAILS //
-		for(let index in keyString)
-		{
-			//check for project if it already exists
-			//patterns [in, under, in project, under project]
-			if((keyString[index].match(/in/gi) || keyString[index].match(/under/gi)) && keyString[index].match(/project/gi))
+			//FETCH OPTIONAL DETAILS //
+			for(let index in keyString)
 			{
-				project = valueString[index].match(/\s@[\w]{2}[\w-_/]+/);
-				if( project !== null)
+				//check for project if it already exists
+				//patterns [in, under, in project, under project]
+				if((keyString[index].match(/in/gi) || keyString[index].match(/under/gi)) && keyString[index].match(/project/gi))
 				{
-					project = project.toString().trim().split('/');
-					owner = project[0].replace('@','').trim();
-					if(project[1] !== undefined && project[1] !== null)
+					project = valueString[index].match(/\s@[\w]{2}[\w-_/]+/);
+					if(project !== null)
 					{
-						repo = project[1].trim();
-						json.repo = repo;
+						project = project.toString().replace('@','').trim();
+						json.repo = project;
 					}
-					json.owner = owner;
 				}
-			}
-			//check for title
-			//patterns [create issue, open issue, add issue]
-			else if((keyString[index].match(/create/gi) || keyString[index].match(/open/gi) || keyString[index].match(/add/gi)) && keyString[index].match(/issue/gi))
-			{
-				json.title = valueString[index].match(/\s"[.\w-_&@!?,'\/[\]\s(){}]+"/).toString().replace(/"+/g,'').trim();
-			}
-			//check for description
-			//patterns [description, desc, details, content, comment]
-			if((keyString[index].match(/comment/gi) && !keyString[index].match(/on/gi)) || (keyString[index].match(/description/gi) || keyString[index].match(/desc/gi) || keyString[index].match(/detail/gi) || keyString[index].match(/content/gi) && !(keyString[index].match(/create/gi)&&keyString[index].match(/issue/gi))))
-			{
-				json.body = valueString[index].match(/"[.\w-_&@!?,'\/[\]\s(){}]+"/).toString().replace(/"+/g,'').trim();
-			}
-			//check for assignees
-			//patterns [to, assign to, give to,]	//eg. [assign issue to, assign to, give issue to, give to]
-			else if(!keyString[index].match(/label/gi) && keyString[index].match(/to/gi))// || keyString[index].match(/give/gi)) && keyString[index].match(/to/gi))
-			{
-				json.assignees = valueString[index].match(/[\w-_]+/g);
-			}
-			//check for labels
-			//patterns [label, with, tag, assign label, add label, assign tag, add tag]
-			else if(!keyString[index].match(/issue/gi) && (keyString[index].match(/label/gi) || keyString[index].match(/with/gi) || keyString[index].match(/tag/gi) || (keyString[index].match(/assign/gi) && keyString[index].match(/label/gi)) || (keyString[index].match(/add/gi) && keyString[index].match(/label/gi))))
-			{
-				json.labels = valueString[index].match(/(help wanted)|([\w-_]+)/g);
-			}
-			//check for issue number
-			//patterns [assign issue #number, give issue #number, label issue #number, tag issue #number, list issue #number, edit issue #number, close issue #number, on issue #number, comment on #number]
-			else if(((keyString[index].match(/assign/gi) || keyString[index].match(/give/gi) || keyString[index].match(/label/gi) || keyString[index].match(/tag/gi) || keyString[index].match(/close/gi) || keyString[index].match(/list/gi) || keyString[index].match(/show/gi) || keyString[index].match(/display	/gi) || keyString[index].match(/edit/gi)) && keyString[index].match(/issue/gi)) || keyString[index].match(/close/gi) ||(keyString[index].match(/comment/gi) && (keyString[index].match(/on/gi) || keyString[index].match(/issue/gi))))
-			{
-				temp = valueString[index].match(/#[0-9]+/)
-				if(temp !== null)
+				//check for title
+				//patterns [create issue, open issue, add issue]
+				else if((keyString[index].match(/create/gi) || keyString[index].match(/open/gi) || keyString[index].match(/add/gi)) && keyString[index].match(/issue/gi))
 				{
-					temp = temp.toString().replace('#','').trim();
-					json.number = Number(temp);
+					json.title = valueString[index].match(/\s"[.\w-_&@!?,'\/[\]\s(){}]+"/).toString().replace(/"+/g,'').trim();
+				}
+				//check for description
+				//patterns [description, desc, details, content, comment]
+				if((keyString[index].match(/comment/gi) && !keyString[index].match(/on/gi)) || (keyString[index].match(/description/gi) || keyString[index].match(/desc/gi) || keyString[index].match(/detail/gi) || keyString[index].match(/content/gi) && !(keyString[index].match(/create/gi)&&keyString[index].match(/issue/gi))))
+				{
+					json.body = valueString[index].match(/"[.\w-_&@!?,'\/[\]\s(){}]+"/).toString().replace(/"+/g,'').trim();
+				}
+				//check for assignees
+				//patterns [to, assign to, give to,]	//eg. [assign issue to, assign to, give issue to, give to]
+				else if(!keyString[index].match(/label/gi) && keyString[index].match(/to/gi))// || keyString[index].match(/give/gi)) && keyString[index].match(/to/gi))
+				{
+					json.assignees = valueString[index].match(/[\w-_]+/g);
+				}
+				//check for labels
+				//patterns [label, with, tag, assign label, add label, assign tag, add tag]
+				else if(!keyString[index].match(/issue/gi) && (keyString[index].match(/label/gi) || keyString[index].match(/with/gi) || keyString[index].match(/tag/gi) || (keyString[index].match(/assign/gi) && keyString[index].match(/label/gi)) || (keyString[index].match(/add/gi) && keyString[index].match(/label/gi))))
+				{
+					json.labels = valueString[index].match(/(help wanted)|([\w-_]+)/g);
+				}
+				//check for issue number
+				//patterns [assign issue #number, give issue #number, label issue #number, tag issue #number, list issue #number, edit issue #number, close issue #number, on issue #number, comment on #number]
+				else if(((keyString[index].match(/assign/gi) || keyString[index].match(/give/gi) || keyString[index].match(/label/gi) || keyString[index].match(/tag/gi) || keyString[index].match(/close/gi) || keyString[index].match(/list/gi) || keyString[index].match(/show/gi) || keyString[index].match(/display	/gi) || keyString[index].match(/edit/gi)) && keyString[index].match(/issue/gi)) || keyString[index].match(/close/gi) ||(keyString[index].match(/comment/gi) && (keyString[index].match(/on/gi) || keyString[index].match(/issue/gi))))
+				{
+					temp = valueString[index].match(/#[0-9]+/)
+					if(temp !== null)
+					{
+						temp = temp.toString().replace('#','').trim();
+						json.number = Number(temp);
+					}
 				}
 			}
 		}
-		return json;
+		else
+		{
+			json.body = "random input";
+		}
 	}
+	return json;
 }
 
-function getUserIntent(message)
+function getKeyString(message)
 {
-	let intent = [];
-
-	keyString = message.replace(/(\s"[.\w-_&@!?,'\/[\]\s(){}]+")|((\s*@[\w-_/,]+)+)|(\s#[0-9]+)/gi,'~').trim();
+	let keyString = message.replace(/(\s"[.\w-_&@!?,'\/[\]\s(){}]+")|((\s*@[\w-_/,]+)+)|(\s#[0-9]+)/gi,'~').trim();
 	
 	if(keyString.search(/[~]+/g) > 0)
 	{
 		keyString = keyString.replace(/[~]+/g,'~');
 	}
+	return keyString;
+}
+
+function getUserIntent(message, keyString)
+{
+	let intent = [];
 	let segments = keyString.split('~');
+
 	console.log(keyString);
 	console.log(" ");
 	console.log("Dynamic check for intents");
@@ -484,6 +474,22 @@ function getUserIntent(message)
 			}
 		}
 	}
+	//check for conversation
+	if(intent.length === 0)
+	{
+		if(message === "" || message.match(/hello/gi) || message.match(/hey/gi) || message.match(/hi/gi) || message.match(/whats up/gi) || message.match(/sup/gi) || message.match(/wassup/gi))
+		{
+			intent.push({"intent":"greetings", "priority":0});
+		}
+		else if((message.match(/how/) || message.match(/what/)) && message.match(/are/) && message.match(/you/))
+		{
+			intent.push({"intent":"howAreYou", "priority":1});
+		}
+		else
+		{
+			intent.push({"intent":"randomInput", "priority":0});	//default	
+		}
+	}
 	return intent;
 }
 
@@ -508,7 +514,7 @@ function getPublishChannel(source)	//channel name will only consist of alphabet 
 	}
 }
 
-gitBotSubscriber.on("pmessage",function(count, channel, message)
+var receiveMessage = function(count, channel, message)
 {
 	intents = '';
 	let strArr = '';
@@ -522,6 +528,8 @@ gitBotSubscriber.on("pmessage",function(count, channel, message)
 	message = jsonData.message;
 	//change Author to Droid
 	jsonData.author = "Droid";
+	//fetch the keyString
+	keyString = getKeyString(message);
 	//fetch Channel to publish on
 	publishChannel = getPublishChannel(jsonData.destination);	//or use jsonData.destination
 	console.log("publish at : "+publishChannel);
@@ -531,13 +539,18 @@ gitBotSubscriber.on("pmessage",function(count, channel, message)
 	// publishChannel = channel.substr(0, channel.lastIndexOf(":"));	//from index, take n characters
 
 	//FETCH USER INTENT
-	intents = getUserIntent(message);	//will generate keyString
+	intents = getUserIntent(message, keyString);	//will generate keyString
 	keyString = keyString.split('~');
 	keyString.pop();	//remove the trailing ~
 
 	//FETCH JSON DATA
 	jsonObject = fetchJsonObject(message);	//set processFurther to false on error
-	jsonObject.authToken = 'c4fd2b41168b387f19ab75d8aa643ae892710c22';
+	jsonObject.authToken = '211aac01c21fc0314b809949505ba2f852e709f9';
+
+	if(message.accessToken !== undefined && message.accessToken !== '')
+	{
+		jsonObject.authToken = message.accessToken;
+	}
 
 	//SORT EXECUTION SEQUENCE IN THE ORDER OF CONTEXT
 	intents.sort(function(a,b){
@@ -561,6 +574,8 @@ gitBotSubscriber.on("pmessage",function(count, channel, message)
 	for(let intent in intents)
 	{
 		console.log("inside for, intent : " + intents[intent].intent);
+		// let fn = window[intents[intent].intent];
+		// fn.apply(null, jsonObject, asyncDataHandler);
 		switch(intents[intent].intent)
 		{
 			case "assignIssue":
@@ -587,7 +602,7 @@ gitBotSubscriber.on("pmessage",function(count, channel, message)
 				// }
 				// else
 				// {
-					assignIssue(jsonObject.owner,jsonObject.repo,jsonObject.authToken,jsonObject.number,jsonObject.assignees,asyncDataHandler); //(err, res) => {
+					assignIssue(jsonObject, asyncDataHandler); //(err, res) => {
 				// 	if(err)
 				// 	{
 				// 		console.log(err.toString());
@@ -626,7 +641,7 @@ gitBotSubscriber.on("pmessage",function(count, channel, message)
 				// }
 				// else
 				// {
-					commentOnIssue(jsonObject.owner,jsonObject.repo,jsonObject.authToken,jsonObject.number,jsonObject.body, asyncDataHandler); //(err, res) => {
+					commentOnIssue(jsonObject, asyncDataHandler); //(err, res) => {
 			// 		if(err)
 			// 		{
 			// 			console.log(err.toString());
@@ -660,7 +675,7 @@ gitBotSubscriber.on("pmessage",function(count, channel, message)
 				// }
 				// else
 				// {
-					closeIssue(jsonObject.owner,jsonObject.repo,jsonObject.authToken,jsonObject.number, asyncDataHandler); //(err, res) => {
+					closeIssue(jsonObject, asyncDataHandler); //(err, res) => {
 			// 		if(err)
 			// 		{
 			// 			console.log(err.toString());
@@ -694,7 +709,7 @@ gitBotSubscriber.on("pmessage",function(count, channel, message)
 		 //    }
 		 //    else
 		 //    {
-				createIssue( jsonObject.owner, jsonObject.repo, jsonObject.authToken, jsonObject.title, jsonObject.body, jsonObject.labels, jsonObject.assignees, asyncDataHandler); //(err, res) => {
+				createIssue(jsonObject, asyncDataHandler); //(err, res) => {
 					// if(err)
 					// {
 					// 	console.log(err);
@@ -770,7 +785,7 @@ gitBotSubscriber.on("pmessage",function(count, channel, message)
 				// }
 				// else
 				// {
-					labelIssue(jsonObject.owner,jsonObject.repo,jsonObject.authToken,jsonObject.number,jsonObject.labels, asyncDataHandler); //(err, res) => {
+					labelIssue(jsonObject, asyncDataHandler); //(err, res) => {
 			// 		if(err)
 			// 		{
 			// 			console.log(err.toString());
@@ -799,7 +814,7 @@ gitBotSubscriber.on("pmessage",function(count, channel, message)
 			 //    }
 				// else
 				// {
-					listIssues(jsonObject.owner,jsonObject.repo,jsonObject.authToken,jsonObject.number, asyncDataHandler); //(err, res) => {
+					listIssues(jsonObject, asyncDataHandler); //(err, res) => {
 			// 		if(err)
 			// 		{
 			// 			console.log(err.toString());
@@ -814,10 +829,9 @@ gitBotSubscriber.on("pmessage",function(count, channel, message)
 			// }
 			break;
 			
-			case "hello":
+			case "greetings":
 				console.log("Hello! How can I help you?");
 				jsonData.message = {type:"string", content: "Hello! How can I help you?"};
-				console.log("inside Hello! Publishing -------------> " + publishChannel);
 				gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
 			break;
 
@@ -833,6 +847,6 @@ gitBotSubscriber.on("pmessage",function(count, channel, message)
 				gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
 		}
 	}
-});
+};
 
-gitBotSubscriber.psubscribe("*[@#]Droid/*");
+module.exports = receiveMessage;

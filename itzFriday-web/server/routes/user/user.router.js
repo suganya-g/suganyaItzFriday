@@ -28,10 +28,11 @@ userRouter.post('/login', function(req, res) {
   		}else {
   		// create a user a new user
 			var testUser = new userAccount({
-          fullName: 'Ruchika',
-    			username: 'ruchika@gmail.com',
+          fullName: 'Ankit',
+    			username: 'ankit@gmail.com',
     			password: 'abcdefgh',
-    			role: 'User'
+    			role: 'User',
+          gitAccess: ''
 			});
 			testUser.save(function(err, user) {
 				if(err){

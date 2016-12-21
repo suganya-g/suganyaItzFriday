@@ -1,33 +1,29 @@
 var request = require('superagent');
-const listIssues = function (owner,repo,authToken,issueNumber,callback)
+const listIssues = function (json,callback)
 {
-    if(!owner)
-    {
-        callback({error: true, type:"string", content: "Error: Owner Not Present"}, null);
-        return
-    }
-    else if(!repo)
+    if(!json.repo)
     {
         callback({error: true, type:"string", content: "Error: Repository Not Present"}, null);
         return
     }
-    else if(!issueNumber)
-    {
-        callback({error: true, type:"string", content: "Error: Issue Number Not Present"}, null);
-        return
-    }
 
-    console.log(issueNumber);
-    var uri = 'https://api.github.com/repos/'+owner+'/'+repo+'/issues';
-    if(issueNumber !== '')
-        uri = uri + '/'+issueNumber;
+    console.log(json.number);
+    var uri = 'https://api.github.com/repos/'+json.repo+'/issues';
+    if(json.number !== '')
+        uri = uri + '/'+json.number;
 
     let intent = '';
     let issues = [];
     let labels = [];
     let assignees = [];
 
-	request.get(uri + '?oauth_token='+authToken)
+    let owner = json.repo.split('/');
+    if(owner[0] !== undefined)
+    {
+        owner = owner[0].trim();
+    }
+
+	request.get(uri + '?oauth_token='+json.authToken)
     .set('User-Agent',owner)
     .set('Content-Type', 'application/json')
     .end(function(error,response){
@@ -37,7 +33,7 @@ const listIssues = function (owner,repo,authToken,issueNumber,callback)
         }
         else
         {
-            if(issueNumber !== '')
+            if(json.number !== '')
             {
                 //fetch labels
                 for(let label in response.body.labels)

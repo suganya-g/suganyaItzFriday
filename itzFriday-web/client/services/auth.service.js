@@ -35,6 +35,11 @@ export default {
     return name;
   },
 
+  getEmailFromToken() {
+    let email = JSON.parse(atob(localStorage.token.split('.')[1])).user;
+    return email;
+  },
+
   loggedIn() {
     return !!localStorage.token
   },

@@ -12,6 +12,7 @@ module.exports = function (socket) {
     });
 
 	socket.on('user:join', function(project) {
+    sub.punsubscribe();
     console.log("in user joined"+project);
     sub.psubscribe(project+"*"); 
 	});

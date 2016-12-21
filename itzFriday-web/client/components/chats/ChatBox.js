@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import {Grid, Row, Col} from 'react-flexbox-grid';
 import ChatToolBar from './ChatToolBar';
 import ChatWindow from './ChatWindow';
-import sockets from './../../services/socket.service.js'
-import Auth from './../../services/auth.service.js'
+import sockets from './../../services/socket.service.js';
+import Auth from './../../services/auth.service.js';
+import ListText from './../listText/ListText';
 
 var name = ''; 
 var chatMessages = [];
@@ -49,7 +50,7 @@ class ChatBox extends Component {
                     <ChatWindow project={this.props.location.query.project} identifierName={this.props.location.query.name} chatMessages={this.state.chatMessages} identifier={this.props.location.query.identifier} addMessage={this.addChatMessages.bind(this)} userTyped={this.state.userTyping} notifyTypingUser={this.notifyTyping.bind(this)}/>
                   </Col>
         			</Row>
-      			</Grid>
+      	</Grid>
 			)
 	}
 
@@ -95,12 +96,13 @@ class ChatBox extends Component {
         author: Auth.getNameFromToken(),
         message: message.chatText,
         timeStamp: message.chatTime,
-        destination: ''
+        destination: '',
       }
       if(message.chatText.match(/@Droid/i)) {
-        sendingMessage.destination = this.props.location.query.project+'#Droid'+'/'+this.props.location.query.name;
-        sendingMessage.message = message.chatText.replace(/@droid/i, '');
-        chatMessages.push(sendingMessage);
+         sendingMessage.destination = this.props.location.query.project+'#Droid'+'/'+this.props.location.query.name;
+         sendingMessage.message = message.chatText.replace(/@droid/i, 'Hey Droid, ');
+         chatMessages.push(sendingMessage);
+          
       }else {
         sendingMessage.destination = this.props.location.query.project+'#'+this.props.location.query.name
       }
@@ -121,6 +123,7 @@ class ChatBox extends Component {
             messages.message = messages.message.content;
             chatMessages.push(messages);
           }else {
+            messages.message = <ListText issues={messages.message.content}/>;
             chatMessages.push(messages);
           }
         }
@@ -136,6 +139,7 @@ class ChatBox extends Component {
             messages.message = messages.message.content;
             chatMessages.push(messages);
           }else {
+            messages.message = <ListText issues={messages.message.content}/>;
             chatMessages.push(messages);
           }
         }else if(names[1] && (users[0].split(' ')[0] === Auth.getNameFromToken()) && (users[1] === (this.props.location.query.name).split(' ')[0]) && (names[0] === this.props.location.query.project) && (users[1] !== 'Droid')){

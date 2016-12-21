@@ -1,32 +1,33 @@
 var request = require('superagent');
-const assignIssue = function (owner,repo,authToken,issueNumber,assignees, callback)
+const assignIssue = function (json, callback)
 {
-    var jsonObj = {
-        'assignees' : assignees
-    };
-
-    if(!owner)
-    {
-        callback({type:"string", content: "Error: Owner Not Present"}, null);
-        return
-    }
-    else if(!repo)
+    if(!json.repo)
     {
         callback({type:"string", content: "Error: Repository Not Present"}, null);
         return
     }
-    else if(!issueNumber)
+    else if(!json.number)
     {
         callback({type:"string", content: "Error: Issue Number Not Present"}, null);
         return
     }
-    else if(!assignees)
+    else if(!json.assignees)
     {
         callback({type:"string", content: "Error: Assignees Not Present"}, null);
         return
     }
 
-	request.patch('https://api.github.com/repos/'+owner+'/'+repo+'/issues/'+issueNumber+'?oauth_token='+authToken)
+    var jsonObj = {
+        'assignees' : json.assignees
+    };
+
+    let owner = json.repo.split('/');
+    if(owner[0] !== undefined)
+    {
+        owner = owner[0].trim();
+    }
+
+	request.patch('https://api.github.com/repos/'+json.repo+'/issues/'+json.number+'?oauth_token='+json.authToken)
     .set('User-Agent',owner)
     .set('Content-Type', 'application/json')
     .send(JSON.stringify(jsonObj))
@@ -36,7 +37,7 @@ const assignIssue = function (owner,repo,authToken,issueNumber,assignees, callba
             callback({type:"string", content: error.toString()}, null);
             return
         }
-        callback(null, {type:"string", content: "Issue "+response.body.number+" has been assigned to : "+assignees});
+        callback(null, {type:"string", content: "Issue "+response.body.number+" has been assigned to : "+json.assignees});
     });
     return
 }

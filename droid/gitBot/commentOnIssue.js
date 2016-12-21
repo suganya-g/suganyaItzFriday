@@ -1,32 +1,33 @@
 var request = require('superagent');
-const commentOnIssue = function (owner,repo,authToken,issueNumber,comment, callback)
+const commentOnIssue = function (json, callback)
 {
-	var jsonObj = {
-        'body' : comment
-    };
-
-    if(!owner)
-    {
-        callback({type:"string", content: "Error: Owner Not Present"}, null);
-        return
-    }
-    else if(!repo)
+	if(!json.repo)
     {
         callback({type:"string", content: "Error: Repository Not Present"}, null);
         return
     }
-    else if(!issueNumber)
+    else if(!json.number)
     {
         callback({type:"string", content: "Error: Issue Number Not Present"}, null);
         return
     }
-    else if(!comment)
+    else if(!json.body)
     {
         callback({type:"string", content: "Error: Comment Body Not Present"}, null);
         return
     }
 
-	request.post('https://api.github.com/repos/'+owner+'/'+repo+'/issues/'+issueNumber+'/comments?oauth_token='+authToken)
+    var jsonObj = {
+        'body' : json.body
+    };
+
+    let owner = json.repo.split('/');
+    if(owner[0] !== undefined)
+    {
+        owner = owner[0].trim();
+    }
+
+	request.post('https://api.github.com/repos/'+json.repo+'/issues/'+json.number+'/comments?oauth_token='+json.authToken)
     .set('User-Agent',owner)
     .set('Content-Type', 'application/json')
     .send(JSON.stringify(jsonObj))
@@ -36,7 +37,7 @@ const commentOnIssue = function (owner,repo,authToken,issueNumber,comment, callb
             callback({type:"string", content: error.toString()}, null);
             return
         }
-        callback(null, {type:"string", content: "Your comment has been posted on issue "+issueNumber+"."});
+        callback(null, {type:"string", content: "Your comment has been posted on issue "+json.number+"."});
     });
     return;
 }

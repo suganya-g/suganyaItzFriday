@@ -54,7 +54,8 @@ export default class Login extends React.Component {
 
   disableButton() {
     this.setState({
-      canSubmit: false
+      canSubmit: false,
+      githubLoginUrl: ''
     });
   }
 
@@ -77,6 +78,7 @@ export default class Login extends React.Component {
   notifyFormError(data) {
     console.error('Form error:', data);
   }
+
   render() {
     const imageSize = {
       mystyle: {

@@ -8,15 +8,18 @@ var io = require('socket.io')(server, {'transports': ['websocket', 'polling']});
 var socket = require('./sockets/socket.js');
 var port = process.env.PORT || 3000;
 var userAccount = require('./routes/user/user.router.js');
+var gitAccount = require('./routes/git/git.router.js');
 var expressJWT = require('express-jwt');
 var jwt = require('jsonwebtoken');
 var appConst = require('./config/config.js');
 var db = require('./service/db.mongo.js');
+var cookieParser = require('cookie-parser');
 
 
 main.use(compression());
 main.use(bodyParser.json());
 main.use(bodyParser.urlencoded({ extended: false }));
+main.use(cookieParser());
 
 if (process.env.NODE_ENV !== 'production') {
   const logger = require('morgan');
@@ -43,7 +46,9 @@ main.get('/', function(req, res) {
 
 //Routing
 main.use('/api/auth/',userAccount);
+main.use('/application/v1/gitAuth/',gitAccount);
 main.use('/api',expressJWT({secret:appConst.jwtSecret}));
+
 
 //Mongo connection
 var appDB = db.getDBConnection();

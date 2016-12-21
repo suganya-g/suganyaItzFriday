@@ -1,21 +1,28 @@
 {
-  "name": "bob",
+  "name": "git-bot",
   "version": "0.1.0",
   "description": "App for managing project and team collaboration",
   "main": "index.js",
   "scripts": {
-    "start": "node ./redis/GitBotSubscriber.js"
+    "start": "node ./server/server.js"
   },
   "contributors": [
     {
       "name": "Apurv Tiwari",
       "email": "apt.sharp@gmail.com"
+    },
+    {
+      "name": "Gobinda Thakur",
+      "email": "gobinda.thakur@outlook.com"
     }
   ],
   "license": "MIT",
   "dependencies": {
     "redis": "^2.6.3",
-    "socket.io": "^1.7.1",
-    "superagent": "^3.0.0"
+    "mongoose": "^4.7.1",
+    "superagent": "^3.0.0",
+    "express": "^4.14.0",
+    "body-parser": "^1.15.2",
+    "compression": "^1.6.2"
   }
 }

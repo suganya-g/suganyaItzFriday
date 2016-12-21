@@ -27,9 +27,13 @@ services:
   droid:
     image: droid:0.1.0
     build: './droid'
+    expose:
+      - 3030
     links:
       - redis
+      - db
     environment:
+       MONGO_URL: 'mongodb://db/gitbotDB'
        REDIS_URL: 'redis://redis'
     networks:
       - back-tier

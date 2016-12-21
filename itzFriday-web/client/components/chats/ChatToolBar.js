@@ -58,21 +58,7 @@ class ChatToolBar extends Component {
 		,
 		document.getElementById('dialog'));
 	}
-/*componentDidMount() {
-		var userJoined = {};
-    	if(this.props.identifier === 'message') {
-      		userJoined = {
-        		user: Auth.getNameFromToken(),
-        		destination: this.props.project+'@'+this.props.name
-      		}
-    	}else if(this.props.identifier === 'channel') {
-      		userJoined = {
-        		user: Auth.getNameFromToken(userJoined),
-        		destination: this.props.project+'#'+this.props.name
-      		}
-    	}
-		this.props.joinUser(userJoined);
-	}*/
+
 
 	render() {
 		//const name = this.props.name;
