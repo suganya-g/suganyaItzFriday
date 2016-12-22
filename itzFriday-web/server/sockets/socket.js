@@ -22,7 +22,8 @@ module.exports = function (socket) {
       var chatToPublish = JSON.stringify({
         method: 'send:message',
         destination:data.destination, 
-        author: data.author, 
+        author: data.author,
+        user: data.user,
         timeStamp:data.timeStamp, 
         message:data.message
       });
@@ -38,7 +39,7 @@ module.exports = function (socket) {
      var notifyUser = JSON.stringify({
         method: 'notify',
         destination:data.destination, 
-        author: data.author, 
+        author: data.author,
         timeStamp:'', 
         message:data.author+' is typing.....'
       });

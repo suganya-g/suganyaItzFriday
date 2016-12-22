@@ -8,7 +8,6 @@ var io = require('socket.io')(server, {'transports': ['websocket', 'polling']});
 var socket = require('./sockets/socket.js');
 var port = process.env.PORT || 3000;
 var userAccount = require('./routes/user/user.router.js');
-var gitAccount = require('./routes/git/git.router.js');
 var expressJWT = require('express-jwt');
 var jwt = require('jsonwebtoken');
 var appConst = require('./config/config.js');
@@ -46,7 +45,6 @@ main.get('/', function(req, res) {
 
 //Routing
 main.use('/api/auth/',userAccount);
-main.use('/application/v1/gitAuth/',gitAccount);
 main.use('/api',expressJWT({secret:appConst.jwtSecret}));
 
 

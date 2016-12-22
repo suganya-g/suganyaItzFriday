@@ -5,7 +5,6 @@ var socket = null;
 export default {
 	getSocketConnection() {
 
-		// typical storing of reference to 'app' in this case
       	var self = this;
       	// reset the socket
       	// if it's not the first connect() call this will be triggered

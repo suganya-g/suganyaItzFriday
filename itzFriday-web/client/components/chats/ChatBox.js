@@ -4,7 +4,8 @@ import ChatToolBar from './ChatToolBar';
 import ChatWindow from './ChatWindow';
 import sockets from './../../services/socket.service.js';
 import Auth from './../../services/auth.service.js';
-import ListText from './../listText/ListText';
+import ListText from './../others/ListText';
+import LinkText from './../others/LinkText';
 
 var name = ''; 
 var chatMessages = [];
@@ -86,6 +87,7 @@ class ChatBox extends Component {
     if(this.props.location.query.identifier === "message") {
       var sendingMessage = {
         author: Auth.getNameFromToken(),
+        user: Auth.getEmailFromToken(),
         //source: this.props.location.query.project+'@'+this.props.location.query.name+'/'+Auth.getNameFromToken(),
         message: message.chatText,
         timeStamp: message.chatTime,
@@ -94,6 +96,7 @@ class ChatBox extends Component {
     }else if(this.props.location.query.identifier === "channel") {
       var sendingMessage = {
         author: Auth.getNameFromToken(),
+        user: Auth.getEmailFromToken(),
         message: message.chatText,
         timeStamp: message.chatTime,
         destination: '',
@@ -102,12 +105,14 @@ class ChatBox extends Component {
          sendingMessage.destination = this.props.location.query.project+'#Droid'+'/'+this.props.location.query.name;
          sendingMessage.message = message.chatText.replace(/@droid/i, 'Hey Droid, ');
          chatMessages.push(sendingMessage);
+         sendingMessage.message = message.chatText.replace(/@droid/i, '');
           
       }else {
         sendingMessage.destination = this.props.location.query.project+'#'+this.props.location.query.name
       }
     }
     //chatMessages.push(sendingMessage);
+    //
     socket.emit('send:message', sendingMessage);
     this.setState({chatMessages});
   }
@@ -127,8 +132,11 @@ class ChatBox extends Component {
           {
             messages.message = messages.message.content;
             chatMessages.push(messages);
-          }else{
+          }else if(messages.message.type === 'json'){
             messages.message = <ListText issues={messages.message.content}/>;
+            chatMessages.push(messages);
+          } else if(messages.message.type === 'link') {
+            messages.message = <LinkText link={messages.message.content}/>;
             chatMessages.push(messages);
           }
         }

@@ -9,6 +9,7 @@ var appConst = require('./config/config.js');
 var db = require('./service/db.config.js');
 var receiveMessage = require('./../redis/GitBotSubscriber.js');
 var redis = require("redis");
+var gitRouter = require("./routes/git/git.router.js");
 
 const redisUrl = process.env.REDIS_URL || 'redis://localhost';
 
@@ -29,7 +30,7 @@ gitBotSubscriber.psubscribe("*[@#]Droid/*");
 
 gitBotSubscriber.on("pmessage", receiveMessage);
 
-//main.use('/api/v1/gitAuth/',gitRouter);
+main.use('/api/v1/gitbot/',gitRouter);
 
 // allow CORS
 main.all('*', function(req, res, next) {

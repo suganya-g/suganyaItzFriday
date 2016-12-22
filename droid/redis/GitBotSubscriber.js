@@ -7,6 +7,8 @@ var listIssues = require("../gitBot/listIssues");
 //var greetings = require("../conversation/greetings");
 var commentOnIssue = require("../gitBot/commentOnIssue");
 
+const controller = require('../server/routes/git/git.controller.js');
+
 const redisUrl = process.env.REDIS_URL || 'redis://localhost';
 var gitBotPublisher = redis.createClient(redisUrl);
 /*
@@ -158,7 +160,253 @@ var intentMD = {
 			required : ['comment']
 		}
 	}	
-}
+};
+
+var valueMD = {
+	repo : 						//repo
+	{
+		priority : 100,
+		keyPattern : [
+			{
+				keywords : 
+				[
+					{word : "in", want : true},
+					{word : "project", want : true}
+				]
+			},
+			{
+				keywords : 
+				[
+					{word : "under", want : true},
+					{word : "project", want : true}
+				]
+			},
+		],
+		valuePattern : /\s@[\w]{2}[\w-_/]+/,
+		replace : 
+		{
+			replaceThis : '@',
+			replaceWith : ''
+		}
+	},
+	title : 					//title
+	{
+		priority : 200,
+		keyPattern : [
+			{
+				keywords : 
+				[
+					{word : "create", want : true},
+					{word : "issue", want : true}
+				]
+			},
+			{
+				keywords : 
+				[
+					{word : "open", want : true},
+					{word : "issue", want : true}
+				]
+			},
+			{
+				keywords : 
+				[
+					{word : "add", want : true},
+					{word : "issue", want : true}
+				]
+			}
+		],
+		valuePattern : /\s"[.\w-_&@!?,'\/[\]\s(){}]+"/,
+		replace : 
+		{
+			replaceThis : /"+/g,
+			replaceWith : ''
+		}
+	},
+	body : 						//body
+	{
+		priority : 300,
+		keyPattern : [
+			{
+				keywords : 
+				[
+					{word : "comment", want : true},
+					{word : "on", want : false}
+				]
+			},
+			{
+				keywords : 
+				[
+					{word : "desc", want : true}
+				]
+			},
+			{
+				keywords : 
+				[
+					{word : "description", want : true}
+				]
+			},
+			{
+				keywords : 
+				[
+					{word : "detail", want : true}
+				]
+			},
+			{
+				keywords : 
+				[
+					{word : "content", want : true}
+				]
+			}
+		],
+		valuePattern : /"[.\w-_&@!?,'\/[\]\s(){}]+"/,
+		replace : 
+		{
+			replaceThis : /"+/g,
+			replaceWith : ''
+		}
+	},
+	assignees : 				//assignees
+	{
+		priority : 300,
+		keyPattern : [
+			{
+				keywords : 
+				[
+					{word : "to", want : true},
+					{word : "label", want : false}
+				]
+			}
+		],
+		valuePattern : /[\w-_]+/g,
+		replace : null
+	},
+	labels : 				//labels
+	{
+		priority : 300,
+		keyPattern : [
+			{
+				keywords : 
+				[
+					{word : "assign", want : true},
+					{word : "label", want : true}
+				]
+			},
+			{
+				keywords : 
+				[
+					{word : "with", want : true},
+					{word : "tag", want : true}
+				]
+			},
+			{
+				keywords : 
+				[
+					{word : "add", want : true},
+					{word : "label", want : true}
+				]
+			},
+			{
+				keywords : 
+				[
+					{word : "add", want : true},
+					{word : "tag", want : true}
+				]
+			},
+			{
+				keywords : 
+				[
+					{word : "with", want : true},
+					{word : "label", want : true}
+				]
+			},
+		],
+		valuePattern : /(help wanted)|([\w-_]+)/g,
+		replace : null
+	},
+	number : 				//number
+	{
+		priority : 300,
+		keyPattern : [
+			{
+				keywords : 
+				[
+					{word : "assign", want : true},
+					{word : "issue", want : true}
+				]
+			},
+			{
+				keywords : 
+				[
+					{word : "give", want : true},
+					{word : "issue", want : true}
+				]
+			},
+			{
+				keywords : 
+				[
+					{word : "label", want : true},
+					{word : "issue", want : true}
+				]
+			},
+			{
+				keywords : 
+				[
+					{word : "tag", want : true},
+					{word : "issue", want : true}
+				]
+			},
+			{
+				keywords : 
+				[
+					{word : "list", want : true},
+					{word : "issue", want : true}
+				]
+			},
+			{
+				keywords : 
+				[
+					{word : "display", want : true},
+					{word : "issue", want : true}
+				]
+			},
+			{
+				keywords : 
+				[
+					{word : "show", want : true},
+					{word : "issue", want : true}
+				]
+			},
+			{
+				keywords : 
+				[
+					{word : "close", want : true}
+				]
+			},
+			{
+				keywords : 
+				[
+					{word : "on", want : true},
+					{word : "issue", want : true}
+				]
+			},
+			{
+				keywords : 
+				[
+					{word : "comment", want : true},
+					{word : "on", want : true}
+				]
+			}
+		],
+		valuePattern : /#[0-9]+/,
+		replace : 
+		{
+			replaceThis : '#',
+			replaceWith : ''
+		}
+	},
+
+};
+
 
 // var functionMD = {
 // 	assignIssue : function (owner,repo,authToken,issueNumber,assignees)
@@ -272,7 +520,7 @@ var publishChannel = '';
 var jsonData = '';
 
 var jsonObject = {
-	"owner": "",
+	"authToken": "",
 	"repo" : "",
 	"number" : "",
 	"title" : "",
@@ -309,7 +557,7 @@ function asyncDataHandler(error,result)
 	}
 }
 
-function fetchJsonObject(message)
+function fetchJsonObject(message,keyString)
 {
 	let json = {
 	"authToken": "",
@@ -344,6 +592,7 @@ function fetchJsonObject(message)
 	{	
 		//fetch the values
 		valueString = message.match(/(\s"[.\w-_&@!?,'\/[\]\s(){}]+")|((\s*@[\w-_/,]+)+)|(\s#[0-9]+)/gi);
+
 		if(valueString !== '' && valueString !== null && valueString !== undefined)
 		{
 			// FETCH MANDATORY DETAILS //
@@ -356,55 +605,42 @@ function fetchJsonObject(message)
 				json.repo = project;
 			}
 
-			//FETCH OPTIONAL DETAILS //
-			for(let index in keyString)
+			for(let indexKeyString in keyString)	//access string segment one by one
 			{
-				//check for project if it already exists
-				//patterns [in, under, in project, under project]
-				if((keyString[index].match(/in/gi) || keyString[index].match(/under/gi)) && keyString[index].match(/project/gi))
+				let found = false;					// did you find value in the segment?
+				for(let value in valueMD)	//access which value
 				{
-					project = valueString[index].match(/\s@[\w]{2}[\w-_/]+/);
-					if(project !== null)
+					if( !found )
 					{
-						project = project.toString().replace('@','').trim();
-						json.repo = project;
+						for(let pattern in valueMD[value].keyPattern)
+						{
+							if( !found )
+							{
+								let countMatch = 0;
+								for(let keyword in valueMD[value].keyPattern[pattern].keywords)
+								{
+									//accessing {word : "", want : ""}
+									let patt = new RegExp(valueMD[value].keyPattern[pattern].keywords[keyword].word);
+									if( patt.test(keyString[indexKeyString]) === valueMD[value].keyPattern[pattern].keywords[keyword].want)
+										count++;
+									
+								}
+								if(count === valueMD[value].keyPattern[pattern].keywords.length)
+								{
+									found = true;
+									//fetch the value from valueString
+									json[valueMD[value]] = valueString[indexKeyString].match(valueMD[value].valuePattern);
+									//check if need to replace something
+									if(valueMD[value].replace !== undefined && valueMD[value].replace !== null && valueMD[value].replace !== '')
+									{
+										json[valueMD[value]] = json[valueMD[value]].replace(valueMD[value].replace.replaceThis, valueMD[value].replace.replaceWith)
+									}
+
+								}
+							}
+						}
 					}
-				}
-				//check for title
-				//patterns [create issue, open issue, add issue]
-				else if((keyString[index].match(/create/gi) || keyString[index].match(/open/gi) || keyString[index].match(/add/gi)) && keyString[index].match(/issue/gi))
-				{
-					json.title = valueString[index].match(/\s"[.\w-_&@!?,'\/[\]\s(){}]+"/).toString().replace(/"+/g,'').trim();
-				}
-				//check for description
-				//patterns [description, desc, details, content, comment]
-				if((keyString[index].match(/comment/gi) && !keyString[index].match(/on/gi)) || (keyString[index].match(/description/gi) || keyString[index].match(/desc/gi) || keyString[index].match(/detail/gi) || keyString[index].match(/content/gi) && !(keyString[index].match(/create/gi)&&keyString[index].match(/issue/gi))))
-				{
-					json.body = valueString[index].match(/"[.\w-_&@!?,'\/[\]\s(){}]+"/).toString().replace(/"+/g,'').trim();
-				}
-				//check for assignees
-				//patterns [to, assign to, give to,]	//eg. [assign issue to, assign to, give issue to, give to]
-				else if(!keyString[index].match(/label/gi) && keyString[index].match(/to/gi))// || keyString[index].match(/give/gi)) && keyString[index].match(/to/gi))
-				{
-					json.assignees = valueString[index].match(/[\w-_]+/g);
-				}
-				//check for labels
-				//patterns [label, with, tag, assign label, add label, assign tag, add tag]
-				else if(!keyString[index].match(/issue/gi) && (keyString[index].match(/label/gi) || keyString[index].match(/with/gi) || keyString[index].match(/tag/gi) || (keyString[index].match(/assign/gi) && keyString[index].match(/label/gi)) || (keyString[index].match(/add/gi) && keyString[index].match(/label/gi))))
-				{
-					json.labels = valueString[index].match(/(help wanted)|([\w-_]+)/g);
-				}
-				//check for issue number
-				//patterns [assign issue #number, give issue #number, label issue #number, tag issue #number, list issue #number, edit issue #number, close issue #number, on issue #number, comment on #number]
-				else if(((keyString[index].match(/assign/gi) || keyString[index].match(/give/gi) || keyString[index].match(/label/gi) || keyString[index].match(/tag/gi) || keyString[index].match(/close/gi) || keyString[index].match(/list/gi) || keyString[index].match(/show/gi) || keyString[index].match(/display	/gi) || keyString[index].match(/edit/gi)) && keyString[index].match(/issue/gi)) || keyString[index].match(/close/gi) ||(keyString[index].match(/comment/gi) && (keyString[index].match(/on/gi) || keyString[index].match(/issue/gi))))
-				{
-					temp = valueString[index].match(/#[0-9]+/)
-					if(temp !== null)
-					{
-						temp = temp.toString().replace('#','').trim();
-						json.number = Number(temp);
-					}
-				}
+				}	
 			}
 		}
 		else
@@ -414,6 +650,113 @@ function fetchJsonObject(message)
 	}
 	return json;
 }
+
+
+// function fetchJsonObject(message)
+// {
+// 	let json = {
+// 	"authToken": "",
+// 	"repo" : "",
+// 	"number" : "",
+// 	"title" : "",
+// 	"body" : "",
+// 	"labels" : "",
+// 	"assignees" : "",
+// 	"state" : "open"
+// 	}
+
+// 	let project = '';
+// 	let owner = '';
+// 	let repo = '';
+// 	let temp = '';
+
+	
+// 	if(message === "" || message.match(/hello/gi) || message.match(/hi/gi) || message.match(/whats up/gi) || message.match(/sup/gi) || message.match(/wassup/gi))
+// 	{
+// 		json.body=message;
+// 	}
+// 	else if(message.match(/how/) && message.match(/are/) && message.match(/you/))
+// 	{
+// 		json.body=message;
+// 	}
+// 	else if(keyString.length === 1 && valueString === null)	//atleast one intent (list all issues)
+// 	{
+// 		json.body=message;
+// 	}
+// 	else
+// 	{	
+// 		//fetch the values
+// 		valueString = message.match(/(\s"[.\w-_&@!?,'\/[\]\s(){}]+")|((\s*@[\w-_/,]+)+)|(\s#[0-9]+)/gi);
+// 		if(valueString !== '' && valueString !== null && valueString !== undefined)
+// 		{
+// 			// FETCH MANDATORY DETAILS //
+
+// 			// fetch project details if creating project //
+// 			project = valueString[0].match(/\s@[\w]{2}[\w-_/]+/);
+// 			if(project !== null)
+// 			{
+// 				project = project.toString().replace('@','').trim();
+// 				json.repo = project;
+// 			}
+
+// 			//FETCH OPTIONAL DETAILS //
+// 			for(let index in keyString)
+// 			{
+// 				//check for project if it already exists
+// 				//patterns [in, under, in project, under project]
+// 				if((keyString[index].match(/in/gi) || keyString[index].match(/under/gi)) && keyString[index].match(/project/gi))
+// 				{
+// 					project = valueString[index].match(/\s@[\w]{2}[\w-_/]+/);
+// 					if(project !== null)
+// 					{
+// 						project = project.toString().replace('@','').trim();
+// 						json.repo = project;
+// 					}
+// 				}
+// 				//check for title
+// 				//patterns [create issue, open issue, add issue]
+// 				else if((keyString[index].match(/create/gi) || keyString[index].match(/open/gi) || keyString[index].match(/add/gi)) && keyString[index].match(/issue/gi))
+// 				{
+// 					json.title = valueString[index].match(/\s"[.\w-_&@!?,'\/[\]\s(){}]+"/).toString().replace(/"+/g,'').trim();
+// 				}
+// 				//check for description
+// 				//patterns [description, desc, details, content, comment]
+// 				if((keyString[index].match(/comment/gi) && !keyString[index].match(/on/gi)) || (keyString[index].match(/description/gi) || keyString[index].match(/desc/gi) || keyString[index].match(/detail/gi) || keyString[index].match(/content/gi) && !(keyString[index].match(/create/gi)&&keyString[index].match(/issue/gi))))
+// 				{
+// 					json.body = valueString[index].match(/"[.\w-_&@!?,'\/[\]\s(){}]+"/).toString().replace(/"+/g,'').trim();
+// 				}
+// 				//check for assignees
+// 				//patterns [to, assign to, give to,]	//eg. [assign issue to, assign to, give issue to, give to]
+// 				else if(!keyString[index].match(/label/gi) && keyString[index].match(/to/gi))// || keyString[index].match(/give/gi)) && keyString[index].match(/to/gi))
+// 				{
+// 					json.assignees = valueString[index].match(/[\w-_]+/g);
+// 				}
+// 				//check for labels
+// 				//patterns [label, with, tag, assign label, add label, assign tag, add tag]
+// 				else if(!keyString[index].match(/issue/gi) && (keyString[index].match(/label/gi) || keyString[index].match(/with/gi) || keyString[index].match(/tag/gi) || (keyString[index].match(/assign/gi) && keyString[index].match(/label/gi)) || (keyString[index].match(/add/gi) && keyString[index].match(/label/gi))))
+// 				{
+// 					json.labels = valueString[index].match(/(help wanted)|([\w-_]+)/g);
+// 				}
+// 				//check for issue number
+// 				//patterns [assign issue #number, give issue #number, label issue #number, tag issue #number, list issue #number, edit issue #number, close issue #number, on issue #number, comment on #number]
+// 				else if(((keyString[index].match(/assign/gi) || keyString[index].match(/give/gi) || keyString[index].match(/label/gi) || keyString[index].match(/tag/gi) || keyString[index].match(/close/gi) || keyString[index].match(/list/gi) || keyString[index].match(/show/gi) || keyString[index].match(/display	/gi) || keyString[index].match(/edit/gi)) && keyString[index].match(/issue/gi)) || keyString[index].match(/close/gi) ||(keyString[index].match(/comment/gi) && (keyString[index].match(/on/gi) || keyString[index].match(/issue/gi))))
+// 				{
+// 					temp = valueString[index].match(/#[0-9]+/)
+// 					if(temp !== null)
+// 					{
+// 						temp = temp.toString().replace('#','').trim();
+// 						json.number = Number(temp);
+// 					}
+// 				}
+// 			}
+// 		}
+// 		else
+// 		{
+// 			json.body = "random input";
+// 		}
+// 	}
+// 	return json;
+// }
 
 function getKeyString(message)
 {
@@ -514,6 +857,23 @@ function getPublishChannel(source)	//channel name will only consist of alphabet 
 	}
 }
 
+/*function checkIfUserAccessTokenExists(userId, callback)
+{
+	console.log(userId);
+	request.post('/api/v1/gitbot/access')
+	.send({"email" : userId})
+    .end(function(error,response){
+        if(error)
+        {
+        	console.log(error)
+            callback({type:"string", content: error.toString()}, null);
+            return
+        }
+         callback(null, {type:"string", content: response});
+    });
+    return
+}*/
+
 var receiveMessage = function(count, channel, message)
 {
 	intents = '';
@@ -535,318 +895,464 @@ var receiveMessage = function(count, channel, message)
 	console.log("publish at : "+publishChannel);
 	jsonData.destination = publishChannel;	//set the destination as publish channel
 
-	// let indxOfLastColon = channel.lastIndexOf(":");
-	// publishChannel = channel.substr(0, channel.lastIndexOf(":"));	//from index, take n characters
-
-	//FETCH USER INTENT
-	intents = getUserIntent(message, keyString);	//will generate keyString
-	keyString = keyString.split('~');
-	keyString.pop();	//remove the trailing ~
-
-	//FETCH JSON DATA
-	jsonObject = fetchJsonObject(message);	//set processFurther to false on error
-	jsonObject.authToken = '211aac01c21fc0314b809949505ba2f852e709f9';
-
-	if(message.accessToken !== undefined && message.accessToken !== '')
-	{
-		jsonObject.authToken = message.accessToken;
-	}
-
-	//SORT EXECUTION SEQUENCE IN THE ORDER OF CONTEXT
-	intents.sort(function(a,b){
-		return a.priority - b.priority;
-	});
-	console.log("intent :");
-	console.log(intents);
-
-	console.log("\nkeys :");
-	console.log(keyString);
-
-	console.log("\nvalues :");
-	console.log(valueString);
-
-	if(!jsonObject.toString().match(/(invalid)|(list all)/gi))
-	{
-		console.log("\njson :");
-		console.log(jsonObject);
-	}
-	
-	for(let intent in intents)
-	{
-		console.log("inside for, intent : " + intents[intent].intent);
-		// let fn = window[intents[intent].intent];
-		// fn.apply(null, jsonObject, asyncDataHandler);
-		switch(intents[intent].intent)
+	controller.access(jsonData.user, (err, res) => {
+		if(err)
 		{
-			case "assignIssue":
-				console.log("\ncommand to assign issue ");//NOTE:	//not working cuz of asyn
-				// if(jsonObject.owner === '' || jsonObject.owner.length<2)
-			 //    {
-			 //    	console.log("Error: Project owner invalid/not specified!");
-				// 	gitBotPublisher.publish("delivery2","Error: Project owner invalid/not specified!");
-			 //    }
-			 //    else if(jsonObject.repo === '')
-			 //    {
-			 //    	console.log("Error: Repository name not specified!");
-				// 	gitBotPublisher.publish("delivery2","Error: Repository name not specified!");
-			 //    }
-		  //   	else if(jsonObject.number === '')
-				// {
-				// 	console.log("Error : Issue number not specified!");
-				// 	gitBotPublisher.publish("delivery2","Error: Issue number not specified!");
-				// }
-				// else if(jsonObject.assignees === '')
-				// {
-				// 	console.log("Error : Assignees not specified!");
-				// 	gitBotPublisher.publish("delivery2","Error: Assignees not specified!");
-				// }
-				// else
-				// {
-					assignIssue(jsonObject, asyncDataHandler); //(err, res) => {
-				// 	if(err)
-				// 	{
-				// 		console.log(err.toString());
-				// 		gitBotPublisher.publish("delivery2",err);
-				// 	}
-				// 	else
-				// 	{
-				// 		console.log("Issue "+res.body.number +" has been assigned to : "+jsonObject.assignees);
-				// 		gitBotPublisher.publish("delivery2",res);
-				// 	}
-				// });
-			// }
-			break;
-
-			case "commentOnIssue":
-				console.log("\ncommand to comment on issue ");
-				// if(jsonObject.owner === '' || jsonObject.owner.length<2)
-			 //    {
-			 //    	console.log("Error: Project owner invalid/not specified!");
-				// 	gitBotPublisher.publish("delivery2","Error: Project owner invalid/not specified!");
-			 //    }
-			 //    else if(jsonObject.repo === '')
-			 //    {
-			 //    	console.log("Error: Repository name not specified!");
-				// 	gitBotPublisher.publish("delivery2","Error: Repository name not specified!");
-			 //    }
-		  //   	else if(jsonObject.number === '')
-				// {
-				// 	console.log("Error : Issue number not specified!");
-				// 	gitBotPublisher.publish("delivery2","Error : Issue number not specified!");
-				// }
-				// else if(jsonObject.body === '')
-				// {
-				// 	console.log("Error : Comment not specified!");
-				// 	gitBotPublisher.publish("delivery2","Error : Comment not specified!");
-				// }
-				// else
-				// {
-					commentOnIssue(jsonObject, asyncDataHandler); //(err, res) => {
-			// 		if(err)
-			// 		{
-			// 			console.log(err.toString());
-			// 			gitBotPublisher.publish("delivery2",err);
-			// 		}
-			// 		else
-			// 		{
-			// 			console.log("Comment has been posted successfully on issue " + jsonObject.number);
-			// 			gitBotPublisher.publish("delivery2",res);
-			// 		}
-			// 	});
-			// }
-			break;
-
-			case "closeIssue":
-				console.log("\ncommand to close issue ");
-				// if(jsonObject.owner === '' || jsonObject.owner.length<2)
-			 //    {
-			 //    	console.log("Error: Project owner invalid/not specified!");
-				// 	gitBotPublisher.publish("delivery2","Error: Project owner invalid/not specified!");
-			 //    }
-			 //    else if(jsonObject.repo === '')
-			 //    {
-			 //    	console.log("Error: Repository name not specified!");
-				// 	gitBotPublisher.publish("delivery2","Error: Repository name not specified!");
-			 //    }
-		  //   	else if(jsonObject.number === '')
-				// {
-				// 	console.log("Error : Issue number not specified!");
-				// 	gitBotPublisher.publish("delivery2","Error : Issue number not specified!");
-				// }
-				// else
-				// {
-					closeIssue(jsonObject, asyncDataHandler); //(err, res) => {
-			// 		if(err)
-			// 		{
-			// 			console.log(err.toString());
-			// 			gitBotPublisher.publish("delivery2",err);
-			// 		}
-			// 		else
-			// 		{
-			// 			console.log("Issue "+jsonObject.number +" has been closed!");
-			// 			gitBotPublisher.publish("delivery2",res);
-			// 		}
-			// 	});
-			// }
-			break;
-
-			case "createIssue":
-			console.log("\ncommand to create issue ");
-			// if(jsonObject.owner === '' || jsonObject.owner.length<2)
-		 //    {
-		 //    	console.log("Error: Project owner invalid/not specified!");
-			// 	gitBotPublisher.publish("delivery2","Error: Project owner invalid/not specified!");
-		 //    }
-		 //    else if(jsonObject.repo === '')
-		 //    {
-		 //    	console.log("Error: Repository name not specified!");
-			// 	gitBotPublisher.publish("delivery2","Error: Repository name not specified!");
-		 //    }
-		 //    else if(jsonObject.title === '')
-		 //    {
-		 //    	console.log("Error: Title not present in the information!");
-			// 	gitBotPublisher.publish("delivery2","Error: Title not present in the information!");
-		 //    }
-		 //    else
-		 //    {
-				createIssue(jsonObject, asyncDataHandler); //(err, res) => {
-					// if(err)
-					// {
-					// 	console.log(err);
-					// 	console.log(err.toString());
-					// 	gitBotPublisher.publish("delivery2",err.toString());
-					// 	gitBotPublisher.publish("delivery2","publish error");
-
-						// if(res.toString().match(/not found/gi))
-						// {
-						// 	console.log("Error : Project not found!");
-						// 	gitBotPublisher.publish("delivery2","Error : Project not found!");
-						// }
-						// else if(res.toString().match(/unprocessable entity/gi))
-						// {	
-						// 	console.log("Error : Input string is not in the correct format!");
-						// 	gitBotPublisher.publish("delivery2","Error : Input string is not in the correct format!");
-						// }
-						// else
-						// {
-						// 	console.log(err.toString());
-						// 	gitBotPublisher.publish("delivery2",err);
-						// }
-				// 	}
-				// 	else
-				// 	{
-				// 		console.log("Issue has been created with id : "+res);
-				// 		gitBotPublisher.publish("delivery2",res);
-				// 	}
-				// });
-			// }	
-			break;
-
-			case "createProject":
-				console.log("Create Project : not yet implemented")
-				if(jsonObject.owner === '' )
-				{
-					console.log("Error : Owner name invalid/not present");
-					//gitBotPublisher.publish(publishChannel,"Error : Owner name invalid/not present");
-				}	
-				else if(jsonObject.repo === '' )
-				{
-					console.log("Error : Project information not present");
-					// gitBotPublisher.publish(publishChannel,"Error : Project information not present");
-				}
-				else
-				{
-					//function to create project
-					// gitBotPublisher.publish(publishChannel,"create project");
-				}	
-			break;
-
-			case "labelIssue":
-				console.log("\ncommand to label issue ");
-				// if(jsonObject.owner === '' || jsonObject.owner.length<2)
-			 //    {
-			 //    	console.log("Error: Project owner invalid/not specified!");
-				// 	gitBotPublisher.publish("delivery2","Error: Project owner invalid/not specified!");
-			 //    }
-			 //    else if(jsonObject.repo === '')
-			 //    {
-			 //    	console.log("Error: Repository name not specified!");
-				// 	gitBotPublisher.publish("delivery2","Error: Repository name not specified!");
-			 //    }
-			 //   	else if(jsonObject.number === '')
-				// {
-				// 	console.log("Error : Issue number not specified!");
-				// 	gitBotPublisher.publish("delivery2","Error : Issue number not specified!");
-				// }
-				// else if(jsonObject.labels === '')
-				// {
-				// 	console.log("Error : Labels not specified!");
-				// 	gitBotPublisher.publish("delivery2","Error : Labels not specified!");
-				// }
-				// else
-				// {
-					labelIssue(jsonObject, asyncDataHandler); //(err, res) => {
-			// 		if(err)
-			// 		{
-			// 			console.log(err.toString());
-			// 			gitBotPublisher.publish("delivery2",err);
-			// 		}
-			// 		else
-			// 		{
-			// 			console.log("Issue "+jsonObject.number +" has been labelled as : "+jsonObject.labels);
-			// 			gitBotPublisher.publish("delivery2",res);
-			// 		}
-			// 	});
-			// }
-			break;
-			
-			case "listIssues":
-				console.log("\ncommand to list issues ");
-				// if(jsonObject.owner === '' || jsonObject.owner.length<2)
-			 //    {
-			 //    	console.log("Error: Project owner invalid/not specified!");
-				// 	gitBotPublisher.publish("delivery2","Error: Project owner invalid/not specified!");
-			 //    }
-			 //    else if(jsonObject.repo === '')
-			 //    {
-			 //    	console.log("Error: Repository name not specified!");
-				// 	gitBotPublisher.publish("delivery2","Error: Repository name not specified!");
-			 //    }
-				// else
-				// {
-					listIssues(jsonObject, asyncDataHandler); //(err, res) => {
-			// 		if(err)
-			// 		{
-			// 			console.log(err.toString());
-			// 			gitBotPublisher.publish("delivery2",err);
-			// 		}
-			// 		else
-			// 		{
-			// 			console.log(res);	//returns json of issues
-			// 			gitBotPublisher.publish("delivery2",res);
-			// 		}
-			// 	});
-			// }
-			break;
-			
-			case "greetings":
-				console.log("Hello! How can I help you?");
-				jsonData.message = {type:"string", content: "Hello! How can I help you?"};
-				gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
-			break;
-
-			case "howAreYou":
-				console.log("I am fine, thank you.");
-				jsonData.message = {type:"string", content: "I am fine, thank you."};
-				gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
-			break;
-		
-			case "randomInput":
-				console.log("Sorry, but I am unable to understand you.");
-				jsonData.message = {type:"string", content: "Sorry, I am unable to understand you."};
-				gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
+			console.log(err);
 		}
-	}
+		else 
+		{
+			if(res.exist)
+			{
+				jsonData.authToken = res.message;
+				
+				//FETCH USER INTENT
+				intents = getUserIntent(message, keyString);	//will generate keyString
+				keyString = keyString.split('~');
+				keyString.pop();	//remove the trailing ~
+
+				//FETCH JSON DATA
+				jsonObject = fetchJsonObject(message);	//set processFurther to false on error
+				//jsonObject.authToken = '211aac01c21fc0314b809949505ba2f852e709f9';
+
+				if(message.accessToken !== undefined && message.accessToken !== '')
+				{
+					jsonObject.authToken = message.accessToken;
+				}
+
+				//SORT EXECUTION SEQUENCE IN THE ORDER OF CONTEXT
+				intents.sort(function(a,b){
+					return a.priority - b.priority;
+				});
+				console.log("intent :");
+				console.log(intents);
+
+				console.log("\nkeys :");
+				console.log(keyString);
+
+				console.log("\nvalues :");
+				console.log(valueString);
+
+				if(!jsonObject.toString().match(/(invalid)|(list all)/gi))
+				{
+					console.log("\njson :");
+					console.log(jsonObject);
+				}
+				
+				for(let intent in intents)
+				{
+					console.log("inside for, intent : " + intents[intent].intent);
+					// let fn = window[intents[intent].intent];
+					// fn.apply(null, jsonObject, asyncDataHandler);
+					switch(intents[intent].intent)
+					{
+						case "assignIssue":
+							console.log("\ncommand to assign issue ");//NOTE:	//not working cuz of asyn
+							assignIssue(jsonObject, asyncDataHandler); //(err, res) => {
+							
+						break;
+
+						case "commentOnIssue":
+							console.log("\ncommand to comment on issue ");
+							commentOnIssue(jsonObject, asyncDataHandler); //(err, res) => {
+						
+						break;
+
+						case "closeIssue":
+							console.log("\ncommand to close issue ");
+							closeIssue(jsonObject, asyncDataHandler); //(err, res) => {
+						
+						break;
+
+						case "createIssue":
+							console.log("\ncommand to create issue ");
+							createIssue(jsonObject, asyncDataHandler); //(err, res) => {
+							
+						break;
+
+						case "createProject":
+							console.log("Create Project : not yet implemented")
+							if(jsonObject.owner === '' )
+							{
+								console.log("Error : Owner name invalid/not present");
+								//gitBotPublisher.publish(publishChannel,"Error : Owner name invalid/not present");
+							}	
+							else if(jsonObject.repo === '' )
+							{
+								console.log("Error : Project information not present");
+								// gitBotPublisher.publish(publishChannel,"Error : Project information not present");
+							}
+							else
+							{
+								//function to create project
+								// gitBotPublisher.publish(publishChannel,"create project");
+							}	
+						break;
+
+						case "labelIssue":
+							console.log("\ncommand to label issue ");
+							labelIssue(jsonObject, asyncDataHandler); //(err, res) => {
+						
+						break;
+						
+						case "listIssues":
+							console.log("\ncommand to list issues ");
+							listIssues(jsonObject, asyncDataHandler); //(err, res) => {
+						
+						break;
+						
+						case "greetings":
+							console.log("Hello! How can I help you?");
+							jsonData.message = {type:"string", content: "Hello! How can I help you?"};
+							gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
+						break;
+
+						case "howAreYou":
+							console.log("I am fine, thank you.");
+							jsonData.message = {type:"string", content: "I am fine, thank you."};
+							gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
+						break;
+					
+						case "randomInput":
+							console.log("Sorry, but I am unable to understand you.");
+							jsonData.message = {type:"string", content: "Sorry, I am unable to understand you."};
+							gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
+					}
+				}
+			}
+			else
+			{
+				jsonData.message = {type:"string", content: "Your account is not linked with GitHub. Please link it with GitHub to avail the droid facilities."};
+				gitBotPublisher.publish(publishChannel, JSON.stringify(jsonData));
+
+				jsonData.message = {type:"link", content: res.message};
+				gitBotPublisher.publish(publishChannel, JSON.stringify(jsonData));
+			}
+		}
+	});
+
+	// //check if user exists
+	// if(jsonData.authToken === '' || jsonData.authToken === null || jsonData.authToken === undefined)
+	// {
+	// 	console.log('message is null....');
+	// 	jsonData.message = {type:"string", content: ""};
+	// 	gitBotPublisher.publish(publishChannel, JSON.stringify(jsonData));
+	// }
+	// else
+	// {
+	// 	// let indxOfLastColon = channel.lastIndexOf(":");
+	// 	// publishChannel = channel.substr(0, channel.lastIndexOf(":"));	//from index, take n characters
+
+	// 	//FETCH USER INTENT
+	// 	intents = getUserIntent(message, keyString);	//will generate keyString
+	// 	keyString = keyString.split('~');
+	// 	keyString.pop();	//remove the trailing ~
+
+	// 	//FETCH JSON DATA
+	// 	jsonObject = fetchJsonObject(message);	//set processFurther to false on error
+	// 	jsonObject.authToken = '211aac01c21fc0314b809949505ba2f852e709f9';
+
+	// 	if(message.accessToken !== undefined && message.accessToken !== '')
+	// 	{
+	// 		jsonObject.authToken = message.accessToken;
+	// 	}
+
+	// 	//SORT EXECUTION SEQUENCE IN THE ORDER OF CONTEXT
+	// 	intents.sort(function(a,b){
+	// 		return a.priority - b.priority;
+	// 	});
+	// 	console.log("intent :");
+	// 	console.log(intents);
+
+	// 	console.log("\nkeys :");
+	// 	console.log(keyString);
+
+	// 	console.log("\nvalues :");
+	// 	console.log(valueString);
+
+	// 	if(!jsonObject.toString().match(/(invalid)|(list all)/gi))
+	// 	{
+	// 		console.log("\njson :");
+	// 		console.log(jsonObject);
+	// 	}
+		
+	// 	for(let intent in intents)
+	// 	{
+	// 		console.log("inside for, intent : " + intents[intent].intent);
+	// 		// let fn = window[intents[intent].intent];
+	// 		// fn.apply(null, jsonObject, asyncDataHandler);
+	// 		switch(intents[intent].intent)
+	// 		{
+	// 			case "assignIssue":
+	// 				console.log("\ncommand to assign issue ");//NOTE:	//not working cuz of asyn
+	// 				// if(jsonObject.owner === '' || jsonObject.owner.length<2)
+	// 			 //    {
+	// 			 //    	console.log("Error: Project owner invalid/not specified!");
+	// 				// 	gitBotPublisher.publish("delivery2","Error: Project owner invalid/not specified!");
+	// 			 //    }
+	// 			 //    else if(jsonObject.repo === '')
+	// 			 //    {
+	// 			 //    	console.log("Error: Repository name not specified!");
+	// 				// 	gitBotPublisher.publish("delivery2","Error: Repository name not specified!");
+	// 			 //    }
+	// 		  //   	else if(jsonObject.number === '')
+	// 				// {
+	// 				// 	console.log("Error : Issue number not specified!");
+	// 				// 	gitBotPublisher.publish("delivery2","Error: Issue number not specified!");
+	// 				// }
+	// 				// else if(jsonObject.assignees === '')
+	// 				// {
+	// 				// 	console.log("Error : Assignees not specified!");
+	// 				// 	gitBotPublisher.publish("delivery2","Error: Assignees not specified!");
+	// 				// }
+	// 				// else
+	// 				// {
+	// 					assignIssue(jsonObject, asyncDataHandler); //(err, res) => {
+	// 				// 	if(err)
+	// 				// 	{
+	// 				// 		console.log(err.toString());
+	// 				// 		gitBotPublisher.publish("delivery2",err);
+	// 				// 	}
+	// 				// 	else
+	// 				// 	{
+	// 				// 		console.log("Issue "+res.body.number +" has been assigned to : "+jsonObject.assignees);
+	// 				// 		gitBotPublisher.publish("delivery2",res);
+	// 				// 	}
+	// 				// });
+	// 			// }
+	// 			break;
+
+	// 			case "commentOnIssue":
+	// 				console.log("\ncommand to comment on issue ");
+	// 				// if(jsonObject.owner === '' || jsonObject.owner.length<2)
+	// 			 //    {
+	// 			 //    	console.log("Error: Project owner invalid/not specified!");
+	// 				// 	gitBotPublisher.publish("delivery2","Error: Project owner invalid/not specified!");
+	// 			 //    }
+	// 			 //    else if(jsonObject.repo === '')
+	// 			 //    {
+	// 			 //    	console.log("Error: Repository name not specified!");
+	// 				// 	gitBotPublisher.publish("delivery2","Error: Repository name not specified!");
+	// 			 //    }
+	// 		  //   	else if(jsonObject.number === '')
+	// 				// {
+	// 				// 	console.log("Error : Issue number not specified!");
+	// 				// 	gitBotPublisher.publish("delivery2","Error : Issue number not specified!");
+	// 				// }
+	// 				// else if(jsonObject.body === '')
+	// 				// {
+	// 				// 	console.log("Error : Comment not specified!");
+	// 				// 	gitBotPublisher.publish("delivery2","Error : Comment not specified!");
+	// 				// }
+	// 				// else
+	// 				// {
+	// 					commentOnIssue(jsonObject, asyncDataHandler); //(err, res) => {
+	// 			// 		if(err)
+	// 			// 		{
+	// 			// 			console.log(err.toString());
+	// 			// 			gitBotPublisher.publish("delivery2",err);
+	// 			// 		}
+	// 			// 		else
+	// 			// 		{
+	// 			// 			console.log("Comment has been posted successfully on issue " + jsonObject.number);
+	// 			// 			gitBotPublisher.publish("delivery2",res);
+	// 			// 		}
+	// 			// 	});
+	// 			// }
+	// 			break;
+
+	// 			case "closeIssue":
+	// 				console.log("\ncommand to close issue ");
+	// 				// if(jsonObject.owner === '' || jsonObject.owner.length<2)
+	// 			 //    {
+	// 			 //    	console.log("Error: Project owner invalid/not specified!");
+	// 				// 	gitBotPublisher.publish("delivery2","Error: Project owner invalid/not specified!");
+	// 			 //    }
+	// 			 //    else if(jsonObject.repo === '')
+	// 			 //    {
+	// 			 //    	console.log("Error: Repository name not specified!");
+	// 				// 	gitBotPublisher.publish("delivery2","Error: Repository name not specified!");
+	// 			 //    }
+	// 		  //   	else if(jsonObject.number === '')
+	// 				// {
+	// 				// 	console.log("Error : Issue number not specified!");
+	// 				// 	gitBotPublisher.publish("delivery2","Error : Issue number not specified!");
+	// 				// }
+	// 				// else
+	// 				// {
+	// 					closeIssue(jsonObject, asyncDataHandler); //(err, res) => {
+	// 			// 		if(err)
+	// 			// 		{
+	// 			// 			console.log(err.toString());
+	// 			// 			gitBotPublisher.publish("delivery2",err);
+	// 			// 		}
+	// 			// 		else
+	// 			// 		{
+	// 			// 			console.log("Issue "+jsonObject.number +" has been closed!");
+	// 			// 			gitBotPublisher.publish("delivery2",res);
+	// 			// 		}
+	// 			// 	});
+	// 			// }
+	// 			break;
+
+	// 			case "createIssue":
+	// 			console.log("\ncommand to create issue ");
+	// 			// if(jsonObject.owner === '' || jsonObject.owner.length<2)
+	// 		 //    {
+	// 		 //    	console.log("Error: Project owner invalid/not specified!");
+	// 			// 	gitBotPublisher.publish("delivery2","Error: Project owner invalid/not specified!");
+	// 		 //    }
+	// 		 //    else if(jsonObject.repo === '')
+	// 		 //    {
+	// 		 //    	console.log("Error: Repository name not specified!");
+	// 			// 	gitBotPublisher.publish("delivery2","Error: Repository name not specified!");
+	// 		 //    }
+	// 		 //    else if(jsonObject.title === '')
+	// 		 //    {
+	// 		 //    	console.log("Error: Title not present in the information!");
+	// 			// 	gitBotPublisher.publish("delivery2","Error: Title not present in the information!");
+	// 		 //    }
+	// 		 //    else
+	// 		 //    {
+	// 				createIssue(jsonObject, asyncDataHandler); //(err, res) => {
+	// 					// if(err)
+	// 					// {
+	// 					// 	console.log(err);
+	// 					// 	console.log(err.toString());
+	// 					// 	gitBotPublisher.publish("delivery2",err.toString());
+	// 					// 	gitBotPublisher.publish("delivery2","publish error");
+
+	// 						// if(res.toString().match(/not found/gi))
+	// 						// {
+	// 						// 	console.log("Error : Project not found!");
+	// 						// 	gitBotPublisher.publish("delivery2","Error : Project not found!");
+	// 						// }
+	// 						// else if(res.toString().match(/unprocessable entity/gi))
+	// 						// {	
+	// 						// 	console.log("Error : Input string is not in the correct format!");
+	// 						// 	gitBotPublisher.publish("delivery2","Error : Input string is not in the correct format!");
+	// 						// }
+	// 						// else
+	// 						// {
+	// 						// 	console.log(err.toString());
+	// 						// 	gitBotPublisher.publish("delivery2",err);
+	// 						// }
+	// 				// 	}
+	// 				// 	else
+	// 				// 	{
+	// 				// 		console.log("Issue has been created with id : "+res);
+	// 				// 		gitBotPublisher.publish("delivery2",res);
+	// 				// 	}
+	// 				// });
+	// 			// }	
+	// 			break;
+
+	// 			case "createProject":
+	// 				console.log("Create Project : not yet implemented")
+	// 				if(jsonObject.owner === '' )
+	// 				{
+	// 					console.log("Error : Owner name invalid/not present");
+	// 					//gitBotPublisher.publish(publishChannel,"Error : Owner name invalid/not present");
+	// 				}	
+	// 				else if(jsonObject.repo === '' )
+	// 				{
+	// 					console.log("Error : Project information not present");
+	// 					// gitBotPublisher.publish(publishChannel,"Error : Project information not present");
+	// 				}
+	// 				else
+	// 				{
+	// 					//function to create project
+	// 					// gitBotPublisher.publish(publishChannel,"create project");
+	// 				}	
+	// 			break;
+
+	// 			case "labelIssue":
+	// 				console.log("\ncommand to label issue ");
+	// 				// if(jsonObject.owner === '' || jsonObject.owner.length<2)
+	// 			 //    {
+	// 			 //    	console.log("Error: Project owner invalid/not specified!");
+	// 				// 	gitBotPublisher.publish("delivery2","Error: Project owner invalid/not specified!");
+	// 			 //    }
+	// 			 //    else if(jsonObject.repo === '')
+	// 			 //    {
+	// 			 //    	console.log("Error: Repository name not specified!");
+	// 				// 	gitBotPublisher.publish("delivery2","Error: Repository name not specified!");
+	// 			 //    }
+	// 			 //   	else if(jsonObject.number === '')
+	// 				// {
+	// 				// 	console.log("Error : Issue number not specified!");
+	// 				// 	gitBotPublisher.publish("delivery2","Error : Issue number not specified!");
+	// 				// }
+	// 				// else if(jsonObject.labels === '')
+	// 				// {
+	// 				// 	console.log("Error : Labels not specified!");
+	// 				// 	gitBotPublisher.publish("delivery2","Error : Labels not specified!");
+	// 				// }
+	// 				// else
+	// 				// {
+	// 					labelIssue(jsonObject, asyncDataHandler); //(err, res) => {
+	// 			// 		if(err)
+	// 			// 		{
+	// 			// 			console.log(err.toString());
+	// 			// 			gitBotPublisher.publish("delivery2",err);
+	// 			// 		}
+	// 			// 		else
+	// 			// 		{
+	// 			// 			console.log("Issue "+jsonObject.number +" has been labelled as : "+jsonObject.labels);
+	// 			// 			gitBotPublisher.publish("delivery2",res);
+	// 			// 		}
+	// 			// 	});
+	// 			// }
+	// 			break;
+				
+	// 			case "listIssues":
+	// 				console.log("\ncommand to list issues ");
+	// 				// if(jsonObject.owner === '' || jsonObject.owner.length<2)
+	// 			 //    {
+	// 			 //    	console.log("Error: Project owner invalid/not specified!");
+	// 				// 	gitBotPublisher.publish("delivery2","Error: Project owner invalid/not specified!");
+	// 			 //    }
+	// 			 //    else if(jsonObject.repo === '')
+	// 			 //    {
+	// 			 //    	console.log("Error: Repository name not specified!");
+	// 				// 	gitBotPublisher.publish("delivery2","Error: Repository name not specified!");
+	// 			 //    }
+	// 				// else
+	// 				// {
+	// 					listIssues(jsonObject, asyncDataHandler); //(err, res) => {
+	// 			// 		if(err)
+	// 			// 		{
+	// 			// 			console.log(err.toString());
+	// 			// 			gitBotPublisher.publish("delivery2",err);
+	// 			// 		}
+	// 			// 		else
+	// 			// 		{
+	// 			// 			console.log(res);	//returns json of issues
+	// 			// 			gitBotPublisher.publish("delivery2",res);
+	// 			// 		}
+	// 			// 	});
+	// 			// }
+	// 			break;
+				
+	// 			case "greetings":
+	// 				console.log("Hello! How can I help you?");
+	// 				jsonData.message = {type:"string", content: "Hello! How can I help you?"};
+	// 				gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
+	// 			break;
+
+	// 			case "howAreYou":
+	// 				console.log("I am fine, thank you.");
+	// 				jsonData.message = {type:"string", content: "I am fine, thank you."};
+	// 				gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
+	// 			break;
+			
+	// 			case "randomInput":
+	// 				console.log("Sorry, but I am unable to understand you.");
+	// 				jsonData.message = {type:"string", content: "Sorry, I am unable to understand you."};
+	// 				gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
+	// 		}
+	// 	}
+	// }
 };
 
 module.exports = receiveMessage;
