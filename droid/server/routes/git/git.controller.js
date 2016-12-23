@@ -79,6 +79,8 @@ module.exports = {
       .end(function(err0, response0) {
         if(err0) { res.status(500).json(err0); return; }
         const accessToken = response0.body.access_token;
+        const tokenType = response0.body.token_type;
+        console.log(tokenType);
         var gitUser = new gitAccount({
           username: email,
           gitAccess: accessToken

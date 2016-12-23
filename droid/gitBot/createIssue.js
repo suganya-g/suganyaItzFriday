@@ -1,42 +1,41 @@
 var request = require('superagent');
-const createIssue = function (json,callback)
+const createIssue = function (repo,authToken,title,body,labels,assignees,callback)
 {
-    console.log(json);
-    if(!json.repo)
+    var jsonObj = {
+        "title" : "",
+        "state": "open"
+    };
+    
+    if(!repo)
     {
         callback({type:"string", content: "Error: Repository Not Present"}, null);
         return
     }
-    else if(!json.title)
+    else if(!title)
     {
         callback({type:"string", content: "Error: Issue Title Not Present"}, null);
         return
     }
 
-    var jsonObj = {
-        "title" : "",
-        "state": "open"
-    };
-
-    let owner = json.repo.split('/');
+    let owner = repo.split('/');
     if(owner[0] !== undefined)
     {
         owner = owner[0].trim();
     }
 
-    jsonObj.title = json.title;
+    jsonObj.title = title;
 
-    if(json.body !== '')
-        jsonObj.body = json.body;
-    if(json.labels !== '')
-        jsonObj.labels = json.labels;
-    if(json.assignees !== '')
-        jsonObj.assignees = json.assignees;
+    if(body !== '')
+        jsonObj.body = body;
+    if(labels !== '')
+        jsonObj.labels = labels;
+    if(assignees !== '')
+        jsonObj.assignees = assignees;
 
     console.log("Sending the following JSON");
     console.log(jsonObj);
 
-	request.post('https://api.github.com/repos/'+json.repo+'/issues?oauth_token='+json.authToken)
+	request.post('https://api.github.com/repos/'+repo+'/issues?oauth_token='+authToken)
     .set('User-Agent',owner)
     .set('Content-Type', 'application/json')
     .send(JSON.stringify(jsonObj))
@@ -47,7 +46,7 @@ const createIssue = function (json,callback)
             return
         }
          callback(null, {type:"string", content: "Issue has been opened with number "+response.body.number+'.'});
+        return 
     });
-    return 
 }
 module.exports = createIssue;

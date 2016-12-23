@@ -1,28 +1,28 @@
 var request = require('superagent');
-const closeIssue = function (json,callback)
+const closeIssue = function (repo,authToken,number,callback)
 {
-	var jsonObj = {
+    var jsonObj = {
         'state' : 'closed'
     };
 
-    if(!json.repo)
+    if(!repo)
     {
         callback({type:"string", content: "Error: Repository Not Present"}, null);
         return
     }
-    else if(!json.number)
+    else if(!number)
     {
         callback({type:"string", content: "Error: Issue Number Not Present"}, null);
         return
     }
 
-    let owner = json.repo.split('/');
+    let owner = repo.split('/');
     if(owner[0] !== undefined)
     {
         owner = owner[0].trim();
     }
 
-	request.patch('https://api.github.com/repos/'+json.repo+'/issues/'+json.number+'?oauth_token='+json.authToken)
+	request.patch('https://api.github.com/repos/'+repo+'/issues/'+number+'?oauth_token='+authToken)
     .set('User-Agent',owner)
     .set('Content-Type', 'application/json')
     .send(JSON.stringify(jsonObj))

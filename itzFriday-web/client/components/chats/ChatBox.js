@@ -105,7 +105,6 @@ class ChatBox extends Component {
          sendingMessage.destination = this.props.location.query.project+'#Droid'+'/'+this.props.location.query.name;
          sendingMessage.message = message.chatText.replace(/@droid/i, 'Hey Droid, ');
          chatMessages.push(sendingMessage);
-         sendingMessage.message = message.chatText.replace(/@droid/i, '');
           
       }else {
         sendingMessage.destination = this.props.location.query.project+'#'+this.props.location.query.name

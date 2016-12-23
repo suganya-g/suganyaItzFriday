@@ -28,8 +28,8 @@ userRouter.post('/login', function(req, res) {
   		}else {
   		// create a user a new user
 			var testUser = new userAccount({
-          fullName: 'Vikram',
-    			username: 'vikram@gmail.com',
+          fullName: 'Apurv',
+    			username: 'apurv@gmail.com',
     			password: 'abcdefgh',
     			role: 'User',
           gitAccess: ''
