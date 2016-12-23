@@ -14,7 +14,7 @@ import {Grid, Row, Col} from 'react-flexbox-grid'
 import RaisedButton from 'material-ui/RaisedButton';
 import {grey400,cyan50,red500,grey500,grey100,blueGrey100,blueGrey50,teal100} from 'material-ui/styles/colors';
 import {Link} from 'react-router';
-
+import MediaQuery from 'react-responsive';
 
 var previous="blank";
 var counter=0;
@@ -35,11 +35,11 @@ const styles = {
     	position:'absolute',
 			top:'20%',
 			bottom:'20%',
-			left:'20%',
-			right:'20%',
-			width:'60%',
+			left:'10%',
+			right:'10%',
+			width:'80%',
 			height:'60%'
-      }
+		}
     };
 export default class SendInvite extends React.Component
 {
@@ -137,19 +137,42 @@ export default class SendInvite extends React.Component
 	{
 		return(<Grid>
 		<Paper style={styles.paperStyle}>
-			<div style={{textAlign:'center'}}>
+			<div style={{textAlign:'center',marginTop:'50px'}}>
 			<Row center="xs">
+			  <MediaQuery query='(min-device-width: 1024px)'>
 			<SocialPersonAdd style={{color:'#004D40',width:'100px',height:'100px'}} />
 			<h1 style={{color:'#004D40'}}>Join Us!</h1>
+			</MediaQuery>
+
+			 <MediaQuery query='(max-device-width: 1023px)'>
+			          <SocialPersonAdd style={{color:'#004D40',width:'50px',height:'50px'}} />
+			           <h3 style={{color:'#004D40'}}>Join Us!</h3>
+			 </MediaQuery>
 			</Row>
 			<Row center="xs">
-			<h4 style={{color:'#004D40'}}>Add new members to your team!</h4>
+			   <MediaQuery query='(min-device-width: 1024px)'>
+			        <h4 style={{color:'#004D40'}}>Add new members to your team!</h4>
+				 </MediaQuery>
+
+				 <MediaQuery query='(max-device-width: 1023px)'>
+				      <h5 style={{color:'#004D40'}}>Add new members to your team!</h5>
+				 </MediaQuery>
 			</Row>
 			<Row center="xs">
+			 <MediaQuery query='(min-device-width: 1024px)'>
 			<TextField type="email"
 			floatingLabelText="Invite by Email"
 			onChange={this.handleAdd}
 			errorText={this.state.errorMsg}/>
+			</MediaQuery>
+
+			<MediaQuery query='(max-device-width: 1023px)'>
+			<TextField type="email"
+			floatingLabelText="Invite by Email"
+			style={{width:'150px'}}
+			onChange={this.handleAdd}
+			errorText={this.state.errorMsg}/>
+			</MediaQuery>
 			<IconButton tooltip="Add" style={{marginTop: '20px'}}
 				disabled={this.state.addIconState}
 				onClick={this.handleAddClick}>
