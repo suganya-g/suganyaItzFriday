@@ -7,6 +7,7 @@ import ChatText from './ChatText';
 const styles = {
   chatBoxStyle: {
     position: "relative",
+    width:'100%',
       height: "100%",
     margin: "0 auto"
   },
@@ -16,7 +17,7 @@ const styles = {
       borderTop: "1px solid #dae2e3"
   },
    messageList: {
-    height: 420,
+    height: 560,
     listStyle: "none",
     overflowY: "scroll"
   },
@@ -59,7 +60,7 @@ class ChatWindow extends Component {
               <ChatText chatTextMessages = {chats[i]}/>
             </li>);
           }
-           
+
     return(
         <Paper zDepth={5} style={styles.chatBoxStyle}>
           <ul style= {styles.messageList}>
