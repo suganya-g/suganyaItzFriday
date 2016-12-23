@@ -21,7 +21,6 @@ var gitAccount = require('./../../model/git.user.js');
 
 module.exports = {
   access: function(email, callback) {
-    console.log('in router::'+email);
     var result = '';
     gitAccount.findOne({ username: email}, function(err, user) {
       if (err) {
@@ -36,7 +35,7 @@ module.exports = {
       if(user) {
         if(user.checkGitAccess()){
           result = {
-            message:'https://github.com/login/oauth/authorize?client_id=' + config.GITHUB_CLIENT_ID+'&state=' +email,
+            message:'https://github.com/login/oauth/authorize?client_id=' + config.GITHUB_CLIENT_ID+'&state=' +email+'&scope=user%20public_repo',
             exist: false
           };
           callback(null, result);
@@ -68,7 +67,6 @@ module.exports = {
   complete: function(req, res) {
     const code = req.query.code;
     const email = req.query.state;
-    console.log(email);
     request
       .get('https://github.com/login/oauth/access_token')
       .query({

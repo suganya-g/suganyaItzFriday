@@ -688,17 +688,15 @@ var receiveMessage = function(count, channel, message)
 				//FETCH JSON DATA
 				jsonObject = fetchJsonObject(message);	//set processFurther to false on error
 
-				if(message.accessToken !== undefined && message.accessToken !== '')
-				{
-					jsonObject.authToken = message.accessToken;
-				}
+				// if(message.accessToken !== undefined && message.accessToken !== '')
+				// {
+				jsonObject.authToken = authToken;
+				// }
 
 				//SORT EXECUTION SEQUENCE IN THE ORDER OF CONTEXT
 				intents.sort(function(a,b){
 					return a.priority - b.priority;
 				});
-
-				jsonObject.authToken = "b5bbf7951de69dc1750bf2f6c21f20c1a74923ce";
 
 				console.log("intent :");
 				console.log(intents);
