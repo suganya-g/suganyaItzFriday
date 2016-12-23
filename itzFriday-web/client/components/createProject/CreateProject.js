@@ -11,6 +11,7 @@ import {Link} from 'react-router';
 import Formsy from 'formsy-react';
 import FormsyText from 'formsy-material-ui/lib/FormsyText';
 import Request from 'superagent';
+import MediaQuery from 'react-responsive';
 
 const styles ={
   paperStyle:{backgroundColor:blueGrey50,
@@ -65,59 +66,79 @@ export default class CreateProject extends React.Component
 
   render()
   {
-     return(
-      <Grid>
-      <Paper style={styles.paperStyle}>
-
-        <Row>
-          <span style={{marginTop:100,margin:'auto'}}>
-          <Avatar style={{backgroundColor:"#004D40"}} src="./../../resources/images/buddy.png" alt="qwerty" size={150}/>
-          </span>
-        </Row>
-        <Row center="xs">
-          <h1>A messaging app for teams who see through the Earth</h1>
-          <p>The IceCube Collaboration is one of tens of thousands of teams around the world using Slack to make their working lives simpler, more pleasant, and more productive.</p>
-        </Row>
-        <Row center="xs">
-        <Col lg={ 12 }
-                 md={ 12 }
-                 sm={ 12 }
-                 xs={ 12 }>
-          <Formsy.Form
-            onValid={ this.enableButton }
-            onInvalid={ this.disableButton }
-            onValidSubmit={ this.submitForm }
-            onInvalidSubmit={ this.notifyFormError }>
-          <FormsyText
-             name="email"
-             validations="isEmail"
-             validationError="Please enter a valid email"
-             required
-             hintText="Enter your email"
-             updateImmediately
-             floatingLabelText="Email" />
-            <div>
-         <RaisedButton
-              type="submit"
-              style={{marginTop:20}}
-            label="Create Project"
-            disabled={!this.state.canSubmit}
-            primary={true}/>
+    return(
+     <Grid>
+     <Paper style={styles.paperStyle}>
+       <Row>
+         <span style={{margin:'auto'}}>
+         <MediaQuery query='(min-device-width: 1024px)'>
+         <div className='logo'>
+         <Avatar className="logo" style={{backgroundColor:"#004D40"}} src="./../../resources/images/buddy.png" alt="qwerty" size={150}/>
+         </div>
+         </MediaQuery>
+         <MediaQuery query='(max-device-width: 1023px)' className="logo">
+         <Avatar className="logo" style={{backgroundColor:"#004D40"}} src="./../../resources/images/buddy.png" alt="qwerty" size={100}/>
+         </MediaQuery>
+         </span>
+       </Row>
+       <Row center="xs">
+       <Col lg={ 12 }
+                md={ 12 }
+                sm={ 12 }
+                xs={ 12 }>
+         <MediaQuery query='(min-device-width: 1024px)'>
+         <div className="content">
+         <h1 className="tagLine">ItzFriday!</h1>
+         <p className="tagLine">A messaging platform for teams who see through the Earth</p>
+         </div>
+         </MediaQuery>
+         <MediaQuery query='(max-device-width: 1023px)'>
+         <div className="content">
+         <h3 className="tagLine">ItzFriday!</h3>
+         <p className="tagLine">A messaging platform for teams who see through the Earth</p>
+         </div>
+         </MediaQuery>
+       </Col>
+       </Row>
+       <Row center="xs">
+       <Col lg={ 12 }
+                md={ 12 }
+                sm={ 12 }
+                xs={ 12 }>
+         <Formsy.Form
+           onValid={ this.enableButton }
+           onInvalid={ this.disableButton }
+           onValidSubmit={ this.submitForm }
+           onInvalidSubmit={ this.notifyFormError }>
+         <FormsyText
+            name="email"
+            validations="isEmail"
+            validationError="Please enter a valid email"
+            required
+            hintText="Enter your email"
+            updateImmediately
+            floatingLabelText="Email" />
+           <div>
+        <RaisedButton
+             type="submit"
+             style={{marginTop:20}}
+           label="Create Project"
+           disabled={!this.state.canSubmit}
+           primary={true}/>
 </div>
 <h5 style={{color:'grey'}}>- OR -</h5>
 <div>
 <RaisedButton label="Sign In"
-    labelPosition="before"
-    primary={true}
-    onClick={this.redirectLogin}
-    icon={<ActionAccountCircle />}/>
-    </div>
-          </Formsy.Form>
+   labelPosition="before"
+   primary={true}
+   onClick={this.redirectLogin}
+   icon={<ActionAccountCircle />}/>
+   </div>
+         </Formsy.Form>
 
-        </Col>
-        </Row>
-      </Paper>
-      </Grid>);
-  }
-
+       </Col>
+       </Row>
+     </Paper>
+     </Grid>);
+ }
 }
