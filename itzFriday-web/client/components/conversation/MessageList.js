@@ -26,34 +26,13 @@ var groups=[];
 var messages =[];
 
 const styles = {
-	rootContainer : {
-		margin: '0px 0px 0px 0px',
-		padding: '0px 0px 0px 0px',
-	},
 	iconButton : {
 		color: 'white'
-	},
-	container : {
-		margin: '0px 0px 0px 0px',
-		padding: '10px',
-		background: "#e0f2f1",
 	},
 	appBar : {
 		color: 'white',
 		backgroundColor: '#004D40',
 		width: '*',
-	},
-	projectList : {
-		color: 'white',
-		float: 'left',
-		width: '150px',
-		height: window.innerHeight,
-		margin: '0px 0px 0px 0px',
-		padding: '2px 2px 2px 2px',
-	},
-	projectListItem : {
-		marginTop: '2px',
-		color: '#424242',
 	},
 	listItem : {
 		color: '#004D40',
@@ -64,9 +43,6 @@ const styles = {
 		textDecoration: 'none',
 		backgroundColor:'white',
 		color: '#004D40'
-	},
-	projectNameListItem : {
-		color: '#607D8B'
 	},
 };
 
@@ -126,7 +102,7 @@ export default class MessageList extends React.Component
 			return (<span />);
 		}
 		return(
-				<ListItem primaryText="Messages" id="messages" key="messages" style={styles.listItem} initiallyOpen={false} primaryTogglesNestedList={true}
+				<ListItem primaryText="Conversations" id="messages" key="messages" style={styles.listItem} initiallyOpen={false} primaryTogglesNestedList={true}
 				nestedItems={messages}>
 				</ListItem>
 			);
