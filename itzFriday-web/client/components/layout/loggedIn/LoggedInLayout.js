@@ -8,6 +8,7 @@ import Paper from 'material-ui/Paper';
 import Divider from 'material-ui/Divider';
 import Avatar from 'material-ui/Avatar';
 import AppBar from 'material-ui/AppBar';
+import Badge from 'material-ui/Badge';
 import IconButton from 'material-ui/IconButton';
 import IconMenu from 'material-ui/IconMenu';
 import FileFolder from 'material-ui/svg-icons/file/folder';
@@ -41,6 +42,8 @@ const styles = {
 	drawer : {
 		backgroundColor: "#004D40",
 		overflowY : 'auto',
+		width:'250px',
+		margin: '0px 0px 0px 0px'
 	},
 	appBar : {
 		color: 'white',
@@ -211,7 +214,8 @@ export default class LoggedInLayout extends React.Component
 		projectList =[];
 		for (let index in projects)
 		 {
-			 projectList.push(<ListItem leftIcon={<FileFolder />} style={{color:'white'}} primaryText={projects[index].name}
+			 projectList.push(
+			      <ListItem leftIcon={<FileFolder />} rightIcon={ <Badge badgeContent={10} />} style={{color:'white'}} primaryText={projects[index].name}
 							 onNestedListToggle={this.handleNestedListToggle.bind(this,index)}
 							 open={this.state.openIndex===index}
 							 primaryTogglesNestedList={true}
@@ -235,7 +239,7 @@ export default class LoggedInLayout extends React.Component
 			{isLogged ?
 			<div>
 			    <MediaQuery query='(min-device-width: 1024px)'>
-					<div className="col-xs-2 col-sm-2 col-md-2 col-lg-2" style={{width:'20%'}}>
+					<div className="col-xs-2 col-sm-2 col-md-2 col-lg-2">
 						<div className="leftPane" style={styles.leftPane}>
 								<Drawer open={true} docked={true} id="projectList" containerStyle={styles.drawer} zDepth={2}>
 											 <List>
@@ -356,7 +360,7 @@ export default class LoggedInLayout extends React.Component
 					 </div>: ''}
 					 <MediaQuery query='(min-device-width: 1024px)'>
 					 <div className="row" style={{width:'100%'}}>
-								<div id="content" style={{backgroundColor: "#e0f2f1",paddingLeft:'200px'}}>
+								<div id="content" style={{backgroundColor: "#e0f2f1",margin: '0px 0px 0px 0px',padding: '0px 0px 0px 0px',marginLeft:'200px'}}>
 										 {this.props.children}
 								</div>
 					 </div>
