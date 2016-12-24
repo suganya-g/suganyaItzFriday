@@ -26,11 +26,11 @@ export default class InviteAccept extends React.Component
     this.disableButton = this.disableButton.bind(this);
   }
 
-  enableButton() 
+  enableButton()
   {
    this.setState({canSubmit: true});
  }
-   disableButton() 
+   disableButton()
    {
     this.setState({canSubmit: false});
   }
@@ -44,16 +44,16 @@ export default class InviteAccept extends React.Component
   }
 
   render()
-  { 
+  {
      return(
-      
+
       <Grid>
       <Paper>
       <Card style={styles.cardStyle}>
       <Row center='xs'>
           <span style={{marginTop:'15px'}}>
           <Avatar style={{backgroundColor:"#004D40"}} src="./../../resources/images/buddy.png" alt="qwerty" size={150}/>
-          </span> 
+          </span>
         </Row>
          <Row center="xs">
           <h1>ItzFriday</h1>
@@ -62,25 +62,25 @@ export default class InviteAccept extends React.Component
           <p>You have been invited to join a project named "Buddy"</p>
         </Row>
         <Row center="xs">
-           <RaisedButton 
+           <RaisedButton
             style={{
               marginTop:"25px"
            }}
             type="submit"
             label="Accept Invitation"
             labelColor="white"
-            backgroundColor="#4CAF50" 
+            backgroundColor="#4CAF50"
             onClick={() => this.redirectInvitedMemberDetails("abc@gmail.com","Friday")}>
-            </RaisedButton> 
+            </RaisedButton>
           </Row>
           <Row center="xs">
           <p style={{marginTop:"125px", width:"600px"}}><strong>"ItzFriday"</strong> has been created for the people working in collabration to create ,code and manage their projects at one platform with a friendly environment.</p>
          </Row>
          </Card>
       </Paper>
-      
+
       </Grid>
-      
+
       );
   }
 

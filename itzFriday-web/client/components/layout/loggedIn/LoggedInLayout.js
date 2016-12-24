@@ -2,70 +2,53 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {Link} from 'react-router';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import {amber100,green100,orange100,grey50} from 'material-ui/styles/colors';
+import {List, ListItem} from 'material-ui/List';
+import {grey50} from 'material-ui/styles/colors';
+import Paper from 'material-ui/Paper';
+import Divider from 'material-ui/Divider';
+import Avatar from 'material-ui/Avatar';
 import AppBar from 'material-ui/AppBar';
 import IconButton from 'material-ui/IconButton';
 import IconMenu from 'material-ui/IconMenu';
-import MenuItem from 'material-ui/MenuItem';
-import SettingsIcon from 'material-ui/svg-icons/action/settings';
-import FlatButton from 'material-ui/FlatButton';
-import {List, ListItem} from 'material-ui/List';
-import Paper from 'material-ui/Paper';
+import FileFolder from 'material-ui/svg-icons/file/folder';
+import ChannelList from './../../conversation/ChannelList';
+import MessageList from './../../conversation/MessageList';
 import Drawer from 'material-ui/Drawer';
-import Divider from 'material-ui/Divider';
-import Avatar from 'material-ui/Avatar';
-import SocialNotifications from 'material-ui/svg-icons/social/notifications';
-import SocialPerson from 'material-ui/svg-icons/social/person';
 import ActionAccountBox from 'material-ui/svg-icons/action/account-box';
 import ImageDehaze from 'material-ui/svg-icons/image/dehaze';
-import ContentAddCircle from 'material-ui/svg-icons/content/add-circle';
+import NavigationApps from 'material-ui/svg-icons/navigation/apps';
+import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import AVRecentActors from 'material-ui/svg-icons/av/recent-actors';
 import FileFolderShared from 'material-ui/svg-icons/file/folder-shared';
 import ActionPowerSettingsNew from 'material-ui/svg-icons/action/power-settings-new';
 import ContentDrafts from 'material-ui/svg-icons/content/drafts';
 import ContentRemoveCircle from 'material-ui/svg-icons/content/remove-circle';
-import FileFolder from 'material-ui/svg-icons/file/folder';
-import HardwareTv from 'material-ui/svg-icons/hardware/tv';
-import NavigationExpandLess from 'material-ui/svg-icons/navigation/expand-less';
-import ImageTagFaces from 'material-ui/svg-icons/image/tag-faces';
-import ChannelList from './../../conversation/ChannelList';
-import MessageList from './../../conversation/MessageList';
 import ManageTeam from './../../sendInvite/SendInvite';
 import Auth from '../../../services/auth.service.js';
+import MediaQuery from 'react-responsive';
+import { Grid, Row, Col } from 'react-flexbox-grid';
 //styling
 const styles = {
 	rootContainer : {
 		margin: '0px 0px 0px 0px',
 		padding: '0px 0px 0px 0px',
 	},
-	iconButton : {
-		color: 'white'
-	},
 	container : {
 		margin: '0px 0px 0px 0px',
-		padding: '5px 5px 5px 5px',
+		padding: '0px 0px 0px 0px',
 		background: "#e0f2f1",
-		float:'left'
 	},
 	drawer : {
 		backgroundColor: "#004D40",
-		width:"250px",
-		position: "relative",
-		height:window.innerHeight,
 		overflowY : 'auto',
-	},
-	leftPane : {
-		width:"250px",
-		float:'left',
-		margin: '0px 0px 0px 0px',
-		padding: '0px 0px 0px 0px',
-		clear: 'left'
 	},
 	appBar : {
 		color: 'white',
-		width: (window.innerWidth-250),
 		backgroundColor: '#00695C',
-		float: 'left'
+	},
+	leftPane : {
+		margin: '0px 0px 0px 0px',
+		padding: '0px 0px 0px 0px',
 	},
 	listItem : {
 		color: '#004D40',
@@ -75,9 +58,6 @@ const styles = {
 	linkItem : {
 		textDecoration: 'none',
 		color: '#424242'
-	},
-	projectNameListItem : {
-		color: '#607D8B'
 	},
 };
 
@@ -122,17 +102,14 @@ export default class LoggedInLayout extends React.Component
 					messages:[{name:"Sreenidhi",id:0},{name:"Toolika Srivastava",id:1},{name:"Nanda",id:2},{name:"Shipra Joshi",id:3},{name:"Bala",id:4},{name:"Divyanshu Sharma",id:5}]
 				},
 		];
-
-
 		currentProject = 'Friday';
-
 		this.state = {
 			mainMenuOpen: false,
 			appBarTitle: 'Notifications',
 			imageLogoUrl: './../../resources/images/buddy.png',
 			channels: '',
 			messages: '',
-			open: true,
+			open: false,
 			openIndex:0,
 			loggedIn: Auth.loggedIn()
 		};
@@ -140,10 +117,8 @@ export default class LoggedInLayout extends React.Component
 		this.handleChannelChange = this.handleChannelChange.bind(this);
 		this.handleMessageChange = this.handleMessageChange.bind(this);
 		this.openThisProject=this.openThisProject.bind(this);
-		this.handleState=this.handleState.bind(this);
+		this.signOut=this.signOut.bind(this);
 		this.handleAccount = this.handleAccount.bind(this);
-		this.signOut = this.signOut.bind(this);
-		this.toggleMainMenu = this.toggleMainMenu.bind(this);
 		this.closeMainMenu = this.closeMainMenu.bind(this);
 		this.changeLogo = this.changeLogo.bind(this);
 		this.changeChannelState = this.changeChannelState.bind(this);
@@ -151,10 +126,6 @@ export default class LoggedInLayout extends React.Component
 		this.openNotificationBoard = this.openNotificationBoard.bind(this);
 		this.setTitleToNotifications = this.setTitleToNotifications.bind(this);
 		this.nameCompressor = this.nameCompressor.bind(this);
-	}
-  componentDidMount()
-	{
-
 	}
 	nameCompressor(name)
 	{
@@ -186,14 +157,9 @@ export default class LoggedInLayout extends React.Component
 	componentWillMount() {
 		this.setState({loggedIn: Auth.loggedIn()})
 	}
-  handleState(newState)
+	openThisProject (projectName)
 	{
-		console.log(newState.activeItems);
-	}
-
-	openThisProject (event)
-	{
-		currentProject = event.target.innerText ;
+		currentProject = projectName ;
 		console.log(currentProject);
 		localStorage['project']=currentProject;
 		this.setState({appBarTitle: currentProject});
@@ -215,6 +181,8 @@ export default class LoggedInLayout extends React.Component
 		this.closeMainMenu();
 	}
 
+  handleToggle = () => this.setState({open: !this.state.open});
+
 	handleMessageChange(name)
 	{
 		this.props.router.replace('/chat/?project='+this.state.appBarTitle+'&name='+name+'&identifier=message');
@@ -225,29 +193,20 @@ export default class LoggedInLayout extends React.Component
 	{
 		this.closeMainMenu();
 	}
-
-	signOut (e)
-	{
-		Auth.logout();
-		this.props.router.replace('/login/');
-	}
-
 	changeLogo (url)
 	{
 		this.setState({imageLogoUrl : url});
 	}
-
-	toggleMainMenu ()
-	{
-		this.setState({mainMenuOpen: !this.state.mainMenuOpen});
-	}
-
 	closeMainMenu ()
 	{
 		this.setState({mainMenuOpen: false});
 	}
-
-	render() {
+	signOut (e)
+	{
+		Auth.logout();
+		this.props.router.replace('login/');
+	}
+	 render() {
 		const isLogged = Auth.loggedIn();
 		projectList =[];
 		for (let index in projects)
@@ -256,7 +215,7 @@ export default class LoggedInLayout extends React.Component
 							 onNestedListToggle={this.handleNestedListToggle.bind(this,index)}
 							 open={this.state.openIndex===index}
 							 primaryTogglesNestedList={true}
-							 onClick={()=>this.openThisProject(event)}
+							 onClick={()=>this.openThisProject(projects[index].name)}
 							 nestedItems={[
 								 <div style={{backgroundColor:'white'}}>
 								 <Link to={'chat/?project='+this.state.appBarTitle+'&name=Droid&identifier=message'} style={styles.listItem} onTouchTap={() => this.handleMessageChange('Droid')}><ListItem key="friday" id="friday" style={styles.listItem} leftAvatar={<Avatar style={{height:'30', backgroundColor:'transparent'}} src={this.state.imageLogoUrl} alt="Friday" />}><strong>Droid</strong></ListItem></Link>
@@ -271,70 +230,146 @@ export default class LoggedInLayout extends React.Component
 
 		return (
 			<MuiThemeProvider>
+			<div className="wrap container-fluid">
 			<div style={styles.rootContainer}>
-
-			<div className="leftPane" style={styles.leftPane}>
-			{isLogged ?
-			<Paper id="projectList" style={styles.drawer} zDepth={2}>
-		  <List>
-			{projectList}
-			</List>
-			</Paper>: ''}
-			</div>
-
 			{isLogged ?
 			<div>
-			<AppBar id='appbar' title={this.state.appBarTitle} titleStyle={{textAlign:'center'}} style={styles.appBar}
-			zDepth={2}
-			iconElementLeft ={<span/>}
-				iconElementRight={
-					<span id="toggleMainMenu">
-					<IconMenu
-      iconButtonElement={<IconButton onTouchTap={this.toggleMainMenu}>	<ImageDehaze color={grey50} /></IconButton>}
-      anchorOrigin={{horizontal: 'left', vertical: 'top'}}
-      targetOrigin={{horizontal: 'left', vertical: 'top'}}>
-      <List>
-			<ListItem leftIcon={<AVRecentActors/>} primaryText="Account Settings" id="accountSettings" key="accountSettings" primaryTogglesNestedList={true} style={styles.listItem}
-			nestedItems={[
-				<Link to={"profile/"} style={{textDecoration:"none"}}>
-				<ListItem
-							key={1}
-							primaryText="Profile"
-							leftIcon={<ActionAccountBox />} />
-        </Link>,
-				<Link to={"buddy/"} style={{textDecoration:"none"}}>
-				<ListItem
-              key={2}
-              primaryText="Droid settings"
-							leftAvatar={<Avatar style={{backgroundColor:'transparent',width:'30px'}} src={this.state.imageLogoUrl} alt="Friday" />} />
-				</Link>
-			]} />
+			    <MediaQuery query='(min-device-width: 1024px)'>
+					<div className="col-xs-2 col-sm-2 col-md-2 col-lg-2" style={{width:'20%'}}>
+						<div className="leftPane" style={styles.leftPane}>
+								<Drawer open={true} docked={true} id="projectList" containerStyle={styles.drawer} zDepth={2}>
+											 <List>
+														{projectList}
+											 </List>
+								</Drawer>
+							</div>
+					 </div>
+			         <div className="col-xs-10 col-sm-10 col-md-10 col-lg-10" style={{width:'100%'}}>
+							      <div className="row">
+										<AppBar id='appbar' title={this.state.appBarTitle} titleStyle={{textAlign:'center'}} style={styles.appBar}
+										zDepth={2}
+										iconElementLeft ={<span/>}
+											iconElementRight={
+												<span id="toggleMainMenu">
+												<IconMenu
+										iconButtonElement={<IconButton onTouchTap={this.toggleMainMenu}>	<ImageDehaze color={grey50} /></IconButton>}
+										anchorOrigin={{horizontal: 'left', vertical: 'top'}}
+										targetOrigin={{horizontal: 'left', vertical: 'top'}}>
+										<List>
+										<ListItem leftIcon={<AVRecentActors/>} primaryText="Account Settings" id="accountSettings" key="accountSettings" primaryTogglesNestedList={true} style={styles.listItem}
+										nestedItems={[
+											<Link to={"profile/"} style={{textDecoration:"none"}}>
+											<ListItem
+														key={1}
+														primaryText="Profile"
+														leftIcon={<ActionAccountBox />} />
+											</Link>,
+											<Link to={"buddy/"} style={{textDecoration:"none"}}>
+											<ListItem
+														key={2}
+														primaryText="Droid settings"
+														leftAvatar={<Avatar style={{backgroundColor:'transparent',width:'30px'}} src={this.state.imageLogoUrl} alt="Friday" />} />
+											</Link>
+										]} />
 
-			<ListItem leftIcon={<FileFolderShared/>} primaryText="Manage Project Team" id="manageTeam" key="manageTeam" style={styles.listItem} onTouchTap={this.closeMainMenu} primaryTogglesNestedList={true} nestedItems={[
-					<ListItem
-								key={1}
-								primaryText="Invite People"
-								leftIcon={<ContentDrafts />} />,
-					<Link to={"manageTeam/"} style={{textDecoration:'none'}}>
-					<ListItem
-					       key={2}
-					       primaryText="Remove People"
-								leftIcon={<ContentRemoveCircle />} />
-				  </Link>
-				]}/>
-				<ListItem leftIcon={<ActionPowerSettingsNew />} primaryText="Sign Out" id="signOut" key="signOut" style={styles.listItem} onTouchTap={this.signOut} />
-				</List>
-					</IconMenu>
-					</span>
-				}
-				iconStyleLeft={{cursor: 'pointer'}}/>
-				</div>: ''}
+										<ListItem leftIcon={<FileFolderShared/>} primaryText="Manage Project Team" id="manageTeam" key="manageTeam" style={styles.listItem} onTouchTap={this.closeMainMenu} primaryTogglesNestedList={true} nestedItems={[
+												<ListItem
+															key={1}
+															primaryText="Invite People"
+															leftIcon={<ContentDrafts />} />,
+												<Link to={"manageTeam/"} style={{textDecoration:'none'}}>
+												<ListItem
+															 key={2}
+															 primaryText="Remove People"
+															leftIcon={<ContentRemoveCircle />} />
+												</Link>
+											]}/>
+											<ListItem leftIcon={<ActionPowerSettingsNew />} primaryText="Sign Out" id="signOut" key="signOut" style={styles.listItem} onTouchTap={this.signOut} />
+											</List>
+												</IconMenu>
+												</span>
+											}
+											iconStyleLeft={{cursor: 'pointer'}}/>
+										</div>
+			         </div>
+			     </MediaQuery>
 
-					<div id="content" style={styles.container}>
-					{this.props.children}
+			     <MediaQuery query='(max-device-width: 1023px)' className="leftPane">
+					 <div className='row'>
+			           <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+								 <AppBar style={{backgroundColor:'#00695C'}} title={this.state.appBarTitle} iconElementLeft={<span>
+									 <IconButton  onTouchTap={this.handleToggle}><NavigationApps color={grey50} /></IconButton>
+									 <Drawer
+														 docked={false}
+														 width={200}
+														 containerStyle={{backgroundColor: "#004D40"}}
+														 open={this.state.open}
+														 onRequestChange={(open) => this.setState({open})}
+													 >
+													 <List>
+													 {projectList}
+													 </List>
+													 </Drawer>
+												 </span>}
+				 iconElementRight={<span id="toggleMainMenu">
+				 <IconMenu
+				 iconButtonElement={<IconButton onTouchTap={this.toggleMainMenu}>	<ImageDehaze color={grey50} /></IconButton>}
+				 anchorOrigin={{horizontal: 'left', vertical: 'top'}}
+				 targetOrigin={{horizontal: 'left', vertical: 'top'}}>
+				 <List>
+				 <ListItem leftIcon={<AVRecentActors/>} primaryText="Account Settings" id="accountSettings" key="accountSettings" primaryTogglesNestedList={true} style={styles.listItem}
+				 nestedItems={[
+				 <Link to={"profile/"} style={{textDecoration:"none"}}>
+				 <ListItem
+						 key={1}
+						 primaryText="Profile"
+						 leftIcon={<ActionAccountBox />} />
+				 </Link>,
+				 <Link to={"buddy/"} style={{textDecoration:"none"}}>
+				 <ListItem
+						 key={2}
+						 primaryText="Droid settings"
+						 leftAvatar={<Avatar style={{backgroundColor:'transparent',width:'30px'}} src={this.state.imageLogoUrl} alt="Friday" />} />
+				 </Link>
+				 ]} />
+
+				 <ListItem leftIcon={<FileFolderShared/>} primaryText="Manage Project Team" id="manageTeam" key="manageTeam" style={styles.listItem} onTouchTap={this.closeMainMenu} primaryTogglesNestedList={true} nestedItems={[
+				 <ListItem
+							 key={1}
+							 primaryText="Invite People"
+							 leftIcon={<ContentDrafts />} />,
+				 <Link to={"manageTeam/"} style={{textDecoration:'none'}}>
+				 <ListItem
+								key={2}
+								primaryText="Remove People"
+							 leftIcon={<ContentRemoveCircle />} />
+				 </Link>
+				 ]}/>
+				 <ListItem leftIcon={<ActionPowerSettingsNew />} primaryText="Sign Out" id="signOut" key="signOut" style={styles.listItem} onTouchTap={this.signOut} />
+				 </List>
+				 </IconMenu>
+				 </span>}>
+								 </AppBar>
+			           </div>
+						</div>
+			     </MediaQuery>
+					 </div>: ''}
+					 <MediaQuery query='(min-device-width: 1024px)'>
+					 <div className="row" style={{width:'100%'}}>
+								<div id="content" style={{backgroundColor: "#e0f2f1",paddingLeft:'200px'}}>
+										 {this.props.children}
+								</div>
+					 </div>
+					 </MediaQuery>
+					  <MediaQuery query='(max-device-width: 1023px)'>
+						<div className="row">
+ 								<div id="content" style={styles.container}>
+ 										 {this.props.children}
+ 								</div>
+ 					 </div>
+						</MediaQuery>
 					</div>
-					</div>
-
+         </div>
 					</MuiThemeProvider>
 					);
 }

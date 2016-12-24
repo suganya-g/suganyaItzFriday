@@ -8,6 +8,7 @@ import FormsyText from 'formsy-material-ui/lib/FormsyText';
 import {Grid, Row, Col} from 'react-flexbox-grid';
 import {Link} from 'react-router';
 import Request from 'superagent';
+import MediaQuery from 'react-responsive';
 
  const errorMessages = {
     wordsError: "Please only use letters",
@@ -26,7 +27,14 @@ import Request from 'superagent';
         bottom:'5%',
         width:'60%',
         height:'90%'
-    	}
+    	},
+      paperMobile: {
+        position:'absolute',
+        right:'5%',
+        left:'5%',
+        width:'90%',
+        height:'100%'
+      }
 }
  var pass={};
 var title;
@@ -79,87 +87,170 @@ console.log(data)
 
 	render(){
    		return(
-		  <Grid>
-		  <Paper style={styles.paperStyle}>
-		  <Row>
-		  <Col xs={12} sm={12} md={12} lg={12}>
-		    <Formsy.Form
-            onValid={this.enableButton}
-            onInvalid={this.disableButton}
-            onValidSubmit={this.submitForm}
-            onInvalidSubmit={this.notifyFormError}>
-            <div style={{textAlign:'center'}}>
-            <br />
+        <Grid>
+        <MediaQuery query='(min-device-width: 1024px)'>
+  		  <Paper style={styles.paperStyle}>
+  		  <Row>
+  		  <Col xs={12} sm={12} md={12} lg={12}>
+  		    <Formsy.Form
+              onValid={this.enableButton}
+              onInvalid={this.disableButton}
+              onValidSubmit={this.submitForm}
+              onInvalidSubmit={this.notifyFormError}>
+              <div style={{textAlign:'center'}}>
+              <br />
 
-      <MapsPersonPin style={{color:'#004D40',width:'80px',height:'80px'}} />
-			<strong><h2 style={{color:'#004D40'}}>Personal Info</h2></strong>
+        <MapsPersonPin style={{color:'#004D40',width:'80px',height:'80px'}} />
+  			<strong><h2 style={{color:'#004D40'}}>Personal Info</h2></strong>
 
-    		<FormsyText
-              		  name="FirstName"
-              		  onChange={this.handleChange}
-    			      hintText="First Name"
-    			      validations="isWords"
-                      validationError={errorMessages.wordsError}
-              		  required
-				      floatingLabelText="First Name"
-				      updateImmediately/><br />
-              <FormsyText
-                          name="LastName"
-                          onChange={this.handleChange}
-                      hintText="Last Name"
-                      validations="isWords"
-                            validationError={errorMessages.wordsError}
-                    floatingLabelText="Last Name(Optional)"
-                    updateImmediately/><br />
+      		<FormsyText
+                		  name="FirstName"
+                		  onChange={this.handleChange}
+      			      hintText="First Name"
+      			      validations="isWords"
+                        validationError={errorMessages.wordsError}
+                		  required
+  				      floatingLabelText="First Name"
+  				      updateImmediately/><br />
+                <FormsyText
+                            name="LastName"
+                            onChange={this.handleChange}
+                        hintText="Last Name"
+                        validations="isWords"
+                              validationError={errorMessages.wordsError}
+                      floatingLabelText="Last Name(Optional)"
+                      updateImmediately/><br />
 
-			<FormsyText
-					  name="Email"
-				      hintText="Email"
-				      defaultValue={localStorage['email']}
-				      disabled={true}
-				      floatingLabelText="Email ID"/><br />
-			<FormsyText
-				      name="ProjectTitle"
-				      onChange={this.handleChange}
-				      hintText="Project Title"
-				      validations="isAlphanumeric"
-				      validationError={errorMessages.projectTitleError}
-				      required
-				      floatingLabelText="Project Title"
-				      updateImmediately/><br />
-			<FormsyText
-				      name="Password"
-				      hintText="Password"
-				      validations="minLength:8"
-				      type="password"
-				      validationError={errorMessages.passwordError}
-				      required
-				      floatingLabelText="Password"
-				      updateImmediately/><br />
-			<FormsyText
-				      name="ConfirmPassword"
-				      onChange={this.handleChange}
-				      hintText="Same as password"
-				      validations="equalsField:Password"
-				      type="password"
-				      validationError={errorMessages.confirmPasswordError}
-				      required
-				      floatingLabelText="Confirm Password"
-				      updateImmediately/><br />
-           <br />
-            <RaisedButton
-                type="submit"
-                label="Continue"
-                primary={true}
-                labelColor="white"
-                disabled={!this.state.canSubmit}/>
+  			<FormsyText
+  					  name="Email"
+  				      hintText="Email"
+  				      defaultValue={localStorage['email']}
+  				      disabled={true}
+  				      floatingLabelText="Email ID"/><br />
+  			<FormsyText
+  				      name="ProjectTitle"
+  				      onChange={this.handleChange}
+  				      hintText="Project Title"
+  				      validations="isAlphanumeric"
+  				      validationError={errorMessages.projectTitleError}
+  				      required
+  				      floatingLabelText="Project Title"
+  				      updateImmediately/><br />
+  			<FormsyText
+  				      name="Password"
+  				      hintText="Password"
+  				      validations="minLength:8"
+  				      type="password"
+  				      validationError={errorMessages.passwordError}
+  				      required
+  				      floatingLabelText="Password"
+  				      updateImmediately/><br />
+  			<FormsyText
+  				      name="ConfirmPassword"
+  				      onChange={this.handleChange}
+  				      hintText="Same as password"
+  				      validations="equalsField:Password"
+  				      type="password"
+  				      validationError={errorMessages.confirmPasswordError}
+  				      required
+  				      floatingLabelText="Confirm Password"
+  				      updateImmediately/><br />
+             <br />
+              <RaisedButton
+                  type="submit"
+                  label="Continue"
+                  primary={true}
+                  labelColor="white"
+                  disabled={!this.state.canSubmit}/>
 
-              </div>
-         </Formsy.Form>
-        </Col>
-        </Row>
-        </Paper>
-        </Grid>
-      );
-	}
-}
+                </div>
+           </Formsy.Form>
+          </Col>
+          </Row>
+          </Paper>
+          </MediaQuery>
+
+          <MediaQuery query='(max-device-width: 1023px)'>
+          <Paper style={styles.paperMobile}>
+    		  <Row>
+    		  <Col xs={12} sm={12} md={12} lg={12}>
+    		    <Formsy.Form
+                onValid={this.enableButton}
+                onInvalid={this.disableButton}
+                onValidSubmit={this.submitForm}
+                onInvalidSubmit={this.notifyFormError}>
+                <div style={{textAlign:'center'}}>
+
+          <MapsPersonPin style={{color:'#004D40',width:'50px',height:'50px'}} />
+    			<strong><h3 style={{color:'#004D40'}}>Personal Info</h3></strong>
+
+        		<FormsyText
+                  		  name="FirstName"
+                  		  onChange={this.handleChange}
+        			      hintText="First Name"
+        			      validations="isWords"
+                          validationError={errorMessages.wordsError}
+                  		  required
+    				      floatingLabelText="First Name"
+    				      updateImmediately/><br />
+                  <FormsyText
+                              name="LastName"
+                              onChange={this.handleChange}
+                          hintText="Last Name"
+                          validations="isWords"
+                                validationError={errorMessages.wordsError}
+                        floatingLabelText="Last Name(Optional)"
+                        updateImmediately/><br />
+
+    			<FormsyText
+    					  name="Email"
+    				      hintText="Email"
+    				      defaultValue={localStorage['email']}
+    				      disabled={true}
+    				      floatingLabelText="Email ID"/><br />
+    			<FormsyText
+    				      name="ProjectTitle"
+    				      onChange={this.handleChange}
+    				      hintText="Project Title"
+    				      validations="isAlphanumeric"
+    				      validationError={errorMessages.projectTitleError}
+    				      required
+    				      floatingLabelText="Project Title"
+    				      updateImmediately/><br />
+    			<FormsyText
+    				      name="Password"
+    				      hintText="Password"
+    				      validations="minLength:8"
+    				      type="password"
+    				      validationError={errorMessages.passwordError}
+    				      required
+    				      floatingLabelText="Password"
+    				      updateImmediately/><br />
+    			<FormsyText
+    				      name="ConfirmPassword"
+    				      onChange={this.handleChange}
+    				      hintText="Same as password"
+    				      validations="equalsField:Password"
+    				      type="password"
+    				      validationError={errorMessages.confirmPasswordError}
+    				      required
+    				      floatingLabelText="Confirm Password"
+    				      updateImmediately/><br />
+               <br />
+                <RaisedButton
+                    type="submit"
+                    label="Continue"
+                    primary={true}
+                    labelColor="white"
+                    disabled={!this.state.canSubmit}/>
+
+                  </div>
+             </Formsy.Form>
+            </Col>
+            </Row>
+            </Paper>
+          </MediaQuery>
+          </Grid>
+        );
+  	}
+  }

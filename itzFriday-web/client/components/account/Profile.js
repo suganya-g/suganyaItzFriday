@@ -9,6 +9,7 @@ import { Grid, Row, Col } from 'react-flexbox-grid';
 import Paper from 'material-ui/Paper';
 import { FormsyCheckbox, FormsyDate, FormsyRadio, FormsyRadioGroup, FormsySelect, FormsyText, FormsyTime, FormsyToggle } from 'formsy-material-ui/lib';
 import ChangePassword from './../login/ChangePassword';
+import { Router, Route, Link, browserHistory } from 'react-router';
 
 const styles = {
 
@@ -24,7 +25,6 @@ const styles = {
     margin: 'auto',
     textAlign: 'center',
     display: 'inline-block',
-    padding: '10px',
   },
 
   styleButtonSubmit: {
@@ -73,12 +73,12 @@ export default class Profile extends React.Component {
     this.setState({
       open: true
     });
-
   }
   handleClose() {
     this.setState({
       open: false
     });
+    this.props.router.replace('/');
   }
 
   render() {

@@ -12,7 +12,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import SocialPeopleOutline from 'material-ui/svg-icons/social/people-outline';
 import {grey400,cyan50,red500,grey500,grey100,blueGrey100,blueGrey50,teal100} from 'material-ui/styles/colors';
 import AutoComplete from 'material-ui/AutoComplete';
-
+import { Router, Route, Link, browserHistory } from 'react-router';
 
 var previous="blank";
 var counter=0;
@@ -41,6 +41,7 @@ export default class ManageTeam extends React.Component
 		super(props);
 		this.handleAdd=this.handleAdd.bind(this);
 		this.handleAddClick=this.handleAddClick.bind(this);
+		this.handleClose=this.handleClose.bind(this);
 		this.state={email:'',addIconState:true,addbuttonState:true,errorMsg:'',chipData:[],checkbox:true,searchText:''}
 		this.sendInvite=this.sendInvite.bind(this);
 	}
@@ -64,6 +65,10 @@ export default class ManageTeam extends React.Component
  			}
  			console.log("members are "+members+" from "+localStorage['project']);
   }
+	handleClose()
+	{
+		this.props.router.replace('/');
+	}
 	handleAdd(event)
 	{
 		var search=document.getElementById('searchtext').value
@@ -205,7 +210,8 @@ export default class ManageTeam extends React.Component
       <Row center="xs">
       <RaisedButton
           label="Close"
-          backgroundColor='#4CAF50'
+          backgroundColor='#F44336'
+					onClick={this.handleClose}
           labelColor="white"/>
 
       <RaisedButton

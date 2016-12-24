@@ -9,6 +9,7 @@ import FormsyText from 'formsy-material-ui/lib/FormsyText';
 import Formsy from 'formsy-react';
 import Paper from 'material-ui/Paper';
 import { Card, CardHeader, CardText } from 'material-ui/Card';
+import MediaQuery from 'react-responsive';
 
 const errorMessages = {
   emailError: "Please enter valid email",
@@ -60,10 +61,13 @@ export default class Login extends React.Component {
         margin:10
       },
         cardStyle: {
-         padding: '30px',
-        marginTop: window.innerHeight/4.5,
-        marginLeft: "auto",
-        marginRight:'auto'
+        position:'absolute',
+        top:'20%',
+        bottom:'20%',
+        right:'20%',
+        left:'20%',
+        width:'60%',
+        height:'60%'
       },
       gridAlign: {
         margin:'auto',
@@ -89,6 +93,16 @@ export default class Login extends React.Component {
                          md={ 12 }
                          sm={ 12 }
                          xs={ 12 }>
+                         <h1 style={{color:'#004D40'}}>Reset Password</h1>
+                         </Col>
+                         </Row>
+                  <Row center="xs">
+                    <Col
+                         lg={ 12 }
+                         md={ 12 }
+                         sm={ 12 }
+                         xs={ 12 }>
+                         <MediaQuery query='(min-device-width: 1024px)'>
                     <FormsyText
                                 type="email"
                                 name="email"
@@ -98,6 +112,20 @@ export default class Login extends React.Component {
                                 hintText="Enter your Email"
                                 floatingLabelText="Email"
                                 updateImmediately />
+                                </MediaQuery>
+
+                            <MediaQuery query='(max-device-width: 1023px)'>
+                            <FormsyText
+                                        type="email"
+                                        name="email"
+                                        validations="isEmail"
+                                        validationError={ errorMessages.emailError }
+                                        required
+                                        hintText="Enter your Email"
+                                        style={{width:'200px'}}
+                                        floatingLabelText="Email"
+                                        updateImmediately />
+                                        </MediaQuery>
                     </Col>
                   </Row>
                   <Row center="xs">

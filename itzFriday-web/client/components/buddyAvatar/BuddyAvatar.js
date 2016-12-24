@@ -21,7 +21,6 @@ const styles={
     margin: 'auto',
     textAlign: 'center',
     display: 'inline-block',
-    padding: 10
   },
   styleAvatar: {
   	margin: 'auto'
@@ -52,7 +51,7 @@ export default class BuddyAvatar extends React.Component {
   handleUrl = (event) => {
     console.log(event.target.src);
   };
-  
+
 render()
 	{
 		return(
@@ -103,7 +102,7 @@ render()
             </Col>
           </Row>
         </Grid>
-      </div> 
+      </div>
 		);
 	}
 }

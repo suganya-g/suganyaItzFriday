@@ -14,7 +14,8 @@ import FlatButton from 'material-ui/FlatButton';
 import ChangePassword from './ChangePassword';
 import Dialog from 'material-ui/Dialog';
 import Request from 'superagent';
-import Auth from '../../services/auth.service.js'
+import Auth from '../../services/auth.service.js';
+import MediaQuery from 'react-responsive';
 
 const errorMessages = {
   projectName: "Please enter only characters and number",
@@ -25,8 +26,12 @@ const errorMessages = {
 const styles = {
   cardStyle: {
     position:'absolute',
-    top:'25%',
-    left:'10%'
+    top:'20%',
+    left:'20%',
+    right:'20%',
+    bottom:'20%',
+    width:'60%',
+    height:'60%'
   },
   errorStyle: {
     color: 'red'
@@ -54,8 +59,7 @@ export default class Login extends React.Component {
 
   disableButton() {
     this.setState({
-      canSubmit: false,
-      githubLoginUrl: ''
+      canSubmit: false
     });
   }
 
@@ -78,7 +82,6 @@ export default class Login extends React.Component {
   notifyFormError(data) {
     console.error('Form error:', data);
   }
-
   render() {
     const imageSize = {
       mystyle: {
@@ -87,10 +90,10 @@ export default class Login extends React.Component {
       }
     };
     return (
-      <Grid style={styles.cardStyle}>
+      <Grid >
         <Col xs={ 12 }>
         <Card
-
+              style={styles.cardStyle}
               zDepth={ 2 }>
           <Row center="xs">
             <Formsy.Form
@@ -100,12 +103,15 @@ export default class Login extends React.Component {
                          onInvalidSubmit={ this.notifyFormError }>
               <ActionAccountCircle style={ imageSize.mystyle } />
               <CardText>
+              <div>
+              <MediaQuery query='(min-device-width: 1024px)'>
                 <Row>
                   <Col
                        xs={ 12 }
                        sm={ 12 }
                        md={ 12 }
                        lg={ 12 }>
+
                   <FormsyText
                               type="email"
                               name="email"
@@ -132,6 +138,45 @@ export default class Login extends React.Component {
                               updateImmediately />
                   </Col>
                 </Row>
+                </MediaQuery>
+
+                <MediaQuery query='(max-device-width: 1023px)'>
+                <Row>
+                  <Col
+                       xs={ 12 }
+                       sm={ 12 }
+                       md={ 12 }
+                       lg={ 12 }>
+                <FormsyText
+                            type="email"
+                            name="email"
+                            validations="isEmail"
+                            validationError={ errorMessages.emailError }
+                            required
+                            hintText="Enter your Email"
+                            style={{width:'150px'}}
+                            floatingLabelText="Email"
+                            updateImmediately />
+                </Col>
+              </Row>
+              <Row>
+                <Col
+                     xs={ 12 }
+                     sm={ 12 }
+                     md={ 12 }
+                     lg={ 12 }>
+                <FormsyText
+                            type="password"
+                            name="password"
+                            required
+                            hintText="Enter Password"
+                            style={{width:'150px'}}
+                            floatingLabelText="Password"
+                            updateImmediately />
+                </Col>
+              </Row>
+                </MediaQuery>
+                </div>
                 <Row>
                   <Col
                        xs={ 12 }

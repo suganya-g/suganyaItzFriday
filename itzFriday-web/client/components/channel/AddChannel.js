@@ -11,6 +11,7 @@ import AutoComplete from 'material-ui/AutoComplete';
 import RaisedButton from 'material-ui/RaisedButton';
 import Chip from 'material-ui/Chip';
 import Paper from 'material-ui/Paper';
+import SocialPeople from 'material-ui/svg-icons/social/people';
 
 const error="";
 var myArray=[];
@@ -62,7 +63,7 @@ export default class AddChannel extends React.Component {
       },
       wrapper: {
         display: 'flex',
-        
+
       }
     }
 
@@ -105,7 +106,7 @@ export default class AddChannel extends React.Component {
       return ;
     }
     if(value===""){
-     this.setState({err:'Please select a member to add!'}); 
+     this.setState({err:'Please select a member to add!'});
     }
   	else if(member.indexOf(value) === -1){
   		this.setState({err:'This member does not belong to project please select from search box suggestion!'});
@@ -143,51 +144,48 @@ export default class AddChannel extends React.Component {
   render() {
     return (
       <Grid>
-      <Paper style={{padding: '10px'}}>
-        
-        <Col xs={ 12 }>
+      <Paper>
+
+
           <Formsy.Form
                        onValid={ this.enableCreate }
                        onInvalid={ this.disableCreate }
                        onValidSubmit={ this.submitForm }
                        onInvalidSubmit={ this.notifyFormError }>
-            
-            	<Row>
+
+            	<Row center='xs'>
             		<Col
                      xs={ 12 }
                      sm={ 12 }
                      md={ 12 }
                      lg={ 12 }>
-            		Create Channel Page
+                <SocialPeople style={{margin:'auto',color:'#004D40',width:'100px',height:'100px'}} />
+            		<h2 style={{color:'#004D40'}}>Create Channel</h2>
+                <h4 style={{color:'#004D40'}}>Create a shared group for you and some of your team members.</h4>
             		</Col>
            	   </Row>
-               <Row>
-                <Col
-                     xs={ 12 }
-                     sm={ 12 }
-                     md={ 12 }
-                     lg={ 12 }>
+               <Row center='xs'>
                 <FormsyText
                             type="text"
                             name="title"
                             validations="isWords"
                             validationError={ error.messages }
                             required
-                            hintText="Enter title for Channel"
+                            hintText="Enter a name for Channel"
                             floatingLabelText="Title"
                             updateImmediately
-                            fullWidth/>
-                </Col>
+                            />
               </Row>
               <Row center="xs">
-              		<Col xs={12} sm={12} md={12} lg={12}>
               		<div id="chipContainer" style={this.styles.wrapper}>
                 		{this.state.chipData.map(this.renderChip, this)}
                 	</div>
-              		</Col>
               </Row>
               <Row center="xs">
-                <Col xs={11} sm={11} md={11} lg={11}>
+              <Col xs={ 10 }
+                   sm={ 10 }
+                   md={ 10 }
+                   lg={ 10 }>
         				<AutoComplete
           					  id="memberName"
           					  name="member"
@@ -197,36 +195,28 @@ export default class AddChannel extends React.Component {
         				      dataSource={member}
         				      maxSearchResults={5}
         				      hintText="Search Member Here"
-        				      fullWidth
                       errorText = {this.state.err}
                       searchText={this.state.searchText}
                       onNewRequest = {this.onNewRequest}
                       onUpdateInput = {this.onUpdateInput}
         				    />
-				      </Col>
-    			    <Col xs={ 1 }
-                         sm={ 1 }
-                         md={ 1 }
-                         lg={ 1 }>
-                         <IconButton type="button" onClick={this.addData}>
-          						<AddCircleOutline/>
-        				</IconButton>                  
-        			</Col>
+                    </Col>
+                    <IconButton type="button" onClick={this.addData}>
+                 <AddCircleOutline/>
+           </IconButton>
           </Row>
-    			<Row start="xs">
+
+          <br />
+    			<Row center="xs">
                 <Col xs={ 12 }
                      sm={ 12 }
                      md={ 12 }
                      lg={ 12 }>
-                     <RaisedButton type="submit" label="Create Channel" primary={true}/>       
-    			</Col>
+                     <RaisedButton type="submit" label="Create" backgroundColor='#4CAF50' labelColor='white' style={{paddingRight:'10px'}}/>
+                     <RaisedButton type="submit" label="Cancel" backgroundColor='#F44336' labelColor='white'/>
+            </Col>
     			</Row>
-               <div>
-        			
-      		   </div>
-            
           </Formsy.Form>
-        </Col>
         </Paper>
       </Grid>
       );
