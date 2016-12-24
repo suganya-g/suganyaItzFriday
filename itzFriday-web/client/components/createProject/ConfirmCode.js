@@ -7,6 +7,7 @@ import NotificationPriorityHigh from 'material-ui/svg-icons/notification/priorit
 import {Grid, Row, Col} from 'react-flexbox-grid';
 import {Link} from 'react-router';
 import MediaQuery from 'react-responsive';
+import Request from 'superagent';
 
 const errorMessages = {
     numberError: "Please enter the correct six digits confirmation code"
@@ -54,7 +55,20 @@ constructor(props){
     });
   }
   submitForm(data) {
-     this.props.router.replace("projectDetails/")
+    data.email=localStorage['email'];
+    data.email=this.props.location.query.email;
+    Request.post('/user/confirmCode')
+           .send(data)
+           .end((err,res)=>{
+            if(res.body.error===true){
+                  this.setState({
+                    error:res.body.message
+                  })
+            }
+            else{
+                  this.props.router.replace("projectDetails/?email="+this.props.location.query.email+"&exist="+this.props.location.query.exist+"&role=Admin");
+            }
+       });
   }
   handleLinkEvent(){
     return this.state.canSubmit;

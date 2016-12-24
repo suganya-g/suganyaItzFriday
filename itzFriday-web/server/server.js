@@ -13,6 +13,7 @@ var jwt = require('jsonwebtoken');
 var appConst = require('./config/config.js');
 var db = require('./service/db.mongo.js');
 var cookieParser = require('cookie-parser');
+var confirmCode = require('./routes/confirmcode/user.confirmCode.route.js');
 
 
 main.use(compression());
@@ -44,6 +45,8 @@ main.get('/', function(req, res) {
 });
 
 //Routing
+
+main.use(confirmCode);
 main.use('/api/auth/',userAccount);
 main.use('/api',expressJWT({secret:appConst.jwtSecret}));
 
