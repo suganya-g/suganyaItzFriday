@@ -11,7 +11,7 @@ import ForgotPassword from './login/ForgotPassword';
 import CreateProject from './createProject/CreateProject';
 import ConfirmCode from './createProject/ConfirmCode';
 import ProjectCreator from './createProject/ProjectCreator';
-import InvitedMemberDetails from './createProject/InvitedMemberDetails';
+import UserDetails from './createProject/UserDetails';
 import InviteAccept from './createProject/InviteAccept';
 import SendInvite from './sendInvite/SendInvite';
 import BuddyAvatar from './buddyAvatar/BuddyAvatar';
@@ -66,7 +66,7 @@ class App extends Component {
 						<Route path="sendInvite/" component={SendInvite}></Route>
 						<Route path="ForgotPassword/" component={ForgotPassword}></Route>
 						<Route path="inviteAccept/" component={InviteAccept}></Route>
-						<Route path="memberDetails/" component={InvitedMemberDetails} onEnter={this.requireAuth.bind(this)}></Route>
+						<Route path="userDetails/" component={UserDetails} onEnter={this.requireAuth.bind(this)}></Route>
 						<Route path="notifications/" component={NotificationsBoard} onEnter={this.requireAuth.bind(this)}></Route>
 						<Route path="chat/" component={Chat} onEnter={this.requireAuth.bind(this)}></Route>
 						<Route path="addChannel/" component={AddChannel} onEnter={this.requireAuth.bind(this)}></Route>
