@@ -58,7 +58,7 @@ var intentMD = {
 		context : 'owner',
 		props : 
 		{
-			required : ['owner','repo'],
+			required : ['repo','authToken'],
 		},
 		pattern :
 		{
@@ -72,7 +72,7 @@ var intentMD = {
 		context : 'project',
 		props : 
 		{
-			required : ['owner','repo','title'],
+			required : ['repo','authToken','title'],
 			optional : ['body', 'labels', 'assignees']
 		},
 		pattern :
@@ -87,7 +87,7 @@ var intentMD = {
 		context : 'project',
 		props : 
 		{
-			required : ['owner','repo','number','assignees']
+			required : ['repo','authToken','number','assignees']
 		},
 		pattern : 
 		{
@@ -101,7 +101,7 @@ var intentMD = {
 		context : 'project',
 		props : 
 		{
-			required : ['owner','repo','number','labels']
+			required : ['repo','authToken','number','labels']
 		},
 		pattern : 
 		{
@@ -115,7 +115,7 @@ var intentMD = {
 		context : 'project',
 		props : 
 		{
-			required : ['owner','repo','number']
+			required : ['repo','authToken','number']
 		},
 		pattern : 
 		{
@@ -128,7 +128,7 @@ var intentMD = {
 		context : 'project',
 		props : 
 		{
-			required : ['owner','repo'],
+			required : ['repo'],
 			optional : ['number']
 		},
 		pattern :
@@ -143,7 +143,7 @@ var intentMD = {
 		context : 'issue',
 		props : 
 		{
-			required : ['owner','repo','number']
+			required : ['repo','authToken','number','body']
 		},
 		pattern :
 		{
@@ -464,9 +464,6 @@ function fetchJsonObject(message)
 	let project = '';
 	let owner = '';
 	let repo = '';
-	let temp = '';
-	
-	console.log("fetching values ----------------------------------->>>>");
 	
 		valueString = message.match(/(\s"[.\w-_&@!?,'\/[\]\s(){}]+")|((\s*@[\w-_/,]+)+)|(\s#[0-9]+)/gi);
 
@@ -477,8 +474,6 @@ function fetchJsonObject(message)
 				let found = false;					// did you find value in the segment?
 				for(let value in valueMD)	//access which value
 				{
-					// console.log("ckecking for : "+value+" ----keyString : "+keyString[indexKeyString]+" ----valueString : "+valueString[indexKeyString] );
-
 					if( !found )
 					{
 						for(let pattern in valueMD[value].keyPattern)
@@ -500,11 +495,13 @@ function fetchJsonObject(message)
 								if(count === valueMD[value].keyPattern[pattern].keywords.length)
 								{
 									found = true;
-									//fetch the value from valueString
 
+									//fetch the value from valueString
 									let temp = valueString[indexKeyString].match(valueMD[value].valuePattern);
 									if(variableStoresObject.indexOf(value)>=0)	//object stores array/object
+									{
 										json[value] = temp;
+									}
 									else
 									{
 										temp = temp.toString();
@@ -541,7 +538,6 @@ function fetchJsonObject(message)
 				json.body = "random input";
 			}
 		}
-	console.log("fetched values ----------------------------------->>>>");
 
 	return json;
 }
@@ -743,21 +739,21 @@ var receiveMessage = function(count, channel, message)
 
 						case "createProject":
 							console.log("Create Project : not yet implemented")
-							if(jsonObject.owner === '' )
-							{
-								console.log("Error : Owner name invalid/not present");
-								//gitBotPublisher.publish(publishChannel,"Error : Owner name invalid/not present");
-							}	
-							else if(jsonObject.repo === '' )
-							{
-								console.log("Error : Project information not present");
-								// gitBotPublisher.publish(publishChannel,"Error : Project information not present");
-							}
-							else
-							{
-								//function to create project
-								// gitBotPublisher.publish(publishChannel,"create project");
-							}	
+							// if(jsonObject.owner === '' )
+							// {
+							// 	console.log("Error : Owner name invalid/not present");
+							// 	//gitBotPublisher.publish(publishChannel,"Error : Owner name invalid/not present");
+							// }	
+							// else if(jsonObject.repo === '' )
+							// {
+							// 	console.log("Error : Project information not present");
+							// 	// gitBotPublisher.publish(publishChannel,"Error : Project information not present");
+							// }
+							// else
+							// {
+							// 	//function to create project
+							// 	// gitBotPublisher.publish(publishChannel,"create project");
+							// }	
 						break;
 
 						case "labelIssue":
