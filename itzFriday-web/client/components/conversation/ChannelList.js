@@ -105,7 +105,7 @@ export default class ChannelList extends React.Component
 		}
 		return(
 			<ListItem primaryText="Channels" id="channels" key="channels" style={styles.listItem} initiallyOpen={true} primaryTogglesNestedList={true}
-			nestedItems={<ListItem rightIcon={<Badge badgeContent={10} />} primaryText={channels} />}>
+			nestedItems={channels} />}>
 			</ListItem>
 			);
 	}
