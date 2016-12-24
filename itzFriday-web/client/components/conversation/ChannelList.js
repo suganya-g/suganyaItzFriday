@@ -7,7 +7,7 @@ import {amber100,green100,orange100,grey50} from 'material-ui/styles/colors';
 import AppBar from 'material-ui/AppBar';
 import IconButton from 'material-ui/IconButton';
 import FlatButton from 'material-ui/FlatButton';
-
+import Badge from 'material-ui/Badge';
 import Paper from 'material-ui/Paper';
 import Drawer from 'material-ui/Drawer';
 import Divider from 'material-ui/Divider';
@@ -105,7 +105,7 @@ export default class ChannelList extends React.Component
 		}
 		return(
 			<ListItem primaryText="Channels" id="channels" key="channels" style={styles.listItem} initiallyOpen={true} primaryTogglesNestedList={true}
-			nestedItems={channels}>
+			nestedItems={<ListItem rightIcon={<Badge badgeContent={10} />} primaryText={channels} />}>
 			</ListItem>
 			);
 	}
