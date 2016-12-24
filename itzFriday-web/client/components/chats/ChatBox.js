@@ -155,8 +155,11 @@ class ChatBox extends Component {
           {
             messages.message = messages.message.content;
             chatMessages.push(messages);
-          }else {
+          }else if(messages.message.type === 'json'){
             messages.message = <ListText issues={messages.message.content}/>;
+            chatMessages.push(messages);
+          }else if(messages.message.type === 'link') {
+            messages.message = <LinkText link={messages.message.content}/>;
             chatMessages.push(messages);
           }
         }else if(names[1] && (users[0].split(' ')[0] === Auth.getNameFromToken()) && (users[1] === (this.props.location.query.name).split(' ')[0]) && (names[0] === this.props.location.query.project) && (users[1] !== 'Droid')){
