@@ -4,7 +4,6 @@ var assignIssue = require("../gitBot/assignIssue");
 var labelIssue = require("../gitBot/labelIssue");
 var closeIssue = require("../gitBot/closeIssue");
 var listIssues = require("../gitBot/listIssues");
-//var greetings = require("../conversation/greetings");
 var commentOnIssue = require("../gitBot/commentOnIssue");
 
 const controller = require('../server/routes/git/git.controller.js');
@@ -53,20 +52,20 @@ var variableStoresObject = ["labels", "assignees"];
 
 //intent metadata
 var intentMD = {
-	createProject : 
-	{
-		context : 'owner',
-		props : 
-		{
-			required : ['repo','authToken'],
-		},
-		pattern :
-		{
-			oneOfThese : ['create', 'make'],
-			required : ['project']
-		}
-	}
-	,
+	// createProject : 
+	// {
+	// 	context : 'owner',
+	// 	props : 
+	// 	{
+	// 		required : ['repo','authToken'],
+	// 	},
+	// 	pattern :
+	// 	{
+	// 		oneOfThese : ['create', 'make'],
+	// 		required : ['project']
+	// 	}
+	// }
+	// ,
 	createIssue : 
 	{
 		context : 'project',
@@ -169,6 +168,13 @@ var valueMD = {
 				keywords : 
 				[
 					{word : "under", want : true},
+					{word : "project", want : true}
+				]
+			},
+			{
+				keywords : 
+				[
+					{word : "set", want : true},		//when confirming project from user
 					{word : "project", want : true}
 				]
 			},
@@ -418,6 +424,10 @@ var valueString = '';
 var issueNumber = '';
 var publishChannel = '';
 var jsonData = '';
+var projectMap = {};						//store {publishChannel : repo}
+var lastCommandWithoutProjectNameMap = {};		//store {publishChannel : last command}
+var isProjectCorrectMap = {};				//store {publishChannel : true/false}
+var isWaitingForConfrimationMap = {};		//store {publishChannel : true/false}
 
 var jsonObject = {
 	"authToken": "",
@@ -437,6 +447,10 @@ function asyncDataHandler(error,result)
 		console.log(error);
 		console.log(error.toString());	
 		jsonData.message = error;
+		if(error.content.match(/error: not found/gi))
+		{
+			projectMap[publishChannel] = null;
+		}
 		gitBotPublisher.publish(publishChannel, JSON.stringify(jsonData));
 	}
 	else
@@ -496,6 +510,9 @@ function fetchJsonObject(message)
 								{
 									found = true;
 
+									//remove this
+									console.log("matched keywords : ");
+									console.log(valueMD[value].keyPattern[pattern].keywords);
 									//fetch the value from valueString
 									let temp = valueString[indexKeyString].match(valueMD[value].valuePattern);
 									if(variableStoresObject.indexOf(value)>=0)	//object stores array/object
@@ -504,14 +521,17 @@ function fetchJsonObject(message)
 									}
 									else
 									{
-										temp = temp.toString();
-										if(valueMD[value].replace !== undefined && valueMD[value].replace !== null && valueMD[value].replace !== '')
+										if(temp != null && temp != '')
 										{
-											json[value] = temp.replace(valueMD[value].replace.replaceThis, valueMD[value].replace.replaceWith).trim();
+											temp = temp.toString();
+											if(valueMD[value].replace !== undefined && valueMD[value].replace !== null && valueMD[value].replace !== '')
+											{
+												json[value] = temp.replace(valueMD[value].replace.replaceThis, valueMD[value].replace.replaceWith).trim();
+											}
+											console.log("found ----> "+value);
+											console.log(json[value]);
 										}	
 									}
-									console.log("found ----> "+value);
-									console.log(json[value]);
 								}
 							}
 						}
@@ -538,7 +558,6 @@ function fetchJsonObject(message)
 				json.body = "random input";
 			}
 		}
-
 	return json;
 }
 
@@ -663,7 +682,8 @@ var receiveMessage = function(count, channel, message)
 	console.log("publish at : "+publishChannel);
 	jsonData.destination = publishChannel;	//set the destination as publish channel
 
-	controller.access(jsonData.user, (err, res) => {
+	controller.access(jsonData.user, (err, res) => 
+	{
 		if(err)
 		{
 			console.log(err);
@@ -705,6 +725,29 @@ var receiveMessage = function(count, channel, message)
 
 				console.log("\njson :");
 				console.log(jsonObject);
+
+				console.log("repo : "+jsonObject.repo);
+				console.log("project : "+publishChannel);
+				console.log("projectMap : "+projectMap[publishChannel]);
+				console.log(projectMap[publishChannel]);
+				
+				if(jsonObject.repo === '')
+				{
+					if(projectMap[publishChannel] !== null && projectMap[publishChannel] !== undefined && projectMap[publishChannel] !== '')
+					{
+						jsonObject.repo = projectMap[publishChannel];
+						// //ask to cinfirm project name
+						// gitBotPublisher.publish(publishChannel,JSON.stringify({type:"string", content: ""}))
+						// jsonData.message = {type:"string", content: "Should I process in project"};
+						// 	gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
+						console.log("updated json : ");
+						console.log(jsonObject);
+						jsonData.message = {type:"string", content:"Operating in project : "+projectMap[publishChannel]};
+						gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
+					}	
+					
+				}
+				projectMap[publishChannel] = jsonObject.repo;
 				
 				for(let intent in intents)
 				{
@@ -737,24 +780,9 @@ var receiveMessage = function(count, channel, message)
 							
 						break;
 
-						case "createProject":
-							console.log("Create Project : not yet implemented")
-							// if(jsonObject.owner === '' )
-							// {
-							// 	console.log("Error : Owner name invalid/not present");
-							// 	//gitBotPublisher.publish(publishChannel,"Error : Owner name invalid/not present");
-							// }	
-							// else if(jsonObject.repo === '' )
-							// {
-							// 	console.log("Error : Project information not present");
-							// 	// gitBotPublisher.publish(publishChannel,"Error : Project information not present");
-							// }
-							// else
-							// {
-							// 	//function to create project
-							// 	// gitBotPublisher.publish(publishChannel,"create project");
-							// }	
-						break;
+						// case "createProject":
+						// 	console.log("Create Project : not yet implemented")	
+						// break;
 
 						case "labelIssue":
 							console.log("\ncommand to label issue");
@@ -784,6 +812,8 @@ var receiveMessage = function(count, channel, message)
 							console.log("Sorry, but I am unable to understand you.");
 							jsonData.message = {type:"string", content: "Sorry, I am unable to understand you."};
 							gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
+							break;
+
 					}
 				}
 			}
