@@ -7,7 +7,7 @@ let userprofile = require('./../userprofile/userprofile.schema.js');
 let Schema = mongoose.Schema;
 
 let channelMembership = new Schema({
-	channelID:{type:Schema.Type.ObjectId,ref:'channelDetails'},
-	memberID:{type:Schema.Type.ObjectId,ref:'userprofile'}
+	channelID:{type:Schema.Types.ObjectId,ref:'channelDetails'},
+	memberID:{type:Schema.Types.ObjectId,ref:'userprofile'}
 });
-module.exports=mongoose.modal('channelMembership',channelMembership);
+module.exports=mongoose.model('channelMembership',channelMembership);

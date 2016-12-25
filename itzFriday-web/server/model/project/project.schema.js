@@ -12,4 +12,4 @@ let projectDetails = new Schema({
 projectDetails.methods.checkTitle = function(title) {
     return (title === this.title);
 };
-module.exports=mongoose.modal('projectDetails',projectDetails);
+module.exports=mongoose.model('projectDetails',projectDetails);

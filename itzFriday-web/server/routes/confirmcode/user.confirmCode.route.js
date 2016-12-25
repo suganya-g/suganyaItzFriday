@@ -1,8 +1,8 @@
 var express= require('express')
 var router= express.Router();
-let CodeDetails = require('./../../modal/confirmcode/confirmCode.details.js');
+let CodeDetails = require('./../../model/confirmcode/confirmCode.details.js');
 var sendMail=require('./../../service/sendmail.js');
-var UserProfile = require('./../profile/user.profiles.js');
+var UserProfile = require('./../../model/userprofile/userprofile.schema.js');
 var async = require('async');
 router.post('/user/storeConfirmCode/',function(req, res){
 	var email =  req.body.email;
@@ -59,7 +59,6 @@ router.post('/user/storeConfirmCode/',function(req, res){
 									callback(err);
 
 								}
-
 								else{
 									res.status(200).json({message:"token is successfully created and sent to mail",
 										userexist:userexist,
@@ -67,8 +66,7 @@ router.post('/user/storeConfirmCode/',function(req, res){
 									})
 								}
 							});
-						//}	
-						
+
 					} 
 					else{
 						var randomNum=Math.floor(Math.random() * 10);
@@ -113,7 +111,7 @@ router.post('/user/storeConfirmCode/',function(req, res){
 		});	
 });
 
-	router.post('/user/confirmCode',function(req,res){
+router.post('/user/confirmCode',function(req,res){
 		let confirmationCode = req.body.confirmCode;
 		console.log(confirmationCode);
 		console.log(req.body);
