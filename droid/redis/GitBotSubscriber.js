@@ -210,6 +210,12 @@ var valueMD = {
 					{word : "add", want : true},
 					{word : "issue", want : true}
 				]
+			},
+			{
+				keywords : 
+				[
+					{word : "title", want : true},
+				]
 			}
 		],
 		valuePattern : /\s"[.\w-_&@!?,'\/[\]\s(){}]+"/,
@@ -472,7 +478,8 @@ function fetchJsonObject(message)
 	"body" : "",
 	"labels" : "",
 	"assignees" : "",
-	"state" : "open"
+	"state" : "open",
+	"text" : ""			//use it for commands other than git commands
 	}
 
 	let project = '';
@@ -539,23 +546,23 @@ function fetchJsonObject(message)
 				}	
 			}
 		}
-		else
+		else if(valueString === null)
 		{
 			if(message === "" || message.match(/hello/gi) || message.match(/hi/gi) || message.match(/hey/gi) || message.match(/whats up/gi) || message.match(/sup/gi) || message.match(/wassup/gi))
 			{
-				json.body=message;
+				json.text=message;
 			}
 			else if(message.match(/how/) && message.match(/are/) && message.match(/you/))
 			{
-				json.body=message;
+				json.text=message;
 			}
 			else if(keyString.length === 1 && valueString === null)	//atleast one intent (list all issues)
 			{
-				json.body=message;
+				json.text=message;
 			}
 			else
 			{
-				json.body = "random input";
+				json.text = "random input";
 			}
 		}
 	return json;
@@ -672,7 +679,7 @@ var receiveMessage = function(count, channel, message)
 	//fetch the json
 	jsonData = JSON.parse(message);
 	//fetch the message
-	message = jsonData.message;
+	message = jsonData.message.replace('Hey Droid, ','');
 	//change Author to Droid
 	jsonData.author = "Droid";
 	//fetch the keyString
@@ -730,6 +737,17 @@ var receiveMessage = function(count, channel, message)
 				console.log("project : "+publishChannel);
 				console.log("projectMap : "+projectMap[publishChannel]);
 				console.log(projectMap[publishChannel]);
+
+				let intentString = '';
+
+				for(let intent in intents)
+				{
+					intentString += intents[intent].intent + " ";
+					if(intentString.match(/listIssues/gi))
+					{
+						jsonData.text = '';
+					}
+				}
 				
 				if(jsonObject.repo === '')
 				{
@@ -742,8 +760,11 @@ var receiveMessage = function(count, channel, message)
 						// 	gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
 						console.log("updated json : ");
 						console.log(jsonObject);
-						jsonData.message = {type:"string", content:"Operating in project : "+projectMap[publishChannel]};
-						gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
+						if(!intentString.match(/randomInput/gi) && jsonData.text === '')
+						{
+							jsonData.message = {type:"string", content:"Operating on project : "+projectMap[publishChannel]};
+							gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
+						}
 					}	
 					
 				}
