@@ -33,12 +33,12 @@ const styles = {
       },
       paperStyle:{
     	position:'absolute',
-			top:'20%',
-			bottom:'20%',
+			top:'10%',
+			bottom:'10%',
 			left:'10%',
 			right:'10%',
 			width:'80%',
-			height:'60%'
+			height:'80%'
 		}
     };
 export default class SendInvite extends React.Component
@@ -137,11 +137,11 @@ export default class SendInvite extends React.Component
 	{
 		return(<Grid>
 		<Paper style={styles.paperStyle}>
-			<div style={{textAlign:'center',marginTop:'50px'}}>
+			<div style={{textAlign:'center',marginTop:'20px'}}>
 			<Row center="xs">
 			  <MediaQuery query='(min-device-width: 1024px)'>
-			<SocialPersonAdd style={{color:'#004D40',width:'100px',height:'100px'}} />
-			<h1 style={{color:'#004D40'}}>Join Us!</h1>
+			<SocialPersonAdd style={{color:'#004D40',width:'80px',height:'80px'}} />
+			<h2 style={{color:'#004D40'}}>Join Us!</h2>
 			</MediaQuery>
 
 			 <MediaQuery query='(max-device-width: 1023px)'>
@@ -179,14 +179,26 @@ export default class SendInvite extends React.Component
 				<ContentAddCircleOutline/>
 			</IconButton>
 			</Row>
-      <br />
+			<br />
 			<Row center="xs">
+			<MediaQuery query='(min-device-width: 1024px)'>
 			{
-			(this.state.chipData.length)>=3?
-			<div id="chipArea" style={{width:'50%',height:'150px',overflowY: 'auto'}}></div>
-			:
-			<div id="chipArea"></div>
+				(this.state.chipData.length)>=1?
+				<div id="chipArea" style={{width:'30%',height:'150px',overflowY: 'auto',border:'1px solid black'}}></div>
+				:
+				<div id="chipArea"></div>
 			}
+
+			</MediaQuery>
+
+			<MediaQuery query='(max-device-width: 1023px)'>
+			{
+			(this.state.chipData.length)>=1?
+			<div id="chipArea" style={{width:'60%',height:'100px',overflowY: 'auto',border:'1px solid black'}}></div>
+			:
+		  <div id="chipArea"></div>
+			}
+			</MediaQuery>
 			</Row>
 			<br />
 			<Row center="xs">

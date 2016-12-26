@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {Link} from 'react-router';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import {List, ListItem} from 'material-ui/List';
+import {List, ListItem,makeSelectable} from 'material-ui/List';
 import {grey50} from 'material-ui/styles/colors';
 import Paper from 'material-ui/Paper';
 import Divider from 'material-ui/Divider';
@@ -28,6 +28,43 @@ import ManageTeam from './../../sendInvite/SendInvite';
 import Auth from '../../../services/auth.service.js';
 import MediaQuery from 'react-responsive';
 import { Grid, Row, Col } from 'react-flexbox-grid';
+
+
+let SelectableList = makeSelectable(List);
+
+function wrapState(ComposedComponent) {
+  return class SelectableList extends React.Component {
+    static propTypes = {
+      children: React.PropTypes.node.isRequired,
+      defaultValue: React.PropTypes.number.isRequired,
+    };
+
+    componentWillMount() {
+      this.setState({
+        selectedIndex: this.props.defaultValue,
+      });
+    }
+
+    handleRequestChange = (event, index) => {
+      this.setState({
+        selectedIndex: index,
+      });
+    };
+
+    render() {
+      return (
+        <ComposedComponent
+          value={this.state.selectedIndex}
+          onChange={this.handleRequestChange}
+        >
+          {this.props.children}
+        </ComposedComponent>
+      );
+    }
+  };
+}
+
+SelectableList = wrapState(SelectableList);
 //styling
 const styles = {
 	rootContainer : {
@@ -114,6 +151,7 @@ export default class LoggedInLayout extends React.Component
 			messages: '',
 			open: false,
 			openIndex:0,
+      badgeContent:0,
 			loggedIn: Auth.loggedIn()
 		};
 
@@ -129,6 +167,7 @@ export default class LoggedInLayout extends React.Component
 		this.openNotificationBoard = this.openNotificationBoard.bind(this);
 		this.setTitleToNotifications = this.setTitleToNotifications.bind(this);
 		this.nameCompressor = this.nameCompressor.bind(this);
+    this.handleOpenList=this.handleOpenList.bind(this);
 	}
 	nameCompressor(name)
 	{
@@ -144,7 +183,7 @@ export default class LoggedInLayout extends React.Component
 
   handleNestedListToggle(index)
 	{
-		this.setState({openIndex:index});
+    this.handleOpenList(index);
 	}
 	openNotificationBoard ()
 	{
@@ -153,6 +192,10 @@ export default class LoggedInLayout extends React.Component
 		this.props.router.replace('notifications/');
 	}
 
+ handleOpenList(index)
+ {
+   this.setState({openIndex:index});
+ }
 	setTitleToNotifications () {
 		this.setState({appBarTitle: 'Notifications'});
 	}
@@ -160,6 +203,7 @@ export default class LoggedInLayout extends React.Component
 	componentWillMount() {
 		this.setState({loggedIn: Auth.loggedIn()})
 	}
+
 	openThisProject (projectName)
 	{
 		currentProject = projectName ;
@@ -210,15 +254,19 @@ export default class LoggedInLayout extends React.Component
 		this.props.router.replace('login/');
 	}
 	 render() {
+
 		const isLogged = Auth.loggedIn();
 		projectList =[];
+
 		for (let index in projects)
 		 {
 			 projectList.push(
-			      <ListItem leftIcon={<FileFolder />} rightIcon={ <Badge badgeContent={10} />} style={{color:'white'}} primaryText={projects[index].name}
+			    <ListItem id={index} leftIcon={<FileFolder />} rightIcon={ <Badge badgeStyle={{visibility: this.state.badgeContent === 0 ? 'hidden' : 'visible'}} badgeContent={this.state.badgeContent} />}  primaryText={projects[index].name}
 							 onNestedListToggle={this.handleNestedListToggle.bind(this,index)}
+							 value={index+1}
 							 open={this.state.openIndex===index}
 							 primaryTogglesNestedList={true}
+               style={{backgroundColor: this.state.openIndex === index ? 'black':'',color:'white'}}
 							 onClick={()=>this.openThisProject(projects[index].name)}
 							 nestedItems={[
 								 <div style={{backgroundColor:'white'}}>
@@ -242,9 +290,9 @@ export default class LoggedInLayout extends React.Component
 					<div className="col-xs-2 col-sm-2 col-md-2 col-lg-2">
 						<div className="leftPane" style={styles.leftPane}>
 								<Drawer open={true} docked={true} id="projectList" containerStyle={styles.drawer} zDepth={2}>
-											 <List>
+											 <SelectableList defaultValue={3}>
 														{projectList}
-											 </List>
+											  </SelectableList>
 								</Drawer>
 							</div>
 					 </div>

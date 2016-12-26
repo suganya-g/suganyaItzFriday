@@ -9,6 +9,7 @@ import { Grid, Row, Col } from 'react-flexbox-grid';
 import Paper from 'material-ui/Paper';
 import { FormsyCheckbox, FormsyDate, FormsyRadio, FormsyRadioGroup, FormsySelect, FormsyText, FormsyTime, FormsyToggle } from 'formsy-material-ui/lib';
 import ChangePassword from './../login/ChangePassword';
+import Request from 'superagent';
 import { Router, Route, Link, browserHistory } from 'react-router';
 
 const styles = {
@@ -46,7 +47,8 @@ export default class Profile extends React.Component {
     super(props);
     this.state = {
       canSubmit: false,
-      open: false
+      open: false,
+      avatarUrl:'./../../resources/images/userAvatar.jpg'
     };
     this.enableButton = this.enableButton.bind(this);
     this.disableButton = this.disableButton.bind(this);
@@ -101,7 +103,7 @@ export default class Profile extends React.Component {
               <div>
                 <Avatar
                         size={ 150 }
-                        src="./../../resources/images/userAvatar.jpg" />
+                        src={this.state.avatarUrl} />
 
                 <div>
                   <FlatButton
@@ -146,9 +148,8 @@ export default class Profile extends React.Component {
                   <br />
                   <FormsyText
                               name="email"
-                              validations="isEmail"
-                              validationError="Please enter a valid email"
-                              required
+                              defaultValue={localStorage['email']}
+                				      disabled={true}
                               hintText="Enter your email"
                               updateImmediately
                               floatingLabelText="Email" />
