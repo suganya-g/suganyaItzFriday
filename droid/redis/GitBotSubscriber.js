@@ -4,14 +4,16 @@ var assignIssue = require("../gitBot/assignIssue");
 var labelIssue = require("../gitBot/labelIssue");
 var closeIssue = require("../gitBot/closeIssue");
 var listIssues = require("../gitBot/listIssues");
-//var greetings = require("../conversation/greetings");
 var commentOnIssue = require("../gitBot/commentOnIssue");
 
 const controller = require('../server/routes/git/git.controller.js');
-
 const redisUrl = process.env.REDIS_URL || 'redis://localhost';
 var gitBotPublisher = redis.createClient(redisUrl);
 
+var contextMD = require("../metaData/contextMD.js");
+var intentMD = require("../metaData/intentMD.js");
+var valueMD = require("../metaData/valueMD.js");
+var variableStoresObjectMD = require("../metaData/variableStoresObjectMD.js");
 //subscribe --> Project:Channel/DM:GitBot
 //publish --> Project:Channel/DM
 
@@ -42,382 +44,16 @@ var gitBotPublisher = redis.createClient(redisUrl);
 	//comment on issue #number comment "my comment"
 	//on issue #number comment "my comment"
 
-//context metadata
-var contextMD = {
-	owner: 100,
-	project: 200,
-	issue: 300
-};
-
-var variableStoresObject = ["labels", "assignees"];
-
-//intent metadata
-var intentMD = {
-	createProject : 
-	{
-		context : 'owner',
-		props : 
-		{
-			required : ['repo','authToken'],
-		},
-		pattern :
-		{
-			oneOfThese : ['create', 'make'],
-			required : ['project']
-		}
-	}
-	,
-	createIssue : 
-	{
-		context : 'project',
-		props : 
-		{
-			required : ['repo','authToken','title'],
-			optional : ['body', 'labels', 'assignees']
-		},
-		pattern :
-		{
-			oneOfThese : ['create', 'open', 'add'],
-			required : ['issue']
-		}
-	}
-	,
-	assignIssue : 
-	{	
-		context : 'project',
-		props : 
-		{
-			required : ['repo','authToken','number','assignees']
-		},
-		pattern : 
-		{
-			oneOfThese : ['assign', 'give'],
-			required : ['issue']
-		}
-	}
-	,
-	labelIssue : 
-	{	
-		context : 'project',
-		props : 
-		{
-			required : ['repo','authToken','number','labels']
-		},
-		pattern : 
-		{
-			oneOfThese : ['label', 'tag'],
-			required : ['issue']
-		}
-	}
-	,
-	closeIssue : 
-	{					
-		context : 'project',
-		props : 
-		{
-			required : ['repo','authToken','number']
-		},
-		pattern : 
-		{
-			required : ['close']
-		}
-	}
-	,
-	listIssues : 
-	{
-		context : 'project',
-		props : 
-		{
-			required : ['repo'],
-			optional : ['number']
-		},
-		pattern :
-		{
-			oneOfThese : ['list', 'show', 'display'],
-			required : ['issue']
-		}
-	}
-	,
-	commentOnIssue : 
-	{
-		context : 'issue',
-		props : 
-		{
-			required : ['repo','authToken','number','body']
-		},
-		pattern :
-		{
-			oneOfThese : ['on'],
-			required : ['comment']
-		}
-	}	
-};
-
-var valueMD = {
-	repo : 						//repo
-	{
-		priority : 100,
-		keyPattern : [
-			{
-				keywords : 
-				[
-					{word : "in", want : true},
-					{word : "project", want : true}
-				]
-			},
-			{
-				keywords : 
-				[
-					{word : "under", want : true},
-					{word : "project", want : true}
-				]
-			},
-		],
-		valuePattern : /\s@[\w]{2}[\w-_/]+/,
-		replace : 
-		{
-			replaceThis : '@',
-			replaceWith : ''
-		}
-	},
-	title : 					//title
-	{
-		priority : 200,
-		keyPattern : [
-			{
-				keywords : 
-				[
-					{word : "create", want : true},
-					{word : "issue", want : true}
-				]
-			},
-			{
-				keywords : 
-				[
-					{word : "open", want : true},
-					{word : "issue", want : true}
-				]
-			},
-			{
-				keywords : 
-				[
-					{word : "add", want : true},
-					{word : "issue", want : true}
-				]
-			}
-		],
-		valuePattern : /\s"[.\w-_&@!?,'\/[\]\s(){}]+"/,
-		replace : 
-		{
-			replaceThis : /"+/g,
-			replaceWith : ''
-		}
-	},
-	body : 						//body
-	{
-		priority : 300,
-		keyPattern : [
-			{
-				keywords : 
-				[
-					{word : "comment", want : true},
-					{word : "on", want : false}
-				]
-			},
-			{
-				keywords : 
-				[
-					{word : "desc", want : true}
-				]
-			},
-			{
-				keywords : 
-				[
-					{word : "description", want : true}
-				]
-			},
-			{
-				keywords : 
-				[
-					{word : "detail", want : true}
-				]
-			},
-			{
-				keywords : 
-				[
-					{word : "content", want : true}
-				]
-			}
-		],
-		valuePattern : /"[.\w-_&@!?,'\/[\]\s(){}]+"/,
-		replace : 
-		{
-			replaceThis : /"+/g,
-			replaceWith : ''
-		}
-	},
-	assignees : 				//assignees
-	{
-		priority : 300,
-		keyPattern : [
-			{
-				keywords : 
-				[
-					{word : "to", want : true},
-					{word : "label", want : false}
-				]
-			},
-			{
-				keywords : 
-				[
-					{word : "to", want : true},
-					{word : "assign", want : true}
-				]
-			},
-			{
-				keywords : 
-				[
-					{word : "to", want : true},
-					{word : "give", want : true}
-				]
-			},
-		],
-		valuePattern : /[\w-_]+/g,
-		replace : null
-	},
-	labels : 				//labels
-	{
-		priority : 300,
-		keyPattern : [
-			{
-				keywords : 
-				[
-					{word : "assign", want : true},
-					{word : "label", want : true}
-				]
-			},
-			{
-				keywords : 
-				[
-					{word : "with", want : true},
-					{word : "tag", want : true}
-				]
-			},
-			{
-				keywords : 
-				[
-					{word : "add", want : true},
-					{word : "label", want : true}
-				]
-			},
-			{
-				keywords : 
-				[
-					{word : "add", want : true},
-					{word : "tag", want : true}
-				]
-			},
-			{
-				keywords : 
-				[
-					{word : "with", want : true},
-					{word : "label", want : true}
-				]
-			},
-		],
-		valuePattern : /(help wanted)|([\w-_]+)/g,
-		replace : null
-	},
-	number : 				//number
-	{
-		priority : 300,
-		keyPattern : [
-			{
-				keywords : 
-				[
-					{word : "assign", want : true},
-					{word : "issue", want : true}
-				]
-			},
-			{
-				keywords : 
-				[
-					{word : "give", want : true},
-					{word : "issue", want : true}
-				]
-			},
-			{
-				keywords : 
-				[
-					{word : "label", want : true},
-					{word : "issue", want : true}
-				]
-			},
-			{
-				keywords : 
-				[
-					{word : "tag", want : true},
-					{word : "issue", want : true}
-				]
-			},
-			{
-				keywords : 
-				[
-					{word : "list", want : true},
-					{word : "issue", want : true}
-				]
-			},
-			{
-				keywords : 
-				[
-					{word : "display", want : true},
-					{word : "issue", want : true}
-				]
-			},
-			{
-				keywords : 
-				[
-					{word : "show", want : true},
-					{word : "issue", want : true}
-				]
-			},
-			{
-				keywords : 
-				[
-					{word : "close", want : true}
-				]
-			},
-			{
-				keywords : 
-				[
-					{word : "on", want : true},
-					{word : "issue", want : true}
-				]
-			},
-			{
-				keywords : 
-				[
-					{word : "comment", want : true},
-					{word : "on", want : true}
-				]
-			}
-		],
-		valuePattern : /#[0-9]+/,
-		replace : 
-		{
-			replaceThis : '#',
-			replaceWith : ''
-		}
-	},
-
-};
-
 var intents = [];
 var keyString = '';
 var valueString = '';
 var issueNumber = '';
 var publishChannel = '';
 var jsonData = '';
+var projectMap = {};						//store {publishChannel : repo}
+// var lastCommandWithoutProjectNameMap = {};		//store {publishChannel : last command}
+// var isProjectCorrectMap = {};				//store {publishChannel : true/false}
+// var isWaitingForConfrimationMap = {};		//store {publishChannel : true/false}
 
 var jsonObject = {
 	"authToken": "",
@@ -437,6 +73,10 @@ function asyncDataHandler(error,result)
 		console.log(error);
 		console.log(error.toString());	
 		jsonData.message = error;
+		if(error.content.match(/error: not found/gi))
+		{
+			projectMap[publishChannel] = null;
+		}
 		gitBotPublisher.publish(publishChannel, JSON.stringify(jsonData));
 	}
 	else
@@ -458,7 +98,8 @@ function fetchJsonObject(message)
 	"body" : "",
 	"labels" : "",
 	"assignees" : "",
-	"state" : "open"
+	"state" : "open",
+	"text" : ""			//use it for commands other than git commands
 	}
 
 	let project = '';
@@ -496,22 +137,28 @@ function fetchJsonObject(message)
 								{
 									found = true;
 
+									//remove this
+									console.log("matched keywords : ");
+									console.log(valueMD[value].keyPattern[pattern].keywords);
 									//fetch the value from valueString
 									let temp = valueString[indexKeyString].match(valueMD[value].valuePattern);
-									if(variableStoresObject.indexOf(value)>=0)	//object stores array/object
+									if(variableStoresObjectMD.indexOf(value)>=0)	//object stores array/object
 									{
 										json[value] = temp;
 									}
 									else
 									{
-										temp = temp.toString();
-										if(valueMD[value].replace !== undefined && valueMD[value].replace !== null && valueMD[value].replace !== '')
+										if(temp != null && temp != '')
 										{
-											json[value] = temp.replace(valueMD[value].replace.replaceThis, valueMD[value].replace.replaceWith).trim();
+											temp = temp.toString();
+											if(valueMD[value].replace !== undefined && valueMD[value].replace !== null && valueMD[value].replace !== '')
+											{
+												json[value] = temp.replace(valueMD[value].replace.replaceThis, valueMD[value].replace.replaceWith).trim();
+											}
+											console.log("found ----> "+value);
+											console.log(json[value]);
 										}	
 									}
-									console.log("found ----> "+value);
-									console.log(json[value]);
 								}
 							}
 						}
@@ -519,26 +166,25 @@ function fetchJsonObject(message)
 				}	
 			}
 		}
-		else
+		else if(valueString === null)
 		{
 			if(message === "" || message.match(/hello/gi) || message.match(/hi/gi) || message.match(/hey/gi) || message.match(/whats up/gi) || message.match(/sup/gi) || message.match(/wassup/gi))
 			{
-				json.body=message;
+				json.text=message;
 			}
 			else if(message.match(/how/) && message.match(/are/) && message.match(/you/))
 			{
-				json.body=message;
+				json.text=message;
 			}
 			else if(keyString.length === 1 && valueString === null)	//atleast one intent (list all issues)
 			{
-				json.body=message;
+				json.text=message;
 			}
 			else
 			{
-				json.body = "random input";
+				json.text = "random input";
 			}
 		}
-
 	return json;
 }
 
@@ -653,7 +299,7 @@ var receiveMessage = function(count, channel, message)
 	//fetch the json
 	jsonData = JSON.parse(message);
 	//fetch the message
-	message = jsonData.message;
+	message = jsonData.message.replace('Hey Droid, ','');
 	//change Author to Droid
 	jsonData.author = "Droid";
 	//fetch the keyString
@@ -663,7 +309,8 @@ var receiveMessage = function(count, channel, message)
 	console.log("publish at : "+publishChannel);
 	jsonData.destination = publishChannel;	//set the destination as publish channel
 
-	controller.access(jsonData.user, (err, res) => {
+	controller.access(jsonData.user, (err, res) => 
+	{
 		if(err)
 		{
 			console.log(err);
@@ -705,6 +352,43 @@ var receiveMessage = function(count, channel, message)
 
 				console.log("\njson :");
 				console.log(jsonObject);
+
+				console.log("repo : "+jsonObject.repo);
+				console.log("project : "+publishChannel);
+				console.log("projectMap : "+projectMap[publishChannel]);
+				console.log(projectMap[publishChannel]);
+
+				let intentString = '';
+
+				for(let intent in intents)
+				{
+					intentString += intents[intent].intent + " ";
+					if(intentString.match(/listIssues/gi))
+					{
+						jsonData.text = '';
+					}
+				}
+				
+				if(jsonObject.repo === '')
+				{
+					if(projectMap[publishChannel] !== null && projectMap[publishChannel] !== undefined && projectMap[publishChannel] !== '')
+					{
+						jsonObject.repo = projectMap[publishChannel];
+						// //ask to cinfirm project name
+						// gitBotPublisher.publish(publishChannel,JSON.stringify({type:"string", content: ""}))
+						// jsonData.message = {type:"string", content: "Should I process in project"};
+						// 	gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
+						console.log("updated json : ");
+						console.log(jsonObject);
+						if(!intentString.match(/randomInput/gi) && jsonData.text === '')
+						{
+							jsonData.message = {type:"string", content:"Operating on project : "+projectMap[publishChannel]};
+							gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
+						}
+					}	
+					
+				}
+				projectMap[publishChannel] = jsonObject.repo;
 				
 				for(let intent in intents)
 				{
@@ -737,24 +421,9 @@ var receiveMessage = function(count, channel, message)
 							
 						break;
 
-						case "createProject":
-							console.log("Create Project : not yet implemented")
-							// if(jsonObject.owner === '' )
-							// {
-							// 	console.log("Error : Owner name invalid/not present");
-							// 	//gitBotPublisher.publish(publishChannel,"Error : Owner name invalid/not present");
-							// }	
-							// else if(jsonObject.repo === '' )
-							// {
-							// 	console.log("Error : Project information not present");
-							// 	// gitBotPublisher.publish(publishChannel,"Error : Project information not present");
-							// }
-							// else
-							// {
-							// 	//function to create project
-							// 	// gitBotPublisher.publish(publishChannel,"create project");
-							// }	
-						break;
+						// case "createProject":
+						// 	console.log("Create Project : not yet implemented")	
+						// break;
 
 						case "labelIssue":
 							console.log("\ncommand to label issue");
@@ -784,6 +453,8 @@ var receiveMessage = function(count, channel, message)
 							console.log("Sorry, but I am unable to understand you.");
 							jsonData.message = {type:"string", content: "Sorry, I am unable to understand you."};
 							gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
+							break;
+
 					}
 				}
 			}
