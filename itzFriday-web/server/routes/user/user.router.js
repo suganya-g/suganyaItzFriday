@@ -23,15 +23,15 @@ userRouter.post('/login', function(req, res) {
   	if(user){
       console.log(user);
   		if(user.checkPassword(password)){
-        userProfile.findOne({email:email},function(error,userfound){
+        userProfile.findOne({email:email},function(error,userdetails){
           if(error){
             console.log(error);
             console.log("error found while getting profile in authentication");
           }
           else{
-            if(userfound){
-              console.log(userfound);
-              authenticateToken=jwt.sign({user:email,name:userfound.firstName,userid:userfound._id,admin:user.role}, appConst.jwtSecret);
+            if(userdetails){
+              console.log(userdetails);
+              authenticateToken=jwt.sign({user:email,name:userdetails.firstname,userid:userdetails._id,admin:user.role}, appConst.jwtSecret);
               res.status(200).json({
                 message:authenticateToken,
                 error:false
