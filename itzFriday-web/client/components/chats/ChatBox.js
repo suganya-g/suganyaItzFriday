@@ -8,7 +8,7 @@ import ListText from './../others/ListText';
 import LinkText from './../others/LinkText';
 
 //var name = ''; 
-var chatMessages = [];
+//var chatMessages = [];
 var socket = '';
 class ChatBox extends Component {
   constructor(props) {
@@ -27,11 +27,16 @@ class ChatBox extends Component {
     socket.on('connected', this._getConnectedUser.bind(this));
     socket.on('user:join',this._getJoinedUser.bind(this));
     socket.on('send:message', this._recieveMessage.bind(this));
+    socket.on('init:data', this._getDataOnLoad.bind(this))
   }
   componentWillReceiveProps(nextProps) {
+    if(nextProps.location.query.identifier.match(/channel/i)) {
+      var destination = nextProps.location.query.project + '#' + nextProps.location.query.name;
+      socket.emit('init:data', destination);
+    }
     if(this.props !== nextProps) {
-      chatMessages=[];
-      this.setState({chatMessages});
+      //chatMessages=[];
+      //socket.on('init:data', this._getDataOnLoad.bind(this))
     }
     if(this.props.location.query.project !== nextProps.location.query.project) {
       socket.emit('user:join', nextProps.location.query.project);
@@ -89,7 +94,7 @@ class ChatBox extends Component {
       if(message.chatText.match(/@Droid/i)) {
          sendingMessage.destination = this.props.location.query.project+'#Droid'+'/'+this.props.location.query.name;
          sendingMessage.message = message.chatText.replace(/@droid/i, 'Hey Droid, ');
-         chatMessages.push(sendingMessage);
+         //chatMessages.push(sendingMessage);
           
       }else {
         sendingMessage.destination = this.props.location.query.project+'#'+this.props.location.query.name
@@ -98,36 +103,33 @@ class ChatBox extends Component {
     //chatMessages.push(sendingMessage);
     //
     socket.emit('send:message', sendingMessage);
-    this.setState({chatMessages});
+    //this.setState({chatMessages});
   }
 
   _filterMessages(messages) 
   {
     console.log(messages);
-    if(messages && this.props.location.query.identifier === 'channel') 
-    {
+    if(messages && this.props.location.query.identifier === 'channel') {
       var names = messages.destination.split('#');
-      if(names[1] && names[1].match(/Droid/)) 
-      {
+      if(names[1] && names[1].match(/Droid/)) {
         var channelName = names[1].split('/');
         if(channelName && (channelName[0] === this.props.location.query.name) && (names[0] === this.props.location.query.project)) 
         {
           if(messages.message.type === 'string') 
           {
             messages.message = messages.message.content;
-            chatMessages.push(messages);
           }else if(messages.message.type === 'json'){
             messages.message = <ListText issues={messages.message.content}/>;
-            chatMessages.push(messages);
           } else if(messages.message.type === 'link') {
             messages.message = <LinkText link={messages.message.content}/>;
-            chatMessages.push(messages);
           }
+          this.state.chatMessages.push(messages);
         }
       }else if(names[1] && (names[1] === this.props.location.query.name) && (names[0] === this.props.location.query.project))
       {
-        chatMessages.push(messages);
+        this.state.chatMessages.push(messages);
       }
+      this.setState({chatMessages: this.state.chatMessages});
     }
     else if(messages && this.props.location.query.identifier === 'message') 
     {
@@ -139,22 +141,20 @@ class ChatBox extends Component {
           if(messages.message.type === 'string') 
           {
             messages.message = messages.message.content;
-            chatMessages.push(messages);
           }else if(messages.message.type === 'json'){
             messages.message = <ListText issues={messages.message.content}/>;
-            chatMessages.push(messages);
           }else if(messages.message.type === 'link') {
             messages.message = <LinkText link={messages.message.content}/>;
-            chatMessages.push(messages);
           }
+          this.state.chatMessages.push(messages);
         }else if(names[1] && (users[0].split(' ')[0] === Auth.getNameFromToken()) && (users[1] === (this.props.location.query.name).split(' ')[0]) && (names[0] === this.props.location.query.project) && (users[1] !== 'Droid')){
-          chatMessages.push(messages);
+          this.state.chatMessages.push(messages);
         }else if(names[1] && (users[0].split(' ')[0] === (this.props.location.query.name).split(' ')[0]) && (users[1] === Auth.getNameFromToken()) && (names[0] === this.props.location.query.project) && (users[1] !== 'Droid')){
-          chatMessages.push(messages);
+          this.state.chatMessages.push(messages);
         }
       }
+      this.setState({chatMessages:this.state.chatMessages});
     }
-    this.setState({chatMessages});
   }
 
   _getConnectedUser(user) {
@@ -165,6 +165,9 @@ class ChatBox extends Component {
   }
   _socketConnectionError(err) {
     console.log(err)
+  }
+  _getDataOnLoad(chatMessages) {
+    this.setState({chatMessages: chatMessages});
   }
 }
 

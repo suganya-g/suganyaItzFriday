@@ -44,11 +44,12 @@ var variableStoresObjectMD = require("../metaData/variableStoresObjectMD.js");
 	//comment on issue #number comment "my comment"
 	//on issue #number comment "my comment"
 
+const publishChannel = 'delivery';
 var intents = [];
 var keyString = '';
 var valueString = '';
 var issueNumber = '';
-var publishChannel = '';
+var deliveryChannel = '';
 var jsonData = '';
 var projectMap = {};						//store {publishChannel : repo}
 // var lastCommandWithoutProjectNameMap = {};		//store {publishChannel : last command}
@@ -75,7 +76,7 @@ function asyncDataHandler(error,result)
 		jsonData.message = error;
 		if(error.content.match(/error: not found/gi))
 		{
-			projectMap[publishChannel] = null;
+			projectMap[deliveryChannel] = null;
 		}
 		gitBotPublisher.publish(publishChannel, JSON.stringify(jsonData));
 	}
@@ -266,7 +267,7 @@ function getUserIntent(message, keyString)
 	return intent;
 }
 
-function getPublishChannel(source)	//channel name will only consist of alphabet and numbers,-,_
+function getDeliveryChannel(source)	//channel name will only consist of alphabet and numbers,-,_
 {
 	let destination = '';
 	let temp = '';
@@ -293,7 +294,7 @@ var receiveMessage = function(count, channel, message)
 	let strArr = '';
 	keyString = [];
 	valueString = [];
-	publishChannel = '';
+	deliveryChannel = '';
 	let authToken = '';
 
 	//fetch the json
@@ -303,12 +304,18 @@ var receiveMessage = function(count, channel, message)
 	//fetch the keyString
 	keyString = getKeyString(message);
 	//fetch Channel to publish on
-	publishChannel = getPublishChannel(jsonData.destination);	//or use jsonData.destination
-	console.log("publish at : "+publishChannel);
-	jsonData.destination = publishChannel;	//set the destination as publish channel
+	deliveryChannel = getDeliveryChannel(jsonData.destination);	//or use jsonData.destination
+	console.log("delivering at : "+deliveryChannel);
+	jsonData.destination = deliveryChannel;	//set the destination as publish channel
 
-	if(publishChannel.match(/#/))
+	if(deliveryChannel.match(/#/)) 
+	{
+		jsonData.message={type:"string", content:jsonData.message};
+		console.log("publishing at : ");
+		console.log(publishChannel);
 		gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
+		console.log(jsonData);
+	}
 
 
 	//change Author to Droid
@@ -359,9 +366,9 @@ var receiveMessage = function(count, channel, message)
 				console.log(jsonObject);
 
 				console.log("repo : "+jsonObject.repo);
-				console.log("project : "+publishChannel);
-				console.log("projectMap : "+projectMap[publishChannel]);
-				console.log(projectMap[publishChannel]);
+				console.log("project : "+deliveryChannel);
+				console.log("projectMap : "+projectMap[deliveryChannel]);
+				console.log(projectMap[deliveryChannel]);
 
 				let intentString = '';
 
@@ -376,24 +383,20 @@ var receiveMessage = function(count, channel, message)
 				
 				if(jsonObject.repo === '')
 				{
-					if(projectMap[publishChannel] !== null && projectMap[publishChannel] !== undefined && projectMap[publishChannel] !== '')
+					if(projectMap[deliveryChannel] !== null && projectMap[deliveryChannel] !== undefined && projectMap[deliveryChannel] !== '')
 					{
-						jsonObject.repo = projectMap[publishChannel];
-						// //ask to cinfirm project name
-						// gitBotPublisher.publish(publishChannel,JSON.stringify({type:"string", content: ""}))
-						// jsonData.message = {type:"string", content: "Should I process in project"};
-						// 	gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
+						jsonObject.repo = projectMap[deliveryChannel];
 						console.log("updated json : ");
 						console.log(jsonObject);
 						if(!intentString.match(/randomInput/gi) && jsonData.text === '')
 						{
-							jsonData.message = {type:"string", content:"Operating on project : "+projectMap[publishChannel]};
+							jsonData.message = {type:"string", content:"Operating on project : "+projectMap[deliveryChannel]};
 							gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
 						}
 					}	
 					
 				}
-				projectMap[publishChannel] = jsonObject.repo;
+				projectMap[deliveryChannel] = jsonObject.repo;
 				
 				for(let intent in intents)
 				{
