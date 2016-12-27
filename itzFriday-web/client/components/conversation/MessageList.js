@@ -64,7 +64,7 @@ export default class MessageList extends React.Component
 		messages=[];
 		for( let index in groups)
 		{
-			messages.push(<ListItem style={styles.linkItem} onTouchTap={() => this.displayMessage(groups[index].name)} leftAvatar={<Avatar>{groups[index].name.substring(0,1)}</Avatar>} rightIcon={<Badge badgeContent={this.state.badgeContent} badgeStyle={{backgroundColor:'#004D40',color:'white',visibility: this.state.badgeContent === 0 ? 'hidden' : 'visible'}} />}>{this.compressName(groups[index].name)}</ListItem>);
+			messages.push(<ListItem style={styles.linkItem} onTouchTap={() => this.displayMessage(groups[index].name)} leftAvatar={<Avatar size={30} style={{backgroundColor:'#004D40'}}>{groups[index].name.substring(0,1)}</Avatar>} rightIcon={<Badge badgeContent={this.state.badgeContent} badgeStyle={{backgroundColor:'#004D40',color:'white',visibility: this.state.badgeContent === 0 ? 'hidden' : 'visible'}} />}>{this.compressName(groups[index].name)}</ListItem>);
 		}
 	}
 
@@ -81,7 +81,7 @@ export default class MessageList extends React.Component
 		messages=[];
 		for( let index in groups)
 		{
-			messages.push(<ListItem style={styles.linkItem} onTouchTap={() => this.displayMessage(groups[index].name)} leftAvatar={<Avatar>{groups[index].name.substring(0,1)}</Avatar>} rightIcon={<Badge badgeContent={this.state.badgeContent} badgeStyle={{backgroundColor:'#004D40',color:'white',visibility: this.state.badgeContent === 0 ? 'hidden' : 'visible'}} />}>{this.compressName(groups[index].name)}</ListItem>);
+			messages.push(<ListItem style={styles.linkItem} onTouchTap={() => this.displayMessage(groups[index].name)} leftAvatar={<Avatar size={30} style={{backgroundColor:'#004D40'}}>{groups[index].name.substring(0,1)}</Avatar>} rightIcon={<Badge badgeContent={this.state.badgeContent} badgeStyle={{backgroundColor:'#004D40',color:'white',visibility: this.state.badgeContent === 0 ? 'hidden' : 'visible'}} />}>{this.compressName(groups[index].name)}</ListItem>);
 		}
 		messages.push(<Divider/>);
 	}
