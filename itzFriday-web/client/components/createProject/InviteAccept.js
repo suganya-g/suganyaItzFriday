@@ -8,69 +8,84 @@ import {Grid, Row, Col} from 'react-flexbox-grid'
 import Avatar from 'material-ui/Avatar';
 import {Link} from 'react-router';
 import {Card} from 'material-ui/Card';
+import MediaQuery from 'react-responsive';
+import Request from 'superagent';
 const styles ={
-  cardStyle:{backgroundColor:blueGrey50,
-    height:window.innerHeight,
-    padding:10,
-    width:"100%"
+  cardStyle:{
+    backgroundColor:blueGrey50,
+    position:'absolute',
+    top:'10%',
+    botoom:'10%',
+    left:'10%',
+    right:'10%',
+    width:'80%',
+    height:'80%'
   },
 };
-
 export default class InviteAccept extends React.Component
 {
-  constructor(props)
+constructor(props)
   {
     super(props);
-    this.state={canSubmit: false};
-    this.enableButton = this.enableButton.bind(this);
-    this.disableButton = this.disableButton.bind(this);
+    this.state={project:this.props.location.query.project,owner:this.props.location.query.owner,email:this.props.location.query.email},
+    this.redirectInvitedMemberDetails=this.redirectInvitedMemberDetails.bind(this);
+
   }
 
-  enableButton()
+  redirectInvitedMemberDetails()
   {
-   this.setState({canSubmit: true});
- }
-   disableButton()
-   {
-    this.setState({canSubmit: false});
-  }
-  submitForm(data) {
-   alert(JSON.stringify(data, null, 4));
- }
+    console.log(" value to be passed to inviation "+this.state.email+" "+this.state.project)
+    Request.post('/checkInvitation')
+      .send({email:this.state.email,project:this.state.project})
+      .end((err,res)=>{
+        console.log(res)
+        if(res.status==204)
+           this.props.router.replace('userDetails/?email='+this.state.email+'&project='+this.state.project);
+        else if (res.status==206)
+          this.props.router.replace('login/');
+        else
+          alert("some error");
 
-  redirectInvitedMemberDetails(email,title)
-  {
-    this.props.router.replace('/memberDetails/?email='+email+'&title='+title);
+      }); 
   }
 
   render()
   {
      return(
-
       <Grid>
       <Paper>
       <Card style={styles.cardStyle}>
       <Row center='xs'>
+      <MediaQuery query='(min-device-width: 1024px)'>
           <span style={{marginTop:'15px'}}>
           <Avatar style={{backgroundColor:"#004D40"}} src="./../../resources/images/buddy.png" alt="qwerty" size={150}/>
           </span>
+      </MediaQuery>
+       <MediaQuery query='(max-device-width: 1023px)'>
+          <span style={{marginTop:'5px'}}>
+          <Avatar style={{backgroundColor:"#004D40"}} src="./../../resources/images/buddy.png" alt="qwerty" size={80}/>
+          </span>
+       </MediaQuery>
         </Row>
          <Row center="xs">
-          <h1>ItzFriday</h1>
+             <MediaQuery query='(min-device-width: 1024px)'>
+                  <h1>ItzFriday</h1>
+             </MediaQuery>
+             <MediaQuery query='(max-device-width: 1023px)'>
+                   <h3>ItzFriday</h3>
+             </MediaQuery>
         </Row>
           <Row center="xs">
           <p>You have been invited to join a project named "Buddy"</p>
         </Row>
         <Row center="xs">
            <RaisedButton
-            style={{
-              marginTop:"25px"
-           }}
+            style={{marginTop:"25px"}}
             type="submit"
             label="Accept Invitation"
             labelColor="white"
             backgroundColor="#4CAF50"
-            onClick={() => this.redirectInvitedMemberDetails("abc@gmail.com","Friday")}>
+            onClick={this.redirectInvitedMemberDetails}>
             </RaisedButton>
           </Row>
           <Row center="xs">
@@ -78,10 +93,7 @@ export default class InviteAccept extends React.Component
          </Row>
          </Card>
       </Paper>
-
       </Grid>
-
       );
   }
-
 }
