@@ -17,32 +17,7 @@ const error="";
 var myArray=[];
 var counter=0;
 
-var member = [
-  'Apple', 'Apricot', 'Avocado',
-  'Banana', 'Bilberry', 'Blackberry', 'Blackcurrant', 'Blueberry',
-  'Boysenberry', 'Blood Orange',
-  'Cantaloupe', 'Currant', 'Cherry', 'Cherimoya', 'Cloudberry',
-  'Coconut', 'Cranberry', 'Clementine',
-  'Damson', 'Date', 'Dragonmember', 'Durian',
-  'Elderberry',
-  'Feijoa', 'Fig',
-  'Goji berry', 'Gooseberry', 'Grape', 'Grapemember', 'Guava',
-  'Honeydew', 'Huckleberry',
-  'Jabouticaba', 'Jackmember', 'Jambul', 'Jujube', 'Juniper berry',
-  'Kiwi member', 'Kumquat',
-  'Lemon', 'Lime', 'Loquat', 'Lychee',
-  'Nectarine',
-  'Mango', 'Marion berry', 'Melon', 'Miracle member', 'Mulberry', 'Mandarine',
-  'Olive', 'Orange',
-  'Papaya', 'Passionmember', 'Peach', 'Pear', 'Persimmon', 'Physalis', 'Plum', 'Pineapple',
-  'Pumpkin', 'Pomegranate', 'Pomelo', 'Purple Mangosteen',
-  'Quince',
-  'Raspberry', 'Raisin', 'Rambutan', 'Redcurrant',
-  'Salal berry', 'Satsuma', 'Star member', 'Strawberry', 'Squash', 'Salmonberry',
-  'Tamarillo', 'Tamarind', 'Tomato', 'Tangerine',
-  'Ugli member',
-  'Watermelon',
-];
+var member = [];
 var counter=0;
 var isError = false;
 export default class AddChannel extends React.Component {
@@ -66,8 +41,26 @@ export default class AddChannel extends React.Component {
 
       }
     }
-
-
+  }
+  componentWillMount()
+  {
+ 	 if(localStorage['project']==='Friday')
+ 		{
+ 			member=["Gobinda Thakur","Apurv Tiwari","Ruchika Saklani","Suganya Gopal","Ankit Aggarwal","Vikram Marshmallow"];
+ 		}
+ 		else if(localStorage['project']==='Samarth')
+ 		{
+ 			member=["Amol Tiwari","Ankit Kumar Vashisht","Shinder Pal Singh","Ritesh","Kumari Devi","Hari Prasad","Prerna Kukreti"];
+ 		}
+ 		else if(localStorage['project']==='Quiztack')
+ 		{
+ 			member=["Vishant Sharma","Kirti Jalan","Dhivya Lakshmi","Lal Jose","Srinivasan","Nitin Verma"];
+ 		}
+ 		else
+ 			{
+ 			member=["Sreenidhi","Toolika Srivastava","Nanda","Shipra Joshi","Bala","Divyanshu Sharma"];
+ 			}
+ 			console.log("members are "+member+" from "+localStorage['project']);
   }
    enableCreate() {
     this.setState({
@@ -182,10 +175,10 @@ export default class AddChannel extends React.Component {
                 	</div>
               </Row>
               <Row center="xs">
-              <Col xs={ 10 }
-                   sm={ 10 }
-                   md={ 10 }
-                   lg={ 10 }>
+              <Col xs={ 12 }
+                   sm={ 12 }
+                   md={ 12 }
+                   lg={ 12 }>
         				<AutoComplete
           					  id="memberName"
           					  name="member"
@@ -194,26 +187,29 @@ export default class AddChannel extends React.Component {
         				      filter={AutoComplete.fuzzyFilter}
         				      dataSource={member}
         				      maxSearchResults={5}
+                      style={{paddingLeft:'50px'}}
         				      hintText="Search Member Here"
                       errorText = {this.state.err}
                       searchText={this.state.searchText}
                       onNewRequest = {this.onNewRequest}
                       onUpdateInput = {this.onUpdateInput}
         				    />
-                    </Col>
                     <IconButton type="button" onClick={this.addData}>
                  <AddCircleOutline/>
            </IconButton>
+                    </Col>
+
           </Row>
 
           <br />
-    			<Row center="xs">
+    			<Row end="xs">
                 <Col xs={ 12 }
                      sm={ 12 }
                      md={ 12 }
                      lg={ 12 }>
-                     <RaisedButton type="submit" label="Create" backgroundColor='#4CAF50' labelColor='white' style={{paddingRight:'10px'}}/>
-                     <RaisedButton type="submit" label="Cancel" backgroundColor='#F44336' labelColor='white'/>
+                     <div style={{paddingBottom:'20px',paddingRight:'40px'}}>
+                     <RaisedButton type="submit" label="Create" backgroundColor='#4CAF50' labelColor='white'/>
+                     </div>
             </Col>
     			</Row>
           </Formsy.Form>
