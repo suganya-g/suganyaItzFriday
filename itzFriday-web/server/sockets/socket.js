@@ -1,12 +1,10 @@
 var redis = require('redis');
+var getHistory = require('./history.data.js');
 const redisUrl = process.env.REDIS_URL || 'redis://localhost';
 
 var pub = redis.createClient(redisUrl);
 var sub = redis.createClient(redisUrl);
 
-var client = redis.createClient(redisUrl);
-
-var chatHistory = client.multi();
 
 module.exports = function (socket) {
 
@@ -19,6 +17,20 @@ module.exports = function (socket) {
     console.log("in user joined"+project);
     sub.psubscribe(project+"*"); 
 	});
+
+  socket.on('init:data', function(destination) {
+    var chatData = getHistory(destination, function(err,res){
+      if(err)
+        console.log(err);
+      else
+      {
+        console.log(res);
+        socket.emit('init:data', res); 
+      }
+    });
+    // console.log(chatData);
+    // socket.emit('init:data', chatData);
+  });
   
 	// broadcast a user's message to other users
   	socket.on('send:message', function (data) {
@@ -35,14 +47,10 @@ module.exports = function (socket) {
       } else {
         pub.publish('delivery', chatToPublish);
       }
-      chatHistory.rpush(data.destination,chatToPublish);
   	});
 
   sub.on('pmessage', function(pattern, channel, message) {
         var chatData = JSON.parse(message);
-        if(chatData.author.match(/Droid/i)) {
-          chatHistory.rpush(chatData.destination,message);
-        }
         socket.emit(chatData.method, chatData);
   });
 

@@ -62,10 +62,10 @@ export default class ChannelList extends React.Component
 		channels=[];
 		for( let index in groups)
 		{
-			channels.push(<ListItem style={styles.linkItem} onTouchTap={() => this.displayChannel(groups[index].name)} rightIcon={<Badge badgeContent={this.state.badgeContent} badgeStyle={{backgroundColor:'#004D40',color:'white',visibility: this.state.badgeContent === 0 ? 'hidden' : 'visible'}} />} leftIcon={<SocialGroup />}>{this.compressName(groups[index].name)}</ListItem>);
+			channels.push(<ListItem style={styles.linkItem} onTouchTap={() => this.displayChannel(groups[index].name)} rightIcon={<Badge badgeContent={this.state.badgeContent} badgeStyle={{backgroundColor:'#004D40',color:'white',visibility: this.state.badgeContent === 0 ? 'hidden' : 'visible'}} />} leftIcon={<SocialGroup color='#004D40'/>}>{this.compressName(groups[index].name)}</ListItem>);
 		}
 		channels.push(<Divider />);
-		channels.push(<Link to={"addChannel/"} style={styles.linkItem} ><ListItem key={-1} leftIcon={<ContentAddCircle />}>Create channel</ListItem></Link>);
+		channels.push(<Link to={"addChannel/"} style={styles.linkItem} ><ListItem key={-1} leftIcon={<ContentAddCircle color='#004D40' />}>Create channel</ListItem></Link>);
 		channels.push(<Divider />);
 	}
 
@@ -81,10 +81,10 @@ export default class ChannelList extends React.Component
 		channels=[];
 		for( let index in groups)
 		{
-			channels.push(<ListItem style={styles.linkItem} onTouchTap={() => this.displayChannel(groups[index].name)} rightIcon={<Badge badgeContent={this.state.badgeContent} badgeStyle={{backgroundColor:'#004D40',color:'white',visibility: this.state.badgeContent === 0 ? 'hidden' : 'visible'}} />} leftIcon={<SocialGroup />}>{this.compressName(groups[index].name)}</ListItem>);
+			channels.push(<ListItem style={styles.linkItem} onTouchTap={() => this.displayChannel(groups[index].name)} rightIcon={<Badge badgeContent={this.state.badgeContent} badgeStyle={{backgroundColor:'#004D40',color:'white',visibility: this.state.badgeContent === 0 ? 'hidden' : 'visible'}} />} leftIcon={<SocialGroup color='#004D40'/>}>{this.compressName(groups[index].name)}</ListItem>);
 		}
 		channels.push(<Divider />);
-		channels.push(<Link to={"addChannel/"} style={styles.linkItem} ><ListItem key={-1} style={styles.linkItem} leftIcon={<ContentAddCircle />}>Create channel</ListItem></Link>);
+		channels.push(<Link to={"addChannel/"} style={styles.linkItem} ><ListItem key={-1} style={styles.linkItem} leftIcon={<ContentAddCircle color='#004D40'/>}>Create channel</ListItem></Link>);
 		channels.push(<Divider />);
 	}
 

@@ -51,6 +51,7 @@
     "webpack-hot-middleware": "^2.13.2"
   },
   "dependencies": {
+    "async": "^2.1.4",
     "babel-core": "^6.18.2",
     "babel-eslint": "^7.1.0",
     "babel-loader": "^6.2.7",

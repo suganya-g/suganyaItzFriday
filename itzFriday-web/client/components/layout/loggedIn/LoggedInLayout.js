@@ -1,3 +1,4 @@
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Link} from 'react-router';
@@ -74,7 +75,7 @@ const styles = {
 	container : {
 		margin: '0px 0px 0px 0px',
 		padding: '0px 0px 0px 0px',
-		background: "#e0f2f1",
+		background: "#C8E6C9",
 	},
 	drawer : {
 		backgroundColor: "#004D40",
@@ -266,7 +267,7 @@ export default class LoggedInLayout extends React.Component
 							 value={index+1}
 							 open={this.state.openIndex===index}
 							 primaryTogglesNestedList={true}
-               style={{backgroundColor: this.state.openIndex === index ? 'black':'',color:'white'}}
+               style={{backgroundColor: this.state.openIndex === index ? '#00695C':'',color:'white',textDecoration: this.state.openIndex === index ? 'underline':'none',fontWeight: this.state.openIndex === index ? 'bold':''}}
 							 onClick={()=>this.openThisProject(projects[index].name)}
 							 nestedItems={[
 								 <div style={{backgroundColor:'white'}}>
@@ -408,7 +409,7 @@ export default class LoggedInLayout extends React.Component
 					 </div>: ''}
 					 <MediaQuery query='(min-device-width: 1024px)'>
 					 <div className="row" style={{width:'100%'}}>
-								<div id="content" style={{backgroundColor: "#e0f2f1",margin: '0px 0px 0px 0px',padding: '0px 0px 0px 0px',marginLeft:'200px'}}>
+								<div id="content" style={{backgroundColor: "#C8E6C9",margin: '0px 0px 0px 0px',padding: '0px 0px 0px 0px',marginLeft:'200px'}}>
 										 {this.props.children}
 								</div>
 					 </div>

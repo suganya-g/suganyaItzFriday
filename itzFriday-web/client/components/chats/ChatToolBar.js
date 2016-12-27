@@ -30,10 +30,11 @@ const styles = {
 		margin: '0px 0px 0px 0px',
 		background: "white",
 		width: "100%",
-		textIndent: '20px',
+
 	},
 	toolbarText: {
-		color: "#004d40"
+		color: "#004d40",
+		textIndent:'20px'
 	},
 	showIcon: {
 		marginBottom: '5px'
