@@ -3,6 +3,7 @@ var userRouter = express.Router();
 var jwt = require('jsonwebtoken');
 var appConst = require('../../config/config.js');
 var sendMail=require('./../../service/sendmail');
+var userProfile = require('./../../model/userprofile/userprofile.schema.js');
 
 
 var userAccount = require('./user.account.js');
@@ -13,42 +14,36 @@ userRouter.post('/login', function(req, res) {
   let authenticateToken = '';
   userAccount.findOne({ username: email}, function(err, user) {
   	if (err) {
+      console.log(err);
   		res.status(401).json({
-            message:"user/password not found"
-        });
+        message:"user/password not found",
+        error:true
+      });
   	}
-  	if(user) {
+  	if(user){
+      console.log(user);
   		if(user.checkPassword(password)){
-        console.log(user.fullName);
-  			authenticateToken=jwt.sign({user:email,name:user.fullName,sub:'friday',admin:true}, appConst.jwtSecret);
-  			res.status(200).json({
-             	message:authenticateToken
-        		});
-  			}
-  		}else {
-  		// create a user a new user
-			var testUser = new userAccount({
-          fullName: 'Apurv',
-    			username: 'apurv@gmail.com',
-    			password: 'abcdefgh',
-    			role: 'User',
-          gitAccess: ''
-			});
-			testUser.save(function(err, user) {
-				if(err){
-					res.status(401).json({
-            		message:"user/password not found",
-                error: true
-        		  });
-				}
-				authenticateToken=jwt.sign({user:email,name:user.fullName,sub:'friday',admin:true}, appConst.jwtSecret);
-  				res.status(200).json({
-             	message:authenticateToken,
-              error: false
-        		});
-			});
-  		}
-  	});
+        userProfile.findOne({email:email},function(error,userfound){
+          if(error){
+            console.log(error);
+            console.log("error found while getting profile in authentication");
+          }
+          else{
+            if(userfound){
+              console.log(userfound);
+              authenticateToken=jwt.sign({user:email,name:userfound.firstName,userid:userfound._id,admin:user.role}, appConst.jwtSecret);
+              res.status(200).json({
+                message:authenticateToken,
+                error:false
+              });
+            }
+          }
+        })
+      }
+    }else {
+      res.status(401).json({message:"username/password is incorrect",error:true});
+   }
+ });
 });
 
 
