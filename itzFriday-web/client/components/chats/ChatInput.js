@@ -17,7 +17,6 @@ class ChatInput extends Component {
 		super(props);
 		this.state = {
 			canSubmit: false,
-      userTyping: ''
 		}
 	}
 	enableButton() {
@@ -41,21 +40,12 @@ class ChatInput extends Component {
     	}
     	this.props.addChat(newMessage);
 		  this.refs.chat.setState({value: ''});
-  	}
-    notifyTypingUser() {
-      if(this.props.userTyped.author !== Auth.getNameFromToken()) {
-        this.props.notifyTyping();
-        this.setState({userTyping: this.props.userTyped});
-      }else{
-        this.setState({userTyping: ''});
-      }
-    }                                         
+  	}                                        
   	notifyFormError(data) {
     	console.error('Form error:', data);
   	}
 
 	render() {
-    const typingUser = this.state.userTyping;
 		return(
 			<Formsy.Form
                     onValid={this.enableButton.bind(this)}
@@ -64,11 +54,6 @@ class ChatInput extends Component {
                     onInvalidSubmit={this.notifyFormError.bind(this)}
                   >
             <Grid>
-            {typingUser !== '' ?
-            <Row>
-              <Col xs={12}><h5>{typingUser.message}</h5></Col>
-            </Row>: ''
-          }
               <Row>
                 <Col xs={12}>
                 <Row center="xs">
@@ -83,7 +68,6 @@ class ChatInput extends Component {
                   autoComplete="off"
                   updateImmediately
                   style = {styles.inputArea}
-                  onChange = {this.notifyTypingUser.bind(this)}
                 />
                 </Col>
                 <Col xs={2} sm={2} md={2} lg={2}>

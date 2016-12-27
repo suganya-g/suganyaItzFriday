@@ -27,7 +27,6 @@ class ChatBox extends Component {
     socket.on('connected', this._getConnectedUser.bind(this));
     socket.on('user:join',this._getJoinedUser.bind(this));
     socket.on('send:message', this._recieveMessage.bind(this));
-    socket.on('notify', this._notifyUser.bind(this));
   }
   componentWillReceiveProps(nextProps) {
     if(this.props !== nextProps) {
@@ -48,7 +47,7 @@ class ChatBox extends Component {
         			</Row>
         			<Row>
           				<Col xs={12} sm={12} md={12} lg={12}>
-                    <ChatWindow project={this.props.location.query.project} identifierName={this.props.location.query.name} chatMessages={this.state.chatMessages} identifier={this.props.location.query.identifier} addMessage={this.addChatMessages.bind(this)} userTyped={this.state.userTyping} notifyTypingUser={this.notifyTyping.bind(this)}/>
+                    <ChatWindow project={this.props.location.query.project} identifierName={this.props.location.query.name} chatMessages={this.state.chatMessages} identifier={this.props.location.query.identifier} addMessage={this.addChatMessages.bind(this)} />
                   </Col>
         			</Row>
       	</Grid>
@@ -62,20 +61,6 @@ class ChatBox extends Component {
   }
   _recieveMessage(message) {
     this._filterMessages(message);
-  }
-  notifyTyping() {
-    if(this.props.location.query.identifier === "message") {
-      var typingUser = {
-        destination:this.props.location.query.project+'@'+this.props.location.query.name+'/'+Auth.getNameFromToken(), 
-        author: Auth.getNameFromToken()
-      }
-    }else if(this.props.location.query.identifier === "channel") {
-      var typingUser = {
-        destination:this.props.location.query.project+'@'+this.props.location.query.name, 
-        author: Auth.getNameFromToken()
-      }
-    }
-    socket.emit('notify', typingUser);
   }
   joinConversation(userJoined) {
     //this.setState({chatMessages:[]});

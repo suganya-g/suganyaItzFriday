@@ -37,18 +37,6 @@ module.exports = function (socket) {
       }
       chatHistory.rpush(data.destination,chatToPublish);
   	});
-      
-
-  socket.on('notify', function (data) {
-     var notifyUser = JSON.stringify({
-        method: 'notify',
-        destination:data.destination, 
-        author: data.author,
-        timeStamp:'', 
-        message:data.author+' is typing.....'
-      });
-      pub.publish('delivery', notifyUser);
-  });
 
   sub.on('pmessage', function(pattern, channel, message) {
         var chatData = JSON.parse(message);
