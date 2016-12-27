@@ -16,8 +16,7 @@ const styles = {
   },
    messageList: {
     height: 560,
-    listStyle: "none",
-    overflowY: "scroll"
+    listStyle: "none",overflowY: "scroll"
   },
   messageListPhone: {
    height:'100%',
@@ -69,37 +68,37 @@ class ChatWindow extends Component {
         <div>
 
         <MediaQuery minDeviceWidth={1024}>
-          <ul style={{height:'600px'}}>
+          <ul style={{height:'590px',listStyle: "none",overflowY: "scroll"}}>
                 {listView}
           </ul>
         </MediaQuery>
 
         <MediaQuery maxDeviceWidth={320}>
-          <ul style={{height:'380px'}}>
+          <ul style={{height:'380px',listStyle: "none",overflowY: "scroll"}}>
                 {listView}
           </ul>
         </MediaQuery>
 
         <MediaQuery minDeviceWidth={321} maxDeviceWidth={360}>
-          <ul style={{height:'450px'}}>
+          <ul style={{height:'450px',listStyle: "none",overflowY: "scroll"}}>
                 {listView}
           </ul>
         </MediaQuery>
 
         <MediaQuery minDeviceWidth={361} maxDeviceWidth={375}>
-          <ul style={{height:'480px'}}>
+          <ul style={{height:'480px',listStyle: "none",overflowY: "scroll"}}>
                 {listView}
           </ul>
         </MediaQuery>
 
         <MediaQuery minDeviceWidth={376} maxDeviceWidth={414}>
-          <ul style={{height:'550px'}}>
+          <ul style={{height:'550px',listStyle: "none",overflowY: "scroll"}}>
                 {listView}
           </ul>
         </MediaQuery>
 
         <MediaQuery minDeviceWidth={415} maxDeviceWidth={1023}>
-          <ul style={{height:'850px'}}>
+          <ul style={{height:'850px',listStyle: "none",overflowY: "scroll"}}>
                 {listView}
           </ul>
         </MediaQuery>
