@@ -300,8 +300,6 @@ var receiveMessage = function(count, channel, message)
 	jsonData = JSON.parse(message);
 	//fetch the message
 	message = jsonData.message.replace('Hey Droid, ','');
-	//change Author to Droid
-	jsonData.author = "Droid";
 	//fetch the keyString
 	keyString = getKeyString(message);
 	//fetch Channel to publish on
@@ -309,6 +307,13 @@ var receiveMessage = function(count, channel, message)
 	console.log("publish at : "+publishChannel);
 	jsonData.destination = publishChannel;	//set the destination as publish channel
 
+	if(publishChannel.match(/#/))
+		gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
+
+
+	//change Author to Droid
+	jsonData.author = "Droid";
+	
 	controller.access(jsonData.user, (err, res) => 
 	{
 		if(err)

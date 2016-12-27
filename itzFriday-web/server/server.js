@@ -46,6 +46,7 @@ main.get('/', function(req, res) {
 });
 
 //Routing
+//main.use('/api',projectRoutes);
 // main.use('/api',projectRoutes);
 
 main.use('/project',projectRoutes);
