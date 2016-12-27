@@ -104,7 +104,7 @@ class ChatWindow extends Component {
           </ul>
         </MediaQuery>
           <div style={styles.actionBar}>
-            <ChatInput addChat={this.props.addMessage} identifier={this.props.identifier} identifierName={this.props.identifierName} notifyTyping={this.props.notifyTypingUser} userTyped={this.props.userTyped}/>
+            <ChatInput addChat={this.props.addMessage} identifier={this.props.identifier} identifierName={this.props.identifierName} userTyped={this.props.userTyped}/>
           </div>
           </div>
         </Paper>

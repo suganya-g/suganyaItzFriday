@@ -4,6 +4,9 @@ const redisUrl = process.env.REDIS_URL || 'redis://localhost';
 var pub = redis.createClient(redisUrl);
 var sub = redis.createClient(redisUrl);
 
+var client = redis.createClient(redisUrl);
+
+var chatHistory = client.multi();
 
 module.exports = function (socket) {
 
@@ -32,22 +35,14 @@ module.exports = function (socket) {
       } else {
         pub.publish('delivery', chatToPublish);
       }
+      chatHistory.rpush(data.destination,chatToPublish);
   	});
-      
-
-  socket.on('notify', function (data) {
-     var notifyUser = JSON.stringify({
-        method: 'notify',
-        destination:data.destination, 
-        author: data.author,
-        timeStamp:'', 
-        message:data.author+' is typing.....'
-      });
-      pub.publish('delivery', notifyUser);
-  });
 
   sub.on('pmessage', function(pattern, channel, message) {
         var chatData = JSON.parse(message);
+        if(chatData.author.match(/Droid/i)) {
+          chatHistory.rpush(chatData.destination,message);
+        }
         socket.emit(chatData.method, chatData);
   });
 

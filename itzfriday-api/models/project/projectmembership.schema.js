@@ -10,4 +10,4 @@ let projectMemberShip = new Schema({
 	projectID:{type:Schema.Types.ObjectId,ref: 'projectDetails'},
 	memberID:{type:Schema.Types.ObjectId,ref:'userProfile'}
 });
-module.exports = mongoose.model('projectMembership',projectMemberShip);
+module.exports = mongoose.model('projectMembership',projectMembership);
