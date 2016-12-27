@@ -7,7 +7,7 @@ import Auth from './../../services/auth.service.js';
 import ListText from './../others/ListText';
 import LinkText from './../others/LinkText';
 
-var name = ''; 
+//var name = ''; 
 var chatMessages = [];
 var socket = '';
 class ChatBox extends Component {

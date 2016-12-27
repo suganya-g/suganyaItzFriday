@@ -1,0 +1,30 @@
+{
+  "name": "itzfriday-api",
+  "version": "0.1.0",
+  "description": "API for itzfriday",
+  "main": "server.js",
+  "scripts": {
+    "testscript": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [
+    "ExpressJS"
+  ],
+  "contributors": [
+    {
+      "name": "Gobinda Thakur",
+      "email": "gobinda.thakur@outlook.com",
+      "url": "www.gobindathakur.com"
+    }
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "compression": "^1.6.2",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.14.0",
+    "mongoose": "^4.7.1",
+    "superagent": "^3.0.0",
+    "superagent-auth-bearer": "0.0.1"
+  }
+}
