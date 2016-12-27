@@ -4,9 +4,7 @@ var jwt = require('jsonwebtoken');
 var appConst = require('../../config/config.js');
 var sendMail=require('./../../service/sendmail');
 var userProfile = require('./../../model/userprofile/userprofile.schema.js');
-
-
-var userAccount = require('./user.account.js');
+var userAccount = require('./../../model/useraccount/useraccount.schema.js');
 
 userRouter.post('/login', function(req, res) {
   let email = req.body.email;
