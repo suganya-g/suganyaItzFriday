@@ -47,6 +47,7 @@ main.get('/', function(req, res) {
 
 //Routing
 //main.use('/api',projectRoutes);
+// main.use('/api',projectRoutes);
 main.use(confirmCode);
 main.use('/api/auth/',userAccount);
 main.use('/api',expressJWT({secret:appConst.jwtSecret}));
