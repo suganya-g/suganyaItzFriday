@@ -41,7 +41,7 @@ constructor(props){
   this.disableButton= this.disableButton.bind(this);
   this.submitForm = this.submitForm.bind(this);
   this.handleLinkEvent = this.handleLinkEvent.bind(this);
-  this.state = {canSubmit:false};
+  this.state = {canSubmit:false,error:''};
   }
   enableButton() {
     this.setState({
@@ -98,6 +98,7 @@ render(){
               required
               floatingLabelText="Enter your confirmation code"
               updateImmediately/><br />
+              <span style={{color:"red"}}>{this.state.error}</span><br/>
             <RaisedButton
                 type="submit"
                 label="Continue"
@@ -133,6 +134,7 @@ render(){
                 required
                 floatingLabelText="Enter your confirmation code"
                 updateImmediately/><br />
+                <span style={{color:"red"}}>{this.state.error}</span><br/>
               <RaisedButton
                   type="submit"
                   label="Continue"
