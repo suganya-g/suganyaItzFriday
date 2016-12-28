@@ -39,6 +39,8 @@ userRouter.post('/login', function(req, res) {
             }
           }
         })
+      }else {
+        res.status(401).json({message:"username/password is incorrect",error:true});
       }
     }else {
       res.status(401).json({message:"username/password is incorrect",error:true});
