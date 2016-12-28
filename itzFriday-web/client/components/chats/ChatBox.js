@@ -4,6 +4,7 @@ import ChatToolBar from './ChatToolBar';
 import ChatWindow from './ChatWindow';
 import sockets from './../../services/socket.service.js';
 import Auth from './../../services/auth.service.js';
+import SortService from './../../services/sort.service.js';
 import ListText from './../others/ListText';
 import LinkText from './../others/LinkText';
 
@@ -32,6 +33,10 @@ class ChatBox extends Component {
   componentWillReceiveProps(nextProps) {
     if(nextProps.location.query.identifier.match(/channel/i)) {
       var destination = nextProps.location.query.project + '#' + nextProps.location.query.name;
+      socket.emit('init:data', destination);
+    }else if(nextProps.location.query.identifier.match(/message/i)) {
+      var sortedName = SortService.getSortedName(nextProps.location.query.name.split(' ')[0], Auth.getNameFromToken());
+      var destination = nextProps.location.query.project + '@' + sortedName[0]+ '/' +sortedName[1];
       socket.emit('init:data', destination);
     }
     if(this.props !== nextProps) {
