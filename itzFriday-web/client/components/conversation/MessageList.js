@@ -7,7 +7,7 @@ import {amber100,green100,orange100,grey50} from 'material-ui/styles/colors';
 import AppBar from 'material-ui/AppBar';
 import IconButton from 'material-ui/IconButton';
 import FlatButton from 'material-ui/FlatButton';
-
+import Badge from 'material-ui/Badge';
 import Paper from 'material-ui/Paper';
 import Drawer from 'material-ui/Drawer';
 import Divider from 'material-ui/Divider';
@@ -53,6 +53,7 @@ export default class MessageList extends React.Component
 		super(props);
 		this.state = {
 			messages: this.props.messages,
+			badgeContent:0
 		};
 
 		this.displayMessage = this.displayMessage.bind(this);
@@ -63,7 +64,7 @@ export default class MessageList extends React.Component
 		messages=[];
 		for( let index in groups)
 		{
-			messages.push(<ListItem style={styles.linkItem} onTouchTap={() => this.displayMessage(groups[index].name)} leftAvatar={<Avatar>{groups[index].name.substring(0,1)}</Avatar>} rightIcon={<CommunicationChat />}>{this.compressName(groups[index].name)}</ListItem>);
+			messages.push(<ListItem style={styles.linkItem} onTouchTap={() => this.displayMessage(groups[index].name)} leftAvatar={<Avatar size={30} style={{backgroundColor:'#004D40'}}>{groups[index].name.substring(0,1)}</Avatar>} rightIcon={<Badge badgeContent={this.state.badgeContent} badgeStyle={{backgroundColor:'#004D40',color:'white',visibility: this.state.badgeContent === 0 ? 'hidden' : 'visible'}} />}>{this.compressName(groups[index].name)}</ListItem>);
 		}
 	}
 
@@ -80,7 +81,7 @@ export default class MessageList extends React.Component
 		messages=[];
 		for( let index in groups)
 		{
-			messages.push(<ListItem style={styles.linkItem} onTouchTap={() => this.displayMessage(groups[index].name)} leftAvatar={<Avatar>{groups[index].name.substring(0,1)}</Avatar>} rightIcon={<CommunicationChat />}>{this.compressName(groups[index].name)}</ListItem>);
+			messages.push(<ListItem style={styles.linkItem} onTouchTap={() => this.displayMessage(groups[index].name)} leftAvatar={<Avatar size={30} style={{backgroundColor:'#004D40'}}>{groups[index].name.substring(0,1)}</Avatar>} rightIcon={<Badge badgeContent={this.state.badgeContent} badgeStyle={{backgroundColor:'#004D40',color:'white',visibility: this.state.badgeContent === 0 ? 'hidden' : 'visible'}} />}>{this.compressName(groups[index].name)}</ListItem>);
 		}
 		messages.push(<Divider/>);
 	}

@@ -1,0 +1,270 @@
+{
+
+  "projects":[{"_id":"5861dad5ab10de9263adf16e",
+  "name":"itzfriday"},
+  {"_id":"5861dad562116dfb1f724f60",
+  "name":"itzSaturday"},
+  {"_id":"5861dad582d89fc873dd440a",
+  "name":"itzMonday"},
+  {"_id":"5861dad5e38084a54959c03a",
+  "name":"itzGraduationDay"}],
+  "allchannels": [{
+    "_id": "5861dad5ab10de9263adf16e",
+    "channels": [{
+      "_id": "5861e71c1b70e55edb2730b5",
+      "name": "#general"
+    },
+    {
+      "_id": "5861e7770da457926d72e7c8",
+      "name": "#Quilch"
+    },
+    {
+      "_id": "5861e777627f6f450e9d4988",
+      "name": "#Earbang"
+    },
+    {
+      "_id": "5861e777d65747fbbeddbf73",
+      "name": "#Zentry"
+    },
+    {
+      "_id": "5861e777d66b6521f5199c64",
+      "name": "#Zillacom"
+    },
+    {
+      "_id": "5861e7776695475b606ff6be",
+      "name": "#Comcubine"
+    }]
+  },
+  {
+    "_id": "5861dad562116dfb1f724f60",
+    "channels": [{
+      "_id": "5861e7df6a19d210203fabe7",
+      "name": "#general"
+    },
+    {
+      "_id": "5861e7c4a671d63ecf6bb308",
+      "name": "#Zboo"
+    },
+    {
+      "_id": "5861e7c4795924c1a83832bb",
+      "name": "#Inquala"
+    },
+    {
+      "_id": "5861e7c4020c222d43cd0b68",
+      "name": "#Quordate"
+    },
+    {
+      "_id": "5861e7c46db2ba8a760569a0",
+      "name": "#Greeker"
+    },
+    {
+      "_id": "5861e7c4157221c38125684f",
+      "name": "#Schoolio"
+    },
+    {
+      "_id": "5861e7c4b363e3aa0590dc4d",
+      "name": "#Repetwire"
+    }]
+  },
+  {
+    "_id": "5861dad582d89fc873dd440a",
+    "channels": [{
+      "_id": "5861e7df1615acef52453ef7",
+      "name": "#general"
+    },
+    {
+      "_id": "5861e8587723cea3037d81bb",
+      "name": "#Recognia"
+    },
+    {
+      "_id": "5861e8585e73366f4808ecd9",
+      "name": "#Xleen"
+    },
+    {
+      "_id": "5861e8584600315d71e9b481",
+      "name": "#Renovize"
+    },
+    {
+      "_id": "5861e8589be19e321a37259d",
+      "name": "#Acium"
+    },
+    {
+      "_id": "5861e85818154f6c4cd5b4d5",
+      "name": "#Hinway"
+    }]
+  },
+  {
+    "_id": "5861dad5e38084a54959c03a",
+    "channels": [{
+      "_id": "5861e886bd935d9deb35457f",
+      "name": "#general"
+    },
+    {
+      "_id": "5861e886cc5f0afee4a44185",
+      "name": "#Genmex"
+    },
+    {
+      "_id": "5861e88694131d819438d6fc",
+      "name": "#Netagy"
+    },
+    {
+      "_id": "5861e886db89cff617da4e01",
+      "name": "#Zytrex"
+    },
+    {
+      "_id": "5861e8862c56451f6f2021b9",
+      "name": "#Snorus"
+    },
+    {
+      "_id": "5861e8867cf5d1936dac7a88",
+      "name": "#Telpod"
+    },
+    {
+      "_id": "5861e88681229121a59a20e8",
+      "name": "#Digique"
+    }]
+  }
+],
+  "messageHistory":[{
+    "_id":"#itzfriday/0",
+    "message":[{
+      "text": "Lorem cillum proident Lorem qui qui Lorem proident eiusmod anim aute.",
+      "name": "Marcie Owens"
+    },
+    {
+      "text": "Cupidatat ipsum est incididunt occaecat ea veniam in duis amet minim sint elit id.",
+      "name": "Vang Blake"
+    },
+    {
+      "text": "Incididunt dolore veniam sint anim pariatur fugiat culpa amet velit culpa ullamco pariatur.",
+      "name": "Higgins Albert"
+    },
+    {
+      "text": "Fugiat mollit quis qui ex ipsum velit nostrud exercitation qui nulla ea.",
+      "name": "Joann Parsons"
+    },
+    {
+      "text": "In ut proident duis incididunt proident incididunt est.",
+      "name": "Rena Barton"
+    },
+    {
+      "text": "Aliquip voluptate laboris adipisicing Lorem.",
+      "name": "Monique Charles"
+    },
+    {
+      "text": "Culpa sunt ea in enim aliquip.",
+      "name": "Lakisha Mcmillan"
+    },
+    {
+      "text": "Minim reprehenderit exercitation duis proident.",
+      "name": "Fulton Reed"
+    },
+    {
+      "text": "Consequat qui proident non consectetur fugiat deserunt anim officia Lorem laboris nostrud labore et nulla.",
+      "name": "Mills Rivera"
+    },
+    {
+      "text": "Tempor nostrud cupidatat quis laboris eiusmod eu dolore esse qui dolor esse cupidatat ad.",
+      "name": "Luann Alston"
+    },
+    {
+      "text": "Sint elit aliqua anim ea reprehenderit.",
+      "name": "Susanna Valentine"
+    },
+    {
+      "text": "Exercitation occaecat excepteur non sunt sint dolore veniam.",
+      "name": "Burt Garrett"
+    }]
+  },
+  {
+    "_id":"#itzfriday/1",
+    "message":[{
+      "text": "Sit tempor proident amet mollit excepteur pariatur aute officia nulla incididunt tempor magna eiusmod.",
+      "name": "Lane Weaver"
+    },
+    {
+      "text": "Consectetur qui consequat ex quis.",
+      "name": "Sheppard Hull"
+    },
+    {
+      "text": "Duis deserunt excepteur mollit eiusmod ad consectetur officia officia velit cillum.",
+      "name": "Stefanie Crawford"
+    },
+    {
+      "text": "Deserunt consectetur proident voluptate aliqua ad sint ad ipsum ex occaecat laborum laborum.",
+      "name": "Mcleod Richard"
+    },
+    {
+      "text": "Esse magna adipisicing pariatur anim ea.",
+      "name": "Stevens Mosley"
+    },
+    {
+      "text": "Anim ut sit exercitation nisi ipsum veniam enim veniam.",
+      "name": "Keller Beck"
+    },
+    {
+      "text": "Lorem labore duis in eiusmod voluptate irure ad cupidatat cillum ea cillum ut.",
+      "name": "Reyna Perkins"
+    },
+    {
+      "text": "Fugiat labore sunt nulla nulla occaecat excepteur minim elit incididunt dolor.",
+      "name": "Jayne Parsons"
+    },
+    {
+      "text": "Enim laborum dolore Lorem aute eiusmod consequat non sit ea.",
+      "name": "Melisa Whitney"
+    },
+    {
+      "text": "Adipisicing eiusmod cillum eiusmod reprehenderit sit non minim Lorem voluptate.",
+      "name": "Fox Randall"
+    },
+    {
+      "text": "Nulla consequat laborum officia tempor sint ea.",
+      "name": "Shawna Donaldson"
+    },
+    {
+      "text": "Quis culpa sint eiusmod amet ipsum sit pariatur ea.",
+      "name": "Alicia Owens"
+    },
+    {
+      "text": "Aliquip ipsum commodo dolor cupidatat laboris sunt nulla nisi sit veniam qui labore.",
+      "name": "Karin Le"
+    },
+    {
+      "text": "Dolor non do aliqua qui.",
+      "name": "Kelley Barnett"
+    },
+    {
+      "text": "Ex aute nulla consectetur adipisicing duis.",
+      "name": "Mcdaniel Hurst"
+    },
+    {
+      "text": "Consequat cillum veniam duis incididunt nulla occaecat fugiat esse qui aute exercitation.",
+      "name": "Elise Campos"
+    },
+    {
+      "text": "Incididunt ipsum tempor nulla enim velit consectetur mollit adipisicing.",
+      "name": "Hopkins Moran"
+    },
+    {
+      "text": "Nostrud adipisicing voluptate veniam exercitation pariatur non consectetur reprehenderit.",
+      "name": "Kimberly Anthony"
+    },
+    {
+      "text": "Adipisicing et ullamco sit dolore nostrud sit incididunt sit.",
+      "name": "Kristine Gonzalez"
+    },
+    {
+      "text": "Aute dolor adipisicing eiusmod nulla commodo nisi sunt ea et ea.",
+      "name": "Eaton Turner"
+    },
+    {
+      "text": "Eiusmod voluptate voluptate labore do ea amet duis elit nostrud excepteur ut.",
+      "name": "Pope Higgins"
+    },
+    {
+      "text": "Anim id duis pariatur elit.",
+      "name": "Lori Bishop"
+    }]
+  }]
+}

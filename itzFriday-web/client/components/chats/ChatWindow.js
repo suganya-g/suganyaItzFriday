@@ -3,13 +3,11 @@ import ReactDOM from 'react-dom';
 import Paper from 'material-ui/Paper';
 import ChatInput from './ChatInput';
 import ChatText from './ChatText';
+import MediaQuery from 'react-responsive';
 
 const styles = {
   chatBoxStyle: {
-    position: "relative",
     width:'100%',
-      height: "100%",
-    margin: "0 auto"
   },
   actionBar: {
       position: "relative",
@@ -18,9 +16,13 @@ const styles = {
   },
    messageList: {
     height: 560,
-    listStyle: "none",
-    overflowY: "scroll"
+    listStyle: "none",overflowY: "scroll"
   },
+  messageListPhone: {
+   height:'100%',
+   listStyle: "none",
+   overflowY: "scroll"
+ },
   listMargin: {
     marginTop: 20,
     marginLeft: -20
@@ -63,11 +65,46 @@ class ChatWindow extends Component {
 
     return(
         <Paper zDepth={5} style={styles.chatBoxStyle}>
-          <ul style= {styles.messageList}>
+        <div>
+
+        <MediaQuery minDeviceWidth={1024}>
+          <ul style={{height:'590px',listStyle: "none",overflowY: "scroll"}}>
                 {listView}
           </ul>
+        </MediaQuery>
+
+        <MediaQuery maxDeviceWidth={320}>
+          <ul style={{height:'380px',listStyle: "none",overflowY: "scroll"}}>
+                {listView}
+          </ul>
+        </MediaQuery>
+
+        <MediaQuery minDeviceWidth={321} maxDeviceWidth={360}>
+          <ul style={{height:'450px',listStyle: "none",overflowY: "scroll"}}>
+                {listView}
+          </ul>
+        </MediaQuery>
+
+        <MediaQuery minDeviceWidth={361} maxDeviceWidth={375}>
+          <ul style={{height:'480px',listStyle: "none",overflowY: "scroll"}}>
+                {listView}
+          </ul>
+        </MediaQuery>
+
+        <MediaQuery minDeviceWidth={376} maxDeviceWidth={414}>
+          <ul style={{height:'550px',listStyle: "none",overflowY: "scroll"}}>
+                {listView}
+          </ul>
+        </MediaQuery>
+
+        <MediaQuery minDeviceWidth={415} maxDeviceWidth={1023}>
+          <ul style={{height:'850px',listStyle: "none",overflowY: "scroll"}}>
+                {listView}
+          </ul>
+        </MediaQuery>
           <div style={styles.actionBar}>
-            <ChatInput addChat={this.props.addMessage} identifier={this.props.identifier} identifierName={this.props.identifierName} notifyTyping={this.props.notifyTypingUser} userTyped={this.props.userTyped}/>
+            <ChatInput addChat={this.props.addMessage} identifier={this.props.identifier} identifierName={this.props.identifierName} userTyped={this.props.userTyped}/>
+          </div>
           </div>
         </Paper>
       )

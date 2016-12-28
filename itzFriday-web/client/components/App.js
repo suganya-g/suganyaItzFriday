@@ -18,19 +18,20 @@ import BuddyAvatar from './buddyAvatar/BuddyAvatar';
 import NotificationsBoard from './notificationsBoard/NotificationsBoard';
 import Auth from './../services/auth.service.js';
 import ManageTeam from './team/ManageTeam';
+import InvitePeople from './team/InvitePeople';
+
 class App extends Component {
 	constructor(props)
 	{
 		super(props);
-		this.state={invited: false};
+		this.state={
+			invited: false,
+			isLoggedIn: Auth.loggedIn()
+		};
 		this.checkInvited = this.checkInvited.bind(this);
+		this.setLoginStatus = this.setLoginStatus.bind(this);
 	}
 
-	checkLoggedIn(value) {
-		if(value !== undefined) {
-			this.setState({loggedIn: value})
-		}
-	}
 	requireAuth(nextState, replace) {
   		if (!Auth.loggedIn()) {
     		replace({
@@ -46,7 +47,16 @@ class App extends Component {
       			state: { nextPathname: nextState.location.pathname }
     		})
   		}
+  		console.log("authenticatedUser");
+  		this.setLoginStatus();
 	}
+
+	setLoginStatus()
+	{
+		console.log("inside setLoginStatus");
+    	this.setState({isLoggedIn: Auth.loggedIn()});
+	}
+
 	checkInvited(value) {
 		if(value !== undefined) {
 			this.setState({invited: value})
@@ -58,7 +68,7 @@ class App extends Component {
 
 		return (
 				<Router history={hashHistory}>
-					<Route path="/" component={LoggedInLayout}>
+					<Route path="/" isLoggedIn={this.state.isLoggedIn} component={LoggedInLayout}>
 						<IndexRoute component={CreateProject} onEnter={this.authenticatedUser.bind(this)}></IndexRoute>
 						<Route path="login/" component={Login} onEnter={this.authenticatedUser.bind(this)}></Route>
 						<Route path="confirmationCode/" component={ConfirmCode}></Route>
@@ -73,6 +83,7 @@ class App extends Component {
 						<Route path="profile/" component={Profile} onEnter={this.requireAuth.bind(this)}></Route>
 						<Route path="buddy/" component={BuddyAvatar} onEnter={this.requireAuth.bind(this)}></Route>
 						<Route path="manageTeam/" component={ManageTeam} onEnter={this.requireAuth.bind(this)}></Route>
+						<Route path="invitePeople/" component={InvitePeople} onEnter={this.requireAuth.bind(this)}></Route>
 					</Route>
 				</Router>
 			)

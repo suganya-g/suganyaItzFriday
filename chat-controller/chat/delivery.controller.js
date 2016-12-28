@@ -1,5 +1,7 @@
 var redis = require('redis');
 const redisUrl = process.env.REDIS_URL || 'redis://localhost';
+var pushChannelMessage = require('./chat.history.js');
+
 
 		 var sub = redis.createClient(redisUrl);
 		 var pub = redis.createClient(redisUrl);
@@ -15,7 +17,9 @@ const redisUrl = process.env.REDIS_URL || 'redis://localhost';
 
 		sub.on('message', function(channel, message) {
 			var data = JSON.parse(message);
+			pushChannelMessage(data.destination, message);
 			pub.publish(data.destination, message);
+
 		});
 
 		/*this.unsubscribe = function() {

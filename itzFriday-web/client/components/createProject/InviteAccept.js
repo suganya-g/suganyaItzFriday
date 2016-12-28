@@ -22,9 +22,10 @@ const styles ={
     height:'80%'
   },
 };
+
 export default class InviteAccept extends React.Component
 {
-constructor(props)
+  constructor(props)
   {
     super(props);
     this.state={project:this.props.location.query.project,owner:this.props.location.query.owner,email:this.props.location.query.email},
@@ -52,6 +53,7 @@ constructor(props)
   render()
   {
      return(
+
       <Grid>
       <Paper>
       <Card style={styles.cardStyle}>
@@ -61,6 +63,7 @@ constructor(props)
           <Avatar style={{backgroundColor:"#004D40"}} src="./../../resources/images/buddy.png" alt="qwerty" size={150}/>
           </span>
       </MediaQuery>
+
        <MediaQuery query='(max-device-width: 1023px)'>
           <span style={{marginTop:'5px'}}>
           <Avatar style={{backgroundColor:"#004D40"}} src="./../../resources/images/buddy.png" alt="qwerty" size={80}/>
@@ -71,29 +74,44 @@ constructor(props)
              <MediaQuery query='(min-device-width: 1024px)'>
                   <h1>ItzFriday</h1>
              </MediaQuery>
+
              <MediaQuery query='(max-device-width: 1023px)'>
                    <h3>ItzFriday</h3>
              </MediaQuery>
         </Row>
           <Row center="xs">
-          <p>You have been invited to join a project named "Buddy"</p>
+          <p>You have been invited to join a project named</p>
+        </Row>
+        <Row center="xs">
+          <p><strong>{this.state.project}</strong></p>
+        </Row>
+        <Row center="xs">
+          <p>By</p>
+        </Row>
+         <Row center="xs">
+          <p><strong>{this.state.owner}</strong></p>
         </Row>
         <Row center="xs">
            <RaisedButton
-            style={{marginTop:"25px"}}
+            style={{
+              marginTop:"25px"
+           }}
             type="submit"
             label="Accept Invitation"
             labelColor="white"
             backgroundColor="#4CAF50"
-            onClick={this.redirectInvitedMemberDetails}>
+            onClick={() => this.redirectInvitedMemberDetails("abc@gmail.com","Friday")}>
             </RaisedButton>
           </Row>
           <Row center="xs">
-          <p style={{marginTop:"125px", width:"600px"}}><strong>"ItzFriday"</strong> has been created for the people working in collabration to create ,code and manage their projects at one platform with a friendly environment.</p>
+          <p style={{marginTop:"70px", width:"600px"}}><strong>"ItzFriday"</strong> has been created for the people working in collabration to create ,code and manage their projects at one platform with a friendly environment.</p>
          </Row>
          </Card>
       </Paper>
+
       </Grid>
+
       );
   }
+
 }

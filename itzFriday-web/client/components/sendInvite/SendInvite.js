@@ -15,9 +15,11 @@ import {grey400,cyan50,red500,grey500,grey100,blueGrey100,blueGrey50,teal100} fr
 import {Link} from 'react-router';
 import MediaQuery from 'react-responsive';
 import Request from 'superagent';
+
 var previous="blank";
 var counter=0;
 var validExpre=/^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$/i;
+
 const styles = {
         button: {
             color: 'white',
@@ -68,6 +70,7 @@ export default class SendInvite extends React.Component
         this.setState({chipData: this.chipData});
         if(this.state.chipData.length==0)
                 this.setState({addbuttonState:true})
+
         ReactDOM.render(<MuiThemeProvider>
                             <div style={styles.wrapper}>
                                 {this.state.chipData.map(this.renderChip, this)}
@@ -123,28 +126,27 @@ export default class SendInvite extends React.Component
         else
             this.setState({errorMsg:"Email already Entered"})
     }
+    skipInvite()
+    {
+        this.props.router.replace('login/');
+    }
 
-  	 	skipInvite()
-			{
-				this.props.router.replace('login/');
-			}
 
-		sendInvite(data)
-			{
-			for(let index in data)
-				{
-				console.log(data[index].label);
-				Request.post('/sendInvite')
-		    		.send({email:data[index].label,project:this.props.location.query.project,owner:this.props.location.query.owner})
-		    		.end((err, res) => {
-		      		if(res.status==200)
-		      			 this.props.router.replace('login/');
-		      			else
-		      				alert("Mail delivery failed");
-					});
-		      	}
-			}
-
+    sendInvite(data)
+    {
+    for(let index in data)
+        {
+        console.log(data[index].label);
+        Request.post('/sendInvite')
+            .send({email:data[index].label,project:this.props.location.query.project,owner:this.props.location.query.owner})
+            .end((err, res) => {
+            if(res.status==200)
+                 this.props.router.replace('login/');
+                else
+                    alert("Mail delivery failed");
+            });
+        }
+    }
     render()
     {
         return(<Grid>
@@ -155,6 +157,7 @@ export default class SendInvite extends React.Component
             <SocialPersonAdd style={{color:'#004D40',width:'80px',height:'80px'}} />
             <h2 style={{color:'#004D40'}}>Join Us!</h2>
             </MediaQuery>
+
              <MediaQuery query='(max-device-width: 1023px)'>
                       <SocialPersonAdd style={{color:'#004D40',width:'50px',height:'50px'}} />
                        <h3 style={{color:'#004D40'}}>Join Us!</h3>
@@ -164,6 +167,7 @@ export default class SendInvite extends React.Component
                <MediaQuery query='(min-device-width: 1024px)'>
                     <h4 style={{color:'#004D40'}}>Add new members to your team!</h4>
                  </MediaQuery>
+
                  <MediaQuery query='(max-device-width: 1023px)'>
                       <h5 style={{color:'#004D40'}}>Add new members to your team!</h5>
                  </MediaQuery>
@@ -175,6 +179,7 @@ export default class SendInvite extends React.Component
             onChange={this.handleAdd}
             errorText={this.state.errorMsg}/>
             </MediaQuery>
+
             <MediaQuery query='(max-device-width: 1023px)'>
             <TextField type="email"
             floatingLabelText="Invite by Email"
@@ -197,7 +202,9 @@ export default class SendInvite extends React.Component
                 :
                 <div id="chipArea"></div>
             }
+
             </MediaQuery>
+
             <MediaQuery query='(max-device-width: 1023px)'>
             {
             (this.state.chipData.length)>=1?
@@ -208,7 +215,7 @@ export default class SendInvite extends React.Component
             </MediaQuery>
             </Row>
             <br />
-            <Row center="xs">
+         <Row center="xs">
             <RaisedButton
                           label="Skip"
                           backgroundColor='#D32F2F'

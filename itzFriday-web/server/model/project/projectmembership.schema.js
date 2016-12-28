@@ -7,4 +7,6 @@ let projectMemberShip = new Schema({
 	projectID:{type:Schema.Types.ObjectId},
 	memberID:{type:Schema.Types.ObjectId}
 });
-module.exports = mongoose.model('projectMemberShip',projectMemberShip);
+
+module.exports = mongoose.model('projectMembership',projectMemberShip);
+
