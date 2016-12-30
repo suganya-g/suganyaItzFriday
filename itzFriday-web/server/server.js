@@ -79,7 +79,8 @@ io.use(function(sockets, next) {
       } catch (err) {
         console.log(err);
         next(new Error("not valid token"));
-        socket.disconnect();
+        //socket.disconnect();
+        sockets.emit('disconnect', err);
       }
     }
   });

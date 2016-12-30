@@ -17,16 +17,18 @@ var pushChannelMessage = require('./chat.history.js');
 
 		sub.on('message', function(channel, message) {
 			var data = JSON.parse(message);
-			if(data.destination.match(/@/)) {
-				var splitDestination = data.destination.split('@');
-				if(splitDestination[1]) {
-					var splitNames = splitDestination[1].split('/');
-					var newNames = getUpdatedDestination(splitNames[0].split(' ')[0], splitNames[1].split(' ')[0]);
-					var newDestination = splitDestination[0]+ '@' + newNames[0]+ '/' + newNames[1];
-					pushChannelMessage(newDestination, message);
+			if(!data.method.match(/chat:count/)){
+				if(data.destination.match(/@/)) {
+					var splitDestination = data.destination.split('@');
+					if(splitDestination[1]) {
+						var splitNames = splitDestination[1].split('/');
+						var newNames = getUpdatedDestination(splitNames[0].split(' ')[0], splitNames[1].split(' ')[0]);
+						var newDestination = splitDestination[0]+ '@' + newNames[0]+ '/' + newNames[1];
+						pushChannelMessage(newDestination, message);
+					}
+				} else {
+					pushChannelMessage(data.destination, message);
 				}
-			} else {
-				pushChannelMessage(data.destination, message);
 			}
 			pub.publish(data.destination, message);
 

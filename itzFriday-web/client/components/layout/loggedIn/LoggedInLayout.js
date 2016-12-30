@@ -29,6 +29,7 @@ import ManageTeam from './../../sendInvite/SendInvite';
 import Auth from '../../../services/auth.service.js';
 import MediaQuery from 'react-responsive';
 import { Grid, Row, Col } from 'react-flexbox-grid';
+import SocketConnection from './../../../services/socket.service.js';
 
 
 let SelectableList = makeSelectable(List);
@@ -169,6 +170,12 @@ export default class LoggedInLayout extends React.Component
 		this.setTitleToNotifications = this.setTitleToNotifications.bind(this);
 		this.nameCompressor = this.nameCompressor.bind(this);
     this.handleOpenList=this.handleOpenList.bind(this);
+	}
+
+	getChildContext() {
+  		return {
+    		socket: SocketConnection.getSocketConnection()//io(restUrl)
+  		}
 	}
 	nameCompressor(name)
 	{
@@ -425,5 +432,9 @@ export default class LoggedInLayout extends React.Component
          </div>
 					</MuiThemeProvider>
 					);
+	}
 }
-}
+
+LoggedInLayout.childContextTypes = {
+	socket: React.PropTypes.object.isRequired
+};

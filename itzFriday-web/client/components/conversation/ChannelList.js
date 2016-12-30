@@ -22,9 +22,6 @@ import NavigationExpandMore from 'material-ui/svg-icons/navigation/expand-more';
 import NavigationExpandLess from 'material-ui/svg-icons/navigation/expand-less';
 import ImageTagFaces from 'material-ui/svg-icons/image/tag-faces';
 
-var groups=[];
-var channels =[];
-
 const styles = {
 	iconButton : {
 		color: 'white'
@@ -52,21 +49,37 @@ export default class ChannelList extends React.Component
 	{
 		super(props);
 		this.state = {
-			channels: this.props.channels,
-			badgeContent:0
+			groups: this.props.channels,
+			badgeContent:0,
+			currentChannel: '',
+			notify: {},
+			channels: []
 		};
 		this.displayChannel = this.displayChannel.bind(this);
 		this.changeState = this.changeState.bind(this);
 		this.compressName = this.compressName.bind(this);
-		groups = this.props.channels;
-		channels=[];
-		for( let index in groups)
+		this.handleUnreadMessageCount = this.handleUnreadMessageCount.bind(this);
+		this.renderChannels = this.renderChannels.bind(this);
+
+		this.renderChannels();
+		let notify = this.state.notify;
+		for(let index in this.state.groups) {
+			notify[this.state.groups[index].name] = 0;
+		}
+		this.setState({notify});
+	}
+
+	renderChannels()
+	{
+		let channels=[];
+		for( let index in this.state.groups)
 		{
-			channels.push(<ListItem style={styles.linkItem} onTouchTap={() => this.displayChannel(groups[index].name)} rightIcon={<Badge badgeContent={this.state.badgeContent} badgeStyle={{backgroundColor:'#004D40',color:'white',visibility: this.state.badgeContent === 0 ? 'hidden' : 'visible'}} />} leftIcon={<SocialGroup color='#004D40'/>}>{this.compressName(groups[index].name)}</ListItem>);
+			channels.push(<ListItem style={styles.linkItem} onTouchTap={() => this.displayChannel(this.state.groups[index].name)} rightIcon={<Badge badgeContent={this.state.notify[this.state.groups[index].name]} badgeStyle={{backgroundColor:'#004D40',color:'white',visibility: this.state.notify[this.state.groups[index].name] === 0 ? 'hidden' : 'visible'}} />} leftIcon={<SocialGroup color='#004D40'/>}>{this.compressName(this.state.groups[index].name)}</ListItem>);
 		}
 		channels.push(<Divider />);
-		channels.push(<Link to={"addChannel/"} style={styles.linkItem} ><ListItem key={-1} leftIcon={<ContentAddCircle color='#004D40' />}>Create channel</ListItem></Link>);
+		channels.push(<Link to={"addChannel/"} style={styles.linkItem} ><ListItem key={-1} style={styles.linkItem} leftIcon={<ContentAddCircle color='#004D40'/>}>Create channel</ListItem></Link>);
 		channels.push(<Divider />);
+		this.setState({channels});
 	}
 
 	compressName(name)
@@ -76,26 +89,31 @@ export default class ChannelList extends React.Component
 
 	componentWillReceiveProps(nextProps)
 	{
+		
 		this.changeState(nextProps.channels);
-		groups = this.state.channels;
-		channels=[];
-		for( let index in groups)
-		{
-			channels.push(<ListItem style={styles.linkItem} onTouchTap={() => this.displayChannel(groups[index].name)} rightIcon={<Badge badgeContent={this.state.badgeContent} badgeStyle={{backgroundColor:'#004D40',color:'white',visibility: this.state.badgeContent === 0 ? 'hidden' : 'visible'}} />} leftIcon={<SocialGroup color='#004D40'/>}>{this.compressName(groups[index].name)}</ListItem>);
+		let notify = this.state.notify;
+		this.renderChannels();
+		for(let index in this.state.groups) {
+			notify[this.state.groups[index].name] = 0;
 		}
-		channels.push(<Divider />);
-		channels.push(<Link to={"addChannel/"} style={styles.linkItem} ><ListItem key={-1} style={styles.linkItem} leftIcon={<ContentAddCircle color='#004D40'/>}>Create channel</ListItem></Link>);
-		channels.push(<Divider />);
+		this.setState({notify})
+		
 	}
 
 	displayChannel(name)
 	{
+		this.setState({currentChannel: name});
 		this.props.changeChannel(name);
+
 	}
 
-	changeState (channels)
+	changeState (groups)
 	{
-		this.setState({channels});
+		this.setState({groups: groups});
+	}
+
+	componentWillMount() {
+		this.context.socket.on('chat:count', this.handleUnreadMessageCount);
 	}
 
 	render()
@@ -106,8 +124,49 @@ export default class ChannelList extends React.Component
 		}
 		return(
 			<ListItem primaryText="Channels" id="channels" key="channels" style={styles.listItem} initiallyOpen={true} primaryTogglesNestedList={true}
-			nestedItems={channels}>
+			nestedItems={this.state.channels}>
 			</ListItem>
 			);
 	}
+
+	handleUnreadMessageCount(data) 
+	{
+		console.log("Handling socket data change: ", data);
+		let count = 0;
+		let notify = this.state.notify;
+		if(this.state.notify)
+		{
+			console.log('qwerr');
+			for(let index in this.state.groups) 
+			{
+				count = this.state.notify[data.channelName];
+				console.log(this.state.currentChannel+'::'+data.channelName+'::'+count);
+				if(this.state.currentChannel !== data.channelName) 
+				{
+					if(this.state.groups[index].name === data.channelName) 
+					{
+						//notify = this.state.notify;
+						notify[data.channelName] = (++count);
+						console.log(notify[data.channelName]);
+					}	
+				}
+				else 
+				{
+					if(this.state.groups[index].name === data.channelName) 
+					{
+						//notify = this.state.notify;
+						count = 0;
+						notify[data.channelName] = count;
+						console.log(notify[data.channelName]);
+					}	
+				}
+			}
+			this.setState({notify: notify});
+			this.renderChannels();
+			}
+		}
 }
+
+ChannelList.contextTypes = {
+  socket: React.PropTypes.object.isRequired
+};
