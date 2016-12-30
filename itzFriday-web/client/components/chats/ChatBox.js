@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import {Grid, Row, Col} from 'react-flexbox-grid';
 import ChatToolBar from './ChatToolBar';
 import ChatWindow from './ChatWindow';
-import sockets from './../../services/socket.service.js';
 import Auth from './../../services/auth.service.js';
 import SortService from './../../services/sort.service.js';
 import ListText from './../others/ListText';
@@ -10,7 +9,7 @@ import LinkText from './../others/LinkText';
 
 //var name = ''; 
 //var chatMessages = [];
-var socket = '';
+//var socket = '';
 class ChatBox extends Component {
   constructor(props) {
     super(props);
@@ -23,28 +22,30 @@ class ChatBox extends Component {
     this._filterMessages = this._filterMessages.bind(this);
   }
   componentDidMount() {
-    socket = sockets.getSocketConnection();
-    socket.on('error', this._socketConnectionError.bind(this));
-    socket.on('connected', this._getConnectedUser.bind(this));
-    socket.on('user:join',this._getJoinedUser.bind(this));
-    socket.on('send:message', this._recieveMessage.bind(this));
-    socket.on('init:data', this._getDataOnLoad.bind(this))
+    //this.setState({io: sockets.getSocketConnection()})
+    //socket = sockets.getSocketConnection();
+    this.context.socket.on('error', this._socketConnectionError.bind(this));
+    this.context.socket.on('connected', this._getConnectedUser.bind(this));
+    this.context.socket.on('user:join',this._getJoinedUser.bind(this));
+    this.context.socket.on('send:message', this._recieveMessage.bind(this));
+    this.context.socket.on('init:data', this._getDataOnLoad.bind(this));
+    this.context.socket.on('disconnect', this._disconnectSocket.bind(this));
   }
   componentWillReceiveProps(nextProps) {
     if(nextProps.location.query.identifier.match(/channel/i)) {
       var destination = nextProps.location.query.project + '#' + nextProps.location.query.name;
-      socket.emit('init:data', destination);
+      this.context.socket.emit('init:data', destination);
     }else if(nextProps.location.query.identifier.match(/message/i)) {
       var sortedName = SortService.getSortedName(nextProps.location.query.name.split(' ')[0], Auth.getNameFromToken());
       var destination = nextProps.location.query.project + '@' + sortedName[0]+ '/' +sortedName[1];
-      socket.emit('init:data', destination);
+      this.context.socket.emit('init:data', destination);
     }
     if(this.props !== nextProps) {
       //chatMessages=[];
       //socket.on('init:data', this._getDataOnLoad.bind(this))
     }
     if(this.props.location.query.project !== nextProps.location.query.project) {
-      socket.emit('user:join', nextProps.location.query.project);
+      this.context.socket.emit('user:join', nextProps.location.query.project);
     }
   }
 	render() {
@@ -107,7 +108,7 @@ class ChatBox extends Component {
     }
     //chatMessages.push(sendingMessage);
     //
-    socket.emit('send:message', sendingMessage);
+    this.context.socket.emit('send:message', sendingMessage);
     //this.setState({chatMessages});
   }
 
@@ -129,10 +130,20 @@ class ChatBox extends Component {
             messages.message = <LinkText link={messages.message.content}/>;
           }
           this.state.chatMessages.push(messages);
+          var unreadMessages = {
+            destination: messages.destination,
+            channelName: this.props.location.query.name
+          }
+          this.context.socket.emit('chat:count', unreadMessages);
         }
       }else if(names[1] && (names[1] === this.props.location.query.name) && (names[0] === this.props.location.query.project))
       {
         this.state.chatMessages.push(messages);
+        var unreadMessages = {
+            destination: messages.destination,
+            channelName: this.props.location.query.name
+          }
+          this.context.socket.emit('chat:count', unreadMessages);
       }
       this.setState({chatMessages: this.state.chatMessages});
     }
@@ -163,7 +174,7 @@ class ChatBox extends Component {
   }
 
   _getConnectedUser(user) {
-    socket.emit('user:join', this.props.location.query.project);
+    this.context.socket.emit('user:join', this.props.location.query.project);
   }
   _getJoinedUser(joinedUser) {
     console.log(joinedUser.user+' has joined to '+joinedUser.destination);
@@ -174,6 +185,14 @@ class ChatBox extends Component {
   _getDataOnLoad(chatMessages) {
     this.setState({chatMessages: chatMessages});
   }
+  _disconnectSocket(error) {
+    console.log('socket is disconnected due to : '+ error);
+    this.context.socket.disconnect();
+  }
 }
+
+ChatBox.contextTypes = {
+  socket: React.PropTypes.object.isRequired
+};
 
 export default ChatBox;
