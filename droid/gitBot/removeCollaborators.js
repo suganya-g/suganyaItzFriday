@@ -22,31 +22,35 @@ const removeCollaborators = function (repo,authToken,collaborators,callback)
 
     for(let collaborator in collaborators)
     {
-        request.delete(uri + collaborators[collaborator] + '?oauth_token='+authToken)
-        .set('User-Agent',owner)
-        .set('Content-Type', 'application/json')
-        .end(function(error,response)
+        if(collaborators[collaborator] === owner)
         {
-            if(error)
+            callback(null, {type:"string", content: "Can't remove the owner " + collaborators[collaborator]});
+        }
+        else
+        {
+            request.delete(uri + collaborators[collaborator] + '?oauth_token='+authToken)
+            .set('User-Agent',owner)
+            .set('Content-Type', 'application/json')
+            .end(function(error,response)
             {
-                if(error.toString().match(/Unprocessable/ig))
-                    callback({type:"string", content: "Failed to remove "+collaborators[collaborator]}, null);
-                else
-                    callback({type:"string", content: error.toString()}, null);
-            }
-            else
-            {
-                if(response.status === 204)
+                if(error)
                 {
-                    if(collaborators[collaborator] !== owner)
-                        callback(null, {type:"string", content: collaborators[collaborator] + " has been removed from project "+repo});
+                    if(error.toString().match(/Unprocessable/ig))
+                        callback({type:"string", content: "Failed to remove "+collaborators[collaborator]}, null);
                     else
-                        callback(null, {type:"string", content: "Can't remove the owner " + collaborators[collaborator]});
+                        callback({type:"string", content: error.toString()}, null);
                 }
                 else
-                    callback(null, {type:"string", content: "Failed to remove " + collaborators[collaborator]});
-            }
-        });  
+                {
+                    if(response.status === 204)
+                    {
+                        callback(null, {type:"string", content: collaborators[collaborator] + " has been removed from project "+repo});
+                    }
+                    else
+                        callback(null, {type:"string", content: "Failed to remove " + collaborators[collaborator]});
+                }
+            });
+        }  
     }
     return
 }

@@ -22,32 +22,36 @@ const inviteCollaborators = function (repo,authToken,collaborators,callback)
 
     for(let collaborator in collaborators)
     {
-        request.put(uri + collaborators[collaborator] + '?oauth_token='+authToken)
-        .set('User-Agent',owner)
-        .set('Content-Type', 'application/json')
-        .set('Accept', 'application/vnd.github.swamp-thing-preview+json')
-        .end(function(error,response)
+        if(collaborators[collaborator] === owner)
         {
-            if(error)
+            callback(null, {type:"string", content: "Can't send invite to the admin " + collaborators[collaborator]});
+        }
+        else
+        {
+            request.put(uri + collaborators[collaborator] + '?oauth_token='+authToken)
+            .set('User-Agent',owner)
+            .set('Content-Type', 'application/json')
+            .set('Accept', 'application/vnd.github.swamp-thing-preview+json')
+            .end(function(error,response)
             {
-                if(error.renderToString().match(/Unprocessable/ig))
-                    callback({type:"string", content: "Failed to send invitation to "+collaborators[collaborator]}, null);
-                else
-                    callback({type:"string", content: error.toString()}, null);
-            }
-            else
-            {
-                if(response.status === 201)
+                if(error)
                 {
-                    if(collaborators[collaborator] !== owner)
-                        callback(null, {type:"string", content: collaborators[collaborator] + " has been invited to as collaborator in project "+repo});
+                    if(error.renderToString().match(/Unprocessable/ig))
+                        callback({type:"string", content: "Failed to send invitation to "+collaborators[collaborator]}, null);
                     else
-                        callback(null, {type:"string", content: "Can't send invite to the admin " + collaborators[collaborator]});
+                        callback({type:"string", content: error.toString()}, null);
                 }
                 else
-                    callback(null, {type:"string", content: "Failed to send invite to " + collaborators[collaborator]});
-            }
-        });  
+                {
+                    if(response.status === 201)
+                    {
+                        callback(null, {type:"string", content: collaborators[collaborator] + " has been invited as collaborator in project "+repo});
+                    }
+                    else
+                        callback(null, {type:"string", content: "Failed to send invite to " + collaborators[collaborator]});
+                }
+            });
+        }  
     }
     return
 }
