@@ -114,6 +114,98 @@ var valueMD = {
 			replaceWith : ''
 		}
 	},
+	collaborators : 				//assignees
+	{
+		priority : 100,
+		keyPattern : [
+			{
+				keywords : 
+				[
+					{word : "add", want : true},
+					{word : "collaborator", want : true}
+				]
+			},
+			{
+				keywords : 
+				[
+					{word : "add", want : true},
+					{word : "contributor", want : true}
+				]
+			},
+			{
+				keywords : 
+				[
+					{word : "add", want : true},
+					{word : "member", want : true}
+				]
+			},
+			{
+				keywords : 
+				[
+					{word : "invite", want : true},
+					{word : "collaborator", want : true}
+				]
+			},
+			{
+				keywords : 
+				[
+					{word : "invite", want : true},
+					{word : "contributor", want : true}
+				]
+			},
+			{
+				keywords : 
+				[
+					{word : "invite", want : true},
+					{word : "member", want : true}
+				]
+			},
+			{
+				keywords : 
+				[
+					{word : "remove", want : true},
+					{word : "member", want : true}
+				]
+			},
+			{
+				keywords : 
+				[
+					{word : "remove", want : true},
+					{word : "collaborator", want : true}
+				]
+			},
+			{
+				keywords : 
+				[
+					{word : "remove", want : true},
+					{word : "contributor", want : true}
+				]
+			},
+			{
+				keywords : 
+				[
+					{word : "delete", want : true},
+					{word : "member", want : true}
+				]
+			},
+			{
+				keywords : 
+				[
+					{word : "delete", want : true},
+					{word : "collaborator", want : true}
+				]
+			},
+			{
+				keywords : 
+				[
+					{word : "delete", want : true},
+					{word : "contributor", want : true}
+				]
+			},
+		],
+		valuePattern : /[\w-_]+/g,
+		replace : null
+	},
 	assignees : 				//assignees
 	{
 		priority : 300,

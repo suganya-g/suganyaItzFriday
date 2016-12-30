@@ -1,5 +1,6 @@
 var variableStoresObjectMD = [
 "labels", 
-"assignees"
+"assignees",
+"collaborators"
 ];
 module.exports = variableStoresObjectMD;

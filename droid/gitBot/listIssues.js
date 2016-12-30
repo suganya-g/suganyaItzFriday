@@ -3,7 +3,7 @@ const listIssues = function (repo,number,callback)
 {
     if(!repo)
     {
-        callback({error: true, type:"string", content: "Error: Repository Not Present"}, null);
+        callback({type:"string", content: "Error: Repository Not Present"}, null);
         return
     }
 
