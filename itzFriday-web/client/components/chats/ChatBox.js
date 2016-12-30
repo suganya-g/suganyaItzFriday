@@ -3,7 +3,7 @@ import {Grid, Row, Col} from 'react-flexbox-grid';
 import ChatToolBar from './ChatToolBar';
 import ChatWindow from './ChatWindow';
 import Auth from './../../services/auth.service.js';
-// import SortService from './../../services/sort.service.js';
+import SortService from './../../services/sort.service.js';
 import ListText from './../others/ListText';
 import LinkText from './../others/LinkText';
 
