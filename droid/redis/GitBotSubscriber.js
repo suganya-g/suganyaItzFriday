@@ -4,6 +4,10 @@ var assignIssue = require("../gitBot/assignIssue");
 var labelIssue = require("../gitBot/labelIssue");
 var closeIssue = require("../gitBot/closeIssue");
 var listIssues = require("../gitBot/listIssues");
+var listCollaborators = require("../gitBot/listCollaborators");
+var inviteCollaborators = require("../gitBot/inviteCollaborators");
+var addCollaborators = require("../gitBot/addCollaborators");
+var removeCollaborators = require("../gitBot/removeCollaborators");
 var commentOnIssue = require("../gitBot/commentOnIssue");
 
 const controller = require('../server/routes/git/git.controller.js');
@@ -69,11 +73,15 @@ var jsonObject = {
 
 function asyncDataHandler(error,result)
 { 
+	//change Author to Droid
+	jsonData.author = "Droid";
+		
 	if(error)
 	{
 		console.log(error);
 		console.log(error.toString());	
 		jsonData.message = error;
+
 		if(error.content.match(/error: not found/gi))
 		{
 			projectMap[deliveryChannel] = null;
@@ -98,6 +106,7 @@ function fetchJsonObject(message)
 	"title" : "",
 	"body" : "",
 	"labels" : "",
+	"collaborators" : "",
 	"assignees" : "",
 	"state" : "open",
 	"text" : ""			//use it for commands other than git commands
@@ -316,10 +325,6 @@ var receiveMessage = function(count, channel, message)
 		gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
 		console.log(jsonData);
 	}
-
-
-	//change Author to Droid
-	jsonData.author = "Droid";
 	
 	controller.access(jsonData.user, (err, res) => 
 	{
@@ -405,27 +410,33 @@ var receiveMessage = function(count, channel, message)
 					// fn.apply(null, jsonObject, asyncDataHandler);
 					switch(intents[intent].intent)
 					{
+						case "addCollaborators":
+							console.log("\ncommand to add contributors");
+							addCollaborators(jsonObject.repo, jsonObject.authToken, jsonObject.collaborators, asyncDataHandler);
+						
+						break;
+						
 						case "assignIssue":
 							console.log("\ncommand to assign issue ");//NOTE:	//not working cuz of asyn
-							assignIssue(jsonObject.repo, jsonObject.authToken, jsonObject.number, jsonObject.assignees, asyncDataHandler); //(err, res) => {
+							assignIssue(jsonObject.repo, jsonObject.authToken, jsonObject.number, jsonObject.assignees, asyncDataHandler);
 							
 						break;
 
 						case "commentOnIssue":
 							console.log("\ncommand to comment on issue ");
-							commentOnIssue(jsonObject.repo, jsonObject.authToken, jsonObject.number, jsonObject.comment, asyncDataHandler); //(err, res) => {
+							commentOnIssue(jsonObject.repo, jsonObject.authToken, jsonObject.number, jsonObject.comment, asyncDataHandler);
 						
 						break;
 
 						case "closeIssue":
 							console.log("\ncommand to close issue ");
-							closeIssue(jsonObject.repo, jsonObject.authToken, jsonObject.number, asyncDataHandler); //(err, res) => {
+							closeIssue(jsonObject.repo, jsonObject.authToken, jsonObject.number, asyncDataHandler);
 						
 						break;
 
 						case "createIssue":
 							console.log("\ncommand to create issue ");
-							createIssue(jsonObject.repo, jsonObject.authToken, jsonObject.title, jsonObject.body, jsonObject.labels, jsonObject.assignees, asyncDataHandler); //(err, res) => {
+							createIssue(jsonObject.repo, jsonObject.authToken, jsonObject.title, jsonObject.body, jsonObject.labels, jsonObject.assignees, asyncDataHandler);
 							
 						break;
 
@@ -433,33 +444,60 @@ var receiveMessage = function(count, channel, message)
 						// 	console.log("Create Project : not yet implemented")	
 						// break;
 
+						case "inviteCollaborators":
+							console.log("\ncommand to invite contributors");
+							inviteCollaborators(jsonObject.repo, jsonObject.authToken, jsonObject.collaborators, asyncDataHandler);
+						
+						break;
+
 						case "labelIssue":
 							console.log("\ncommand to label issue");
-							labelIssue(jsonObject.repo, jsonObject.authToken, jsonObject.number, jsonObject.labels, asyncDataHandler); //(err, res) => {
+							labelIssue(jsonObject.repo, jsonObject.authToken, jsonObject.number, jsonObject.labels, asyncDataHandler);
 						
 						break;
 						
 						case "listIssues":
 							console.log("\ncommand to list issues");
-							listIssues(jsonObject.repo, jsonObject.number, asyncDataHandler); //(err, res) => {
+							listIssues(jsonObject.repo, jsonObject.number, asyncDataHandler);
+						
+						break;
+						
+						case "listCollaborators":
+							console.log("\ncommand to list collaborators");
+							listCollaborators(jsonObject.repo, jsonObject.authToken, asyncDataHandler);
+						
+						break;
+						
+						case "removeCollaborators":
+							console.log("\ncommand to remove collaborators");
+							removeCollaborators(jsonObject.repo, jsonObject.authToken, jsonObject.collaborators, asyncDataHandler);
 						
 						break;
 						
 						case "greetings":
-							console.log("Hello! How can I help you?");
-							jsonData.message = {ofType:"string", withContent: "Hello! How can I help you?"};
+
+							console.log("Hello! How can I help you, "+jsonData.author+"?");
+							jsonData.message = {ofType:"string", withContent: "Hello! How can I help you, "+jsonData.author+"?"};
+							//change Author to Droid
+							jsonData.author = "Droid";
 							gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
 						break;
 
 						case "howAreYou":
 							console.log("I am fine, thank you.");
-							jsonData.message = {ofType:"string", withContent: "I am fine, thank you."};
+
+							jsonData.message = {ofType:"string", withContent: "I am fine, thanks "+jsonData.author+"!"};
+							//change Author to Droid
+							jsonData.author = "Droid";
 							gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
 						break;
 					
 						case "randomInput":
-							console.log("Sorry, but I am unable to understand you.");
-							jsonData.message = {ofType:"string", withContent: "Sorry, I am unable to understand you."};
+
+							console.log("Sorry, but I am unable to understand you "+jsonData.author);
+							jsonData.message = {ofType:"string", withContent: "Sorry, I am unable to understand you "+jsonData.author};
+							//change Author to Droid
+							jsonData.author = "Droid";
 							gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
 							break;
 

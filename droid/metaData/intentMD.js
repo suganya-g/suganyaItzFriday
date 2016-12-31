@@ -70,6 +70,63 @@ var intentMD = {
 		}
 	}
 	,
+	listCollaborators : 
+	{
+		context : 'owner',
+		props : 
+		{
+			required : ['repo', 'authToken'],
+		},
+		pattern :
+		{
+			oneOfThese : ['list', 'show', 'display'],
+			required : ['collaborator', 'contributor', 'member']
+		}
+	}
+	,
+
+	addCollaborators : //add without sending invite
+	{
+		context : 'owner',
+		props : 
+		{
+			required : ['repo', 'authToken', 'collaborators'],
+		},
+		pattern :
+		{
+			oneOfThese : ['add'],
+			required : ['collaborator', 'contributor', 'member']
+		}
+	}
+	,
+	inviteCollaborators : //send invitation
+	{
+		context : 'owner',
+		props : 
+		{
+			required : ['repo', 'authToken', 'collaborators'],
+		},
+		pattern :
+		{
+			oneOfThese : ['invite'],
+			required : ['collaborator', 'contributor', 'member']
+		}
+	}
+	,
+	removeCollaborators : //send invitation
+	{
+		context : 'owner',
+		props : 
+		{
+			required : ['repo', 'authToken', 'collaborators'],
+		},
+		pattern :
+		{
+			oneOfThese : ['remove', 'delete'],
+			required : ['collaborator', 'contributor', 'member']
+		}
+	}
+	,	
 	commentOnIssue : 
 	{
 		context : 'issue',

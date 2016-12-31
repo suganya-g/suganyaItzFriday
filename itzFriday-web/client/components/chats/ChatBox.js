@@ -6,6 +6,7 @@ import Auth from './../../services/auth.service.js';
 import SortService from './../../services/sort.service.js';
 import ListText from './../others/ListText';
 import LinkText from './../others/LinkText';
+import ListItemsText from './../others/ListItemsText';
 
 
 class ChatBox extends Component {
@@ -41,22 +42,22 @@ class ChatBox extends Component {
       this.context.socket.emit('user:join', nextProps.location.query.project);
     }
   }
-	render() {
-		return (
-				<Grid>
-        			<Row>
-          				<Col xs={12} sm={12} md={12} lg={12}>
+  render() {
+    return (
+        <Grid>
+              <Row>
+                  <Col xs={12} sm={12} md={12} lg={12}>
                         <ChatToolBar project={this.props.location.query.project} name={this.props.location.query.name} identifier={this.props.location.query.identifier} participants={this.state.participants} joinUser={this.joinConversation.bind(this)}/> 
                   </Col>
-        			</Row>
-        			<Row>
-          				<Col xs={12} sm={12} md={12} lg={12}>
+              </Row>
+              <Row>
+                  <Col xs={12} sm={12} md={12} lg={12}>
                     <ChatWindow project={this.props.location.query.project} identifierName={this.props.location.query.name} chatMessages={this.state.chatMessages} identifier={this.props.location.query.identifier} addMessage={this.addChatMessages.bind(this)} />
                   </Col>
-        			</Row>
-      	</Grid>
-			)
-	}
+              </Row>
+        </Grid>
+      )
+  }
 
   _recieveMessage(message) {
     this._filterMessages(message);
@@ -110,6 +111,8 @@ class ChatBox extends Component {
             messages.message = <ListText issues={messages.message.withContent}/>;
           } else if(messages.message.ofType === 'link') {
             messages.message = <LinkText gitLink={messages.message.withContent}/>;
+          }else if(messages.message.ofType === 'listItems') {
+            messages.message = <ListItemsText items={messages.message.withContent}/>;
           }
           this.state.chatMessages.push(messages);
           var unreadMessages = {
@@ -143,6 +146,8 @@ class ChatBox extends Component {
             messages.message = <ListText issues={messages.message.withContent}/>;
           }else if(messages.message.ofType === 'link') {
             messages.message = <LinkText gitLink={messages.message.withContent}/>;
+          }else if(messages.message.ofType === 'listItems') {
+            messages.message = <ListItemsText items={messages.message.withContent}/>;
           }
           this.state.chatMessages.push(messages);
         }else if(names[1] && (users[0].split(' ')[0] === Auth.getNameFromToken()) && (users[1] === (this.props.location.query.name).split(' ')[0]) && (names[0] === this.props.location.query.project) && (users[1] !== 'Droid')){
