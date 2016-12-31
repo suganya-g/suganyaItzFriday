@@ -74,7 +74,7 @@ export default class ChannelList extends React.Component
 		let channels=[];
 		for( let index in this.state.groups)
 		{
-			channels.push(<ListItem style={styles.linkItem} onTouchTap={() => this.displayChannel(this.state.groups[index].name)} rightIcon={<Badge badgeContent={this.state.notify[this.state.groups[index].name]} badgeStyle={{backgroundColor:'#004D40',color:'white',visibility: this.state.notify[this.state.groups[index].name] === 0 ? 'hidden' : 'visible'}} />} leftIcon={<SocialGroup color='#004D40'/>}>{this.compressName(this.state.groups[index].name)}</ListItem>);
+			channels.push(<ListItem key={index} style={styles.linkItem} onTouchTap={() => this.displayChannel(this.state.groups[index].name)} rightIcon={<Badge badgeContent={this.state.notify[this.state.groups[index].name]} badgeStyle={{backgroundColor:'#004D40',color:'white',visibility: this.state.notify[this.state.groups[index].name] === 0 ? 'hidden' : 'visible'}} />} leftIcon={<SocialGroup color='#004D40'/>}>{this.compressName(this.state.groups[index].name)}</ListItem>);
 		}
 		channels.push(<Divider />);
 		channels.push(<Link to={"addChannel/"} style={styles.linkItem} ><ListItem key={-1} style={styles.linkItem} leftIcon={<ContentAddCircle color='#004D40'/>}>Create channel</ListItem></Link>);
@@ -112,7 +112,7 @@ export default class ChannelList extends React.Component
 		this.setState({groups: groups});
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		this.context.socket.on('chat:count', this.handleUnreadMessageCount);
 	}
 
@@ -139,26 +139,25 @@ export default class ChannelList extends React.Component
 			console.log('qwerr');
 			for(let index in this.state.groups) 
 			{
-				count = this.state.notify[data.channelName];
-				console.log(this.state.currentChannel+'::'+data.channelName+'::'+count);
-				if(this.state.currentChannel !== data.channelName) 
-				{
-					if(this.state.groups[index].name === data.channelName) 
-					{
+				count = this.state.notify[data.sender];
+				console.log(this.state.currentChannel+'::'+data.sender+'::'+count);
+				if(this.state.currentChannel !== undefined && data.sender && count !== undefined) {
+
+					if(this.state.currentChannel !== data.sender) {
+						if(this.state.groups[index].name === data.sender) {
 						//notify = this.state.notify;
-						notify[data.channelName] = (++count);
-						console.log(notify[data.channelName]);
-					}	
-				}
-				else 
-				{
-					if(this.state.groups[index].name === data.channelName) 
-					{
+							notify[data.sender] = (++count);
+							console.log(notify[data.sender]);
+						}	
+					} else {
+						if(this.state.groups[index].name === data.sender) {
 						//notify = this.state.notify;
-						count = 0;
-						notify[data.channelName] = count;
-						console.log(notify[data.channelName]);
-					}	
+							count = 0;
+							notify[data.sender] = count;
+							console.log(notify[data.sender]);
+						}	
+					}
+
 				}
 			}
 			this.setState({notify: notify});

@@ -3,12 +3,12 @@ const inviteCollaborators = function (repo,authToken,collaborators,callback)
 {
     if(!repo)
     {
-        callback({error: true, type:"string", content: "Error: Repository Not Present"}, null);
+        callback({ofType:"string", withContent: "Error: Repository Not Present"}, null);
         return
     }
     else if(!collaborators || collaborators.length === 0)
     {
-        callback({error: true, type:"string", content: "Error: Collaborators Not Present"}, null);
+        callback({ofType:"string", withContent: "Error: Collaborators Not Present"}, null);
         return
     }
 
@@ -24,7 +24,7 @@ const inviteCollaborators = function (repo,authToken,collaborators,callback)
     {
         if(collaborators[collaborator] === owner)
         {
-            callback(null, {type:"string", content: "Can't send invite to the admin " + collaborators[collaborator]});
+            callback(null, {ofType:"string", withContent: "Can't send invite to the admin " + collaborators[collaborator]});
         }
         else
         {
@@ -37,18 +37,18 @@ const inviteCollaborators = function (repo,authToken,collaborators,callback)
                 if(error)
                 {
                     if(error.renderToString().match(/Unprocessable/ig))
-                        callback({type:"string", content: "Failed to send invitation to "+collaborators[collaborator]}, null);
+                        callback({ofType:"string", withContent: "Failed to send invitation to "+collaborators[collaborator]}, null);
                     else
-                        callback({type:"string", content: error.toString()}, null);
+                        callback({ofType:"string", withContent: error.toString()}, null);
                 }
                 else
                 {
                     if(response.status === 201)
                     {
-                        callback(null, {type:"string", content: collaborators[collaborator] + " has been invited as collaborator in project "+repo});
+                        callback(null, {ofType:"string", withContent: collaborators[collaborator] + " has been invited as collaborator in project "+repo});
                     }
                     else
-                        callback(null, {type:"string", content: "Failed to send invite to " + collaborators[collaborator]});
+                        callback(null, {ofType:"string", withContent: "Failed to send invite to " + collaborators[collaborator]});
                 }
             });
         }  

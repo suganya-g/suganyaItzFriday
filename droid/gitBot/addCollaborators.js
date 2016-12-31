@@ -3,12 +3,12 @@ const addCollaborators = function (repo,authToken,collaborators,callback)
 {
     if(!repo)
     {
-        callback({type:"string", content: "Error: Repository Not Present"}, null);
+        callback({ofType:"string", withContent: "Error: Repository Not Present"}, null);
         return
     }
     else if(!collaborators || collaborators.length === 0)
     {
-        callback({type:"string", content: "Error: Collaborators Not Present"}, null);
+        callback({ofType:"string", withContent: "Error: Collaborators Not Present"}, null);
         return
     }
 
@@ -24,7 +24,7 @@ const addCollaborators = function (repo,authToken,collaborators,callback)
     {
         if(collaborators[collaborator] === owner)
         {
-            callback(null, {type:"string", content: "Not processing for the owner " + collaborators[collaborator]});
+            callback(null, {ofType:"string", withContent: "Not processing for the owner " + collaborators[collaborator]});
         }
         else
         {
@@ -36,18 +36,18 @@ const addCollaborators = function (repo,authToken,collaborators,callback)
                 if(error)
                 {
                     if(error.toString().match(/Unprocessable/ig))
-                        callback({type:"string", content: "Failed to add "+collaborators[collaborator]+" as collaborator"}, null);
+                        callback({ofType:"string", withContent: "Failed to add "+collaborators[collaborator]+" as collaborator"}, null);
                     else
-                        callback({type:"string", content: error.toString()}, null);
+                        callback({ofType:"string", withContent: error.toString()}, null);
                 }
                 else
                 {
                     if(response.status === 204)
                     {
-                        callback(null, {type:"string", content: collaborators[collaborator] + " has been added as collaborator in project "+repo});
+                        callback(null, {ofType:"string", withContent: collaborators[collaborator] + " has been added as collaborator in project "+repo});
                     }
                     else
-                        callback(null, {type:"string", content: "Failed to add contributor " + collaborators[collaborator]});
+                        callback(null, {ofType:"string", withContent: "Failed to add contributor " + collaborators[collaborator]});
                 }
             });
         }

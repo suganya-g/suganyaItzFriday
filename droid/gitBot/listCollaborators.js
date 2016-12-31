@@ -3,7 +3,7 @@ const listCollaborators = function (repo,authToken,callback)
 {
     if(!repo)
     {
-        callback({type:"string", content: "Error: Repository Not Present"}, null);
+        callback({ofType:"string", withContent: "Error: Repository Not Present"}, null);
         return
     }
 
@@ -23,7 +23,7 @@ const listCollaborators = function (repo,authToken,callback)
     .end(function(error,response){
         if(error)
         {
-            callback({type:"string", content: error.toString()}, null);
+            callback({ofType:"string", withContent: error.toString()}, null);
             return
         }
         else
@@ -36,7 +36,7 @@ const listCollaborators = function (repo,authToken,callback)
 
         }
         console.log(collaborators)
-        callback(null, {type:"listItems", content: collaborators});
+        callback(null, {ofType:"listItems", withContent: collaborators});
         return
     });
 }

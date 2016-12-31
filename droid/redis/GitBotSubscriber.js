@@ -314,7 +314,11 @@ var receiveMessage = function(count, channel, message)
 	//fetch the json
 	jsonData = JSON.parse(message);
 	//fetch the message
-	message = jsonData.message.replace('Hey Droid, ','');
+	message = jsonData.message;
+	if(message.match(/Hey Droid,/gi))
+	{
+		message = message.replace('Hey Droid, ','');
+	}
 	//fetch the keyString
 	keyString = getKeyString(message);
 	//fetch Channel to publish on
@@ -324,7 +328,7 @@ var receiveMessage = function(count, channel, message)
 
 	if(deliveryChannel.match(/#/)) 
 	{
-		jsonData.message={type:"string", content:jsonData.message};
+		jsonData.message={ofType:"string", withContent:jsonData.message};
 		console.log("publishing at : ");
 		console.log(publishChannel);
 		gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
@@ -398,15 +402,14 @@ var receiveMessage = function(count, channel, message)
 						jsonObject.repo = projectMap[deliveryChannel];
 						console.log("updated json : ");
 						console.log(jsonObject);
-						if(jsonObject.text === '')
+						if(jsonObject.text === '' && !intentString.match(/currentRepository/gi))
 						{
 							jsonData.author = "Droid";
-							jsonData.message = {type:"string", content:"Operating on project " + projectMap[deliveryChannel] +"."};
+							jsonData.message = {ofType:"string", withContent:"Operating on project " + projectMap[deliveryChannel]};
 							console.log(jsonData.message.content);
 							gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
 						}
 					}	
-					
 				}
 				projectMap[deliveryChannel] = jsonObject.repo;
 				
@@ -490,7 +493,7 @@ var receiveMessage = function(count, channel, message)
 						case "setRepository":
 							console.log("\ncommand to set current repository");
 							projectMap[deliveryChannel] = jsonObject.repo;
-							jsonData.message = {type:"string", content: "Current repository is set to "+projectMap[deliveryChannel]};
+							jsonData.message = {ofType:"string", withContent: "Current repository is set to "+projectMap[deliveryChannel]};
 							console.log("Current repository is set to "+projectMap[deliveryChannel]);
 							//change Author to Droid
 							jsonData.author = "Droid";
@@ -499,8 +502,9 @@ var receiveMessage = function(count, channel, message)
 						break;
 
 						case "greetings":
+
 							console.log("Hello! How can I help you, "+jsonData.author+"?");
-							jsonData.message = {type:"string", content: "Hello! How can I help you, "+jsonData.author+"?"};
+							jsonData.message = {ofType:"string", withContent: "Hello! How can I help you, "+jsonData.author+"?"};
 							//change Author to Droid
 							jsonData.author = "Droid";
 							gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
@@ -508,15 +512,17 @@ var receiveMessage = function(count, channel, message)
 
 						case "howAreYou":
 							console.log("I am fine, thank you.");
-							jsonData.message = {type:"string", content: "I am fine, thanks "+jsonData.author+"!"};
+
+							jsonData.message = {ofType:"string", withContent: "I am fine, thanks "+jsonData.author+"!"};
 							//change Author to Droid
 							jsonData.author = "Droid";
 							gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
 						break;
 					
 						case "randomInput":
+
 							console.log("Sorry, but I am unable to understand you "+jsonData.author);
-							jsonData.message = {type:"string", content: "Sorry "+jsonData.author+", I am unable to understand you "};
+							jsonData.message = {ofType:"string", withContent: "Sorry "+jsonData.author+", I am unable to understand you "};
 							//change Author to Droid
 							jsonData.author = "Droid";
 							gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
@@ -527,10 +533,10 @@ var receiveMessage = function(count, channel, message)
 			}
 			else
 			{
-				jsonData.message = {type:"string", content: "Your account is not linked with GitHub. Please link it with GitHub to avail the droid facilities."};
+				jsonData.message = {ofType:"string", withContent: "Your account is not linked with GitHub. Please link it with GitHub to avail the droid facilities."};
 				gitBotPublisher.publish(publishChannel, JSON.stringify(jsonData));
 
-				jsonData.message = {type:"link", content: res.message};
+				jsonData.message = {ofType:"link", withContent: res.message};
 				gitBotPublisher.publish(publishChannel, JSON.stringify(jsonData));
 			}
 		}

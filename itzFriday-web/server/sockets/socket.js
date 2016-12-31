@@ -36,7 +36,7 @@ module.exports = function (socket) {
     var countToPublish = JSON.stringify({
         method: 'chat:count',
         destination:countData.destination,
-        channelName: countData.channelName
+        sender: countData.sender
       });
     pub.publish('delivery', countToPublish);
   });
