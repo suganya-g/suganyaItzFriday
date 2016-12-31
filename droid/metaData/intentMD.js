@@ -1,4 +1,18 @@
 var intentMD = {
+	setRepository : 
+	{
+		context : 'owner',
+		props : 
+		{
+			required : ['repo']
+		},
+		pattern :
+		{
+			oneOfThese : ['set'],
+			required : ['repo', 'project']
+		}
+	}
+	,
 	createIssue : 
 	{
 		context : 'project',

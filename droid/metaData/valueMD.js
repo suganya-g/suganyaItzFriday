@@ -20,8 +20,29 @@ var valueMD = {
 			{
 				keywords : 
 				[
+					{word : "in", want : true},
+					{word : "repo", want : true}
+				]
+			},
+			{
+				keywords : 
+				[
+					{word : "under", want : true},
+					{word : "repo", want : true}
+				]
+			},
+			{
+				keywords : 
+				[
 					{word : "set", want : true},		//when confirming project from user
 					{word : "project", want : true}
+				]
+			},
+			{
+				keywords : 
+				[
+					{word : "set", want : true},		//when confirming project from user
+					{word : "repo", want : true}
 				]
 			},
 		],

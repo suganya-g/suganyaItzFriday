@@ -4,6 +4,7 @@ var assignIssue = require("../gitBot/assignIssue");
 var labelIssue = require("../gitBot/labelIssue");
 var closeIssue = require("../gitBot/closeIssue");
 var listIssues = require("../gitBot/listIssues");
+var currentRepository = require("../gitBot/currentRepository");
 var listCollaborators = require("../gitBot/listCollaborators");
 var inviteCollaborators = require("../gitBot/inviteCollaborators");
 var addCollaborators = require("../gitBot/addCollaborators");
@@ -190,7 +191,7 @@ function fetchJsonObject(message)
 			{
 				json.text=message;
 			}
-			else
+			else if(intents.toString().match(/randomInput/gi))
 			{
 				json.text = "random input";
 			}
@@ -263,6 +264,10 @@ function getUserIntent(message, keyString)
 		if(message === "" || message.match(/hello/gi) || message.match(/hey/gi) || message.match(/hi/gi) || message.match(/whats up/gi) || message.match(/sup/gi) || message.match(/wassup/gi))
 		{
 			intent.push({"intent":"greetings", "priority":0});
+		}
+		else if((message.match(/show/gi) || message.match(/current/gi)) && (message.match(/project/gi) || message.match(/repo/gi)))
+		{
+			intent.push({"intent":"currentRepository", "priority":0});
 		}
 		else if((message.match(/how/) || message.match(/what/)) && message.match(/are/) && message.match(/you/))
 		{
@@ -393,9 +398,11 @@ var receiveMessage = function(count, channel, message)
 						jsonObject.repo = projectMap[deliveryChannel];
 						console.log("updated json : ");
 						console.log(jsonObject);
-						if(!intentString.match(/randomInput/gi) && jsonData.text === '')
+						if(jsonObject.text === '')
 						{
-							jsonData.message = {type:"string", content:"Operating on project : "+projectMap[deliveryChannel]};
+							jsonData.author = "Droid";
+							jsonData.message = {type:"string", content:"Operating on project " + projectMap[deliveryChannel] +"."};
+							console.log(jsonData.message.content);
 							gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
 						}
 					}	
@@ -410,6 +417,12 @@ var receiveMessage = function(count, channel, message)
 					// fn.apply(null, jsonObject, asyncDataHandler);
 					switch(intents[intent].intent)
 					{
+						case "currentRepository":
+							console.log("\ncommand to show current repository");
+							currentRepository(jsonObject.repo, asyncDataHandler);
+						
+						break;
+						
 						case "addCollaborators":
 							console.log("\ncommand to add contributors");
 							addCollaborators(jsonObject.repo, jsonObject.authToken, jsonObject.collaborators, asyncDataHandler);
@@ -474,6 +487,17 @@ var receiveMessage = function(count, channel, message)
 						
 						break;
 						
+						case "setRepository":
+							console.log("\ncommand to set current repository");
+							projectMap[deliveryChannel] = jsonObject.repo;
+							jsonData.message = {type:"string", content: "Current repository is set to "+projectMap[deliveryChannel]};
+							console.log("Current repository is set to "+projectMap[deliveryChannel]);
+							//change Author to Droid
+							jsonData.author = "Droid";
+							gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
+							//setRepository(jsonObject.repo, asyncDataHandler);
+						break;
+
 						case "greetings":
 							console.log("Hello! How can I help you, "+jsonData.author+"?");
 							jsonData.message = {type:"string", content: "Hello! How can I help you, "+jsonData.author+"?"};
@@ -492,7 +516,7 @@ var receiveMessage = function(count, channel, message)
 					
 						case "randomInput":
 							console.log("Sorry, but I am unable to understand you "+jsonData.author);
-							jsonData.message = {type:"string", content: "Sorry, I am unable to understand you "+jsonData.author};
+							jsonData.message = {type:"string", content: "Sorry "+jsonData.author+", I am unable to understand you "};
 							//change Author to Droid
 							jsonData.author = "Droid";
 							gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
