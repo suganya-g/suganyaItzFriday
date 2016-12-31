@@ -8,12 +8,12 @@ const createIssue = function (repo,authToken,title,body,labels,assignees,callbac
     
     if(!repo)
     {
-        callback({type:"string", content: "Error: Repository Not Present"}, null);
+        callback({ofType:"string", withContent: "Error: Repository Not Present"}, null);
         return
     }
     else if(!title)
     {
-        callback({type:"string", content: "Error: Issue Title Not Present"}, null);
+        callback({ofType:"string", withContent: "Error: Issue Title Not Present"}, null);
         return
     }
 
@@ -42,10 +42,10 @@ const createIssue = function (repo,authToken,title,body,labels,assignees,callbac
     .end(function(error,response){
         if(error)
         {
-            callback({type:"string", content: error.toString()}, null);
+            callback({ofType:"string", withContent: error.toString()}, null);
             return
         }
-         callback(null, {type:"string", content: "Issue has been opened with number "+response.body.number+'.'});
+         callback(null, {ofType:"string", withContent: "Issue has been opened with number "+response.body.number+'.'});
         return 
     });
 }

@@ -7,17 +7,17 @@ const commentOnIssue = function (repo,authToken,number,comment,callback)
     
 	if(!repo)
     {
-        callback({type:"string", content: "Error: Repository Not Present"}, null);
+        callback({ofType:"string", withContent: "Error: Repository Not Present"}, null);
         return
     }
     else if(!number)
     {
-        callback({type:"string", content: "Error: Issue Number Not Present"}, null);
+        callback({ofType:"string", withContent: "Error: Issue Number Not Present"}, null);
         return
     }
     else if(!comment)
     {
-        callback({type:"string", content: "Error: Comment Body Not Present"}, null);
+        callback({ofType:"string", withContent: "Error: Comment Body Not Present"}, null);
         return
     }
 
@@ -34,10 +34,10 @@ const commentOnIssue = function (repo,authToken,number,comment,callback)
     .end(function(error,response){
         if(error)
         {
-            callback({type:"string", content: error.toString()}, null);
+            callback({ofType:"string", withContent: error.toString()}, null);
             return
         }
-        callback(null, {type:"string", content: "Your comment has been posted on issue "+number+"."});
+        callback(null, {ofType:"string", withContent: "Your comment has been posted on issue "+number+"."});
         return;
     });
 }

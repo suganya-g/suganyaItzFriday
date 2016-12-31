@@ -7,17 +7,17 @@ const assignIssue = function (repo,authToken,number,assignees,callback)
     
     if(!repo)
     {
-        callback({type:"string", content: "Error: Repository Not Present"}, null);
+        callback({ofType:"string", withContent: "Error: Repository Not Present"}, null);
         return
     }
     else if(!number)
     {
-        callback({type:"string", content: "Error: Issue Number Not Present"}, null);
+        callback({ofType:"string", withContent: "Error: Issue Number Not Present"}, null);
         return
     }
     else if(!assignees)
     {
-        callback({type:"string", content: "Error: Assignees Not Present"}, null);
+        callback({ofType:"string", withContent: "Error: Assignees Not Present"}, null);
         return
     }
 
@@ -34,10 +34,10 @@ const assignIssue = function (repo,authToken,number,assignees,callback)
     .end(function(error,response){
         if(error)
         {
-            callback({type:"string", content: error.toString()}, null);
+            callback({ofType:"string", withContent: error.toString()}, null);
             return
         }
-        callback(null, {type:"string", content: "Issue "+response.body.number+" has been assigned to : "+assignees});
+        callback(null, {ofType:"string", withContent: "Issue "+response.body.number+" has been assigned to : "+assignees});
         return
     });
 }

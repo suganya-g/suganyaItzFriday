@@ -56,7 +56,6 @@ class ChatInput extends Component {
     	}
       this.setState({userTyped: ''});
     	this.props.addChat(newMessage);
-		  this.refs.chat.setState({value: ''});
   	}                                        
   	notifyFormError(data) {
     	console.error('Form error:', data);
@@ -82,7 +81,6 @@ class ChatInput extends Component {
                   validationError="Type your message"
                   required
                   hintText="Type your message"
-                  ref="chat"
                   autoComplete="off"
                   updateImmediately
                   style = {styles.inputArea}

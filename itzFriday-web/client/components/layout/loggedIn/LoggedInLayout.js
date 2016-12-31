@@ -125,23 +125,23 @@ export default class LoggedInLayout extends React.Component
 		projects = [
 				{
 					name:'Friday',
-					channels:[{name:"General",id: 0},{name:"Acolyte",id:1}],
-					messages:[{name:"Gobinda Thakur",id:0},{name:"Apurv Tiwari",id:1},{name:"Ruchika Saklani",id:2},{name:"Suganya Gopal",id:3},{name:"Ankit Aggarwal",id:4},{name:"Vikram Marshmallow",id:5}]
+					channels:[{name:"General",id: 2},{name:"Acolyte",id:1}],
+					messages:[{name:"Gobinda Thakur",id:5},{name:"Apurv Tiwari",id:6},{name:"Ruchika Saklani",id:7},{name:"Suganya Gopal",id:8},{name:"Ankit Aggarwal",id:9},{name:"Vikram Marshmallow",id:10}]
 				},
 				{
 					name:'Samarth',
-					channels:[{name:"General",id:0},{name:"Developers",id:1}],
-					messages:[{name:"Amol Tiwari",id:0},{name:"Ankit Kumar Vashisht",id:1},{name:"Shinder Pal Singh",id:2},{name:"Ritesh",id:3},{name:"Kumari Devi",id:4},{name:"Hari Prasad",id:5},{name:"Prerna Kukreti",id:6}]
+					channels:[{name:"General",id:3},{name:"Developers",id:4}],
+					messages:[{name:"Amol Tiwari",id:17},{name:"Ankit Kumar Vashisht",id:16},{name:"Shinder Pal Singh",id:15},{name:"Ritesh",id:14},{name:"Kumari Devi",id:13},{name:"Hari Prasad",id:12},{name:"Prerna Kukreti",id:11}]
 				},
 				{
 					name:'Quiztack',
-					channels:[{name:"General",id:0},{name:"Backend",id:1}],
-					messages:[{name:"Vishant Sharma",id:0},{name:"Kirti Jalan",id:1},{name:"Dhivya Lakshmi",id:2},{name:"Lal Jose",id:3},{name:"Srinivasan",id:4},{name:"Nitin Verma",id:5}]
+					channels:[{name:"General",id:18},{name:"Backend",id:19}],
+					messages:[{name:"Vishant Sharma",id:20},{name:"Kirti Jalan",id:21},{name:"Dhivya Lakshmi",id:22},{name:"Lal Jose",id:23},{name:"Srinivasan",id:24},{name:"Nitin Verma",id:25}]
 				},
 				{
 					name:'Oxygen',
-					channels:[{name:'General',id:0},{name:'Designers',id:1}],
-					messages:[{name:"Sreenidhi",id:0},{name:"Toolika Srivastava",id:1},{name:"Nanda",id:2},{name:"Shipra Joshi",id:3},{name:"Bala",id:4},{name:"Divyanshu Sharma",id:5}]
+					channels:[{name:'General',id:26},{name:'Designers',id:27}],
+					messages:[{name:"Sreenidhi",id:28},{name:"Toolika Srivastava",id:29},{name:"Nanda",id:30},{name:"Shipra Joshi",id:31},{name:"Bala",id:32},{name:"Divyanshu Sharma",id:33}]
 				},
 		];
 		currentProject = 'Friday';
@@ -160,6 +160,7 @@ export default class LoggedInLayout extends React.Component
 		this.handleChannelChange = this.handleChannelChange.bind(this);
 		this.handleMessageChange = this.handleMessageChange.bind(this);
 		this.openThisProject=this.openThisProject.bind(this);
+		this.handleNestedListToggle = this.handleNestedListToggle.bind(this);
 		this.signOut=this.signOut.bind(this);
 		this.handleAccount = this.handleAccount.bind(this);
 		this.closeMainMenu = this.closeMainMenu.bind(this);
@@ -270,7 +271,7 @@ export default class LoggedInLayout extends React.Component
 		 {
 			 projectList.push(
 			    <ListItem id={index} leftIcon={<FileFolder />} rightIcon={ <Badge badgeStyle={{visibility: this.state.badgeContent === 0 ? 'hidden' : 'visible'}} badgeContent={this.state.badgeContent} />}  primaryText={projects[index].name}
-							 onNestedListToggle={this.handleNestedListToggle.bind(this,index)}
+							 onNestedListToggle={()=>this.handleNestedListToggle(index)}
 							 value={index+1}
 							 open={this.state.openIndex===index}
 							 primaryTogglesNestedList={true}
