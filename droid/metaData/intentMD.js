@@ -1,6 +1,7 @@
 var intentMD = {
 	setRepository : 
 	{
+		api : 'github',
 		context : 'owner',
 		props : 
 		{
@@ -15,6 +16,7 @@ var intentMD = {
 	,
 	createIssue : 
 	{
+		api : 'github',
 		context : 'project',
 		props : 
 		{
@@ -30,6 +32,7 @@ var intentMD = {
 	,
 	assignIssue : 
 	{	
+		api : 'github',
 		context : 'project',
 		props : 
 		{
@@ -44,6 +47,7 @@ var intentMD = {
 	,
 	labelIssue : 
 	{	
+		api : 'github',
 		context : 'project',
 		props : 
 		{
@@ -57,7 +61,8 @@ var intentMD = {
 	}
 	,
 	closeIssue : 
-	{					
+	{
+		api : 'github',		
 		context : 'project',
 		props : 
 		{
@@ -71,6 +76,7 @@ var intentMD = {
 	,
 	listIssues : 
 	{
+		api : 'github',
 		context : 'project',
 		props : 
 		{
@@ -86,6 +92,7 @@ var intentMD = {
 	,
 	listCollaborators : 
 	{
+		api : 'github',
 		context : 'owner',
 		props : 
 		{
@@ -101,6 +108,7 @@ var intentMD = {
 
 	addCollaborators : //add without sending invite
 	{
+		api : 'github',
 		context : 'owner',
 		props : 
 		{
@@ -115,6 +123,7 @@ var intentMD = {
 	,
 	inviteCollaborators : //send invitation
 	{
+		api : 'github',
 		context : 'owner',
 		props : 
 		{
@@ -129,6 +138,7 @@ var intentMD = {
 	,
 	removeCollaborators : //send invitation
 	{
+		api : 'github',
 		context : 'owner',
 		props : 
 		{
@@ -143,6 +153,7 @@ var intentMD = {
 	,	
 	commentOnIssue : 
 	{
+		api : 'github',
 		context : 'issue',
 		props : 
 		{

@@ -1,4 +1,5 @@
 var redis = require("redis");
+var help = require("../help/help.js");
 var createIssue = require("../gitBot/createIssue");
 var assignIssue = require("../gitBot/assignIssue");
 var labelIssue = require("../gitBot/labelIssue");
@@ -83,17 +84,21 @@ function asyncDataHandler(error,result)
 		console.log(error.toString());	
 		jsonData.message = error;
 
-		if(error.content.match(/error: not found/gi))
+		if(error.withContent.match(/error: not found/gi))
 		{
 			projectMap[deliveryChannel] = null;
 		}
+		console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
+		console.log(jsonData);
 		gitBotPublisher.publish(publishChannel, JSON.stringify(jsonData));
 	}
 	else
 	{
 		console.log(result);
 		console.log("My Status: Execution completed successfully!");
-		jsonData.message = result;	//send the result..... {result.intent, result.message}
+		jsonData.message = result;
+		console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
+		console.log(jsonData);
 		gitBotPublisher.publish(publishChannel, JSON.stringify(jsonData));
 	}
 }
@@ -179,7 +184,14 @@ function fetchJsonObject(message)
 		}
 		else if(valueString === null)
 		{
-			if(message === "" || message.match(/hello/gi) || message.match(/hi/gi) || message.match(/hey/gi) || message.match(/whats up/gi) || message.match(/sup/gi) || message.match(/wassup/gi))
+			if(message.match(/help/gi))
+			{
+				if(message.match(/-[\w]+/i))
+					json.api = message.match(/-[\w]+/i).toString().replace('-','').trim();
+				else
+					json.api = '';
+			}
+			else if(message === "" || message.match(/hello/gi) || message.match(/hi/gi) || message.match(/hey/gi) || message.match(/whats up/gi) || message.match(/sup/gi) || message.match(/wassup/gi))
 			{
 				json.text=message;
 			}
@@ -261,7 +273,11 @@ function getUserIntent(message, keyString)
 	//check for conversation
 	if(intent.length === 0)
 	{
-		if(message === "" || message.match(/hello/gi) || message.match(/hey/gi) || message.match(/hi/gi) || message.match(/whats up/gi) || message.match(/sup/gi) || message.match(/wassup/gi))
+		if(message.match(/help/gi))
+		{
+			intent.push({"intent":"help", "priority":-1});
+		}
+		else if(message === "" || message.match(/hello/gi) || message.match(/hey/gi) || message.match(/hi/gi) || message.match(/whats up/gi) || message.match(/sup/gi) || message.match(/wassup/gi))
 		{
 			intent.push({"intent":"greetings", "priority":0});
 		}
@@ -275,7 +291,8 @@ function getUserIntent(message, keyString)
 		}
 		else
 		{
-			intent.push({"intent":"randomInput", "priority":0});	//default	
+			intent = [];	//reset intents if any random input is found
+			intent.push({"intent":"randomInput", "priority":Number.NEGATIVE_INFINITY});	//default	
 		}
 	}
 	return intent;
@@ -310,20 +327,22 @@ var receiveMessage = function(count, channel, message)
 	valueString = [];
 	deliveryChannel = '';
 	let authToken = '';
-
-	// console.log("message received ---------------->>on channel ===>>>>>"+channel+" ############processing ::::::");
+	let name = '';
+	console.log("message received ---------------->>on channel ===>>>>>"+channel+" ############processing ::::::");
 
 	//fetch the json
 	jsonData = JSON.parse(message);
+	name = jsonData.author;
 	//fetch the message
 	message = jsonData.message;
 
-	// console.log("message is $$$$$$$$$$$$$$$$$");
-	// console.log(message);
+	console.log("message is $$$$$$$$$$$$$$$$$");
+	console.log(message);
+	console.log("type-----++++++++++++++++++++++++++++++-----------");
+	console.log(typeof(message));
 
-	if(message !== undefined)
+	if(message !== undefined && typeof(message)==="string")
 	{
-
 		if(message.match(/Hey Droid,/gi))
 		{
 			// console.log("message before replace : "+message);
@@ -416,15 +435,15 @@ var receiveMessage = function(count, channel, message)
 							console.log(jsonObject);
 							if(jsonObject.text === '' && !intentString.match(/currentRepository/gi))
 							{
-								jsonData.author = "Droid";
+								//jsonData.author = "Droid";
 								jsonData.message = {ofType:"string", withContent:"Operating on project " + projectMap[deliveryChannel]};
-								console.log(jsonData.message.content);
+								console.log(jsonData.message.withContent);
 								gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
 							}
 						}	
 					}
 					projectMap[deliveryChannel] = jsonObject.repo;
-					
+					jsonData.author = "Droid";
 					for(let intent in intents)
 					{
 						console.log("inside for, intent : " + intents[intent].intent);
@@ -515,32 +534,38 @@ var receiveMessage = function(count, channel, message)
 
 							case "greetings":
 
-								console.log("Hello! How can I help you, "+jsonData.author+"?");
-								jsonData.message = {ofType:"string", withContent: "Hello! How can I help you, "+jsonData.author+"?"};
+								console.log("Hello! How can I help you, "+name+"?");
+								jsonData.message = {ofType:"string", withContent: "Hello! How can I help you, "+name+"?"};
 								//change Author to Droid
 								jsonData.author = "Droid";
 								gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
 							break;
 
 							case "howAreYou":
-								console.log("I am fine, thank you.");
+								console.log("I am fine, thanks "+name);
 
-								jsonData.message = {ofType:"string", withContent: "I am fine, thanks "+jsonData.author+"!"};
+								jsonData.message = {ofType:"string", withContent: "I am fine, thanks "+name};
 								//change Author to Droid
 								jsonData.author = "Droid";
 								gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
 							break;
 						
+							case "help":
+								console.log("help");
+								help(jsonObject.api, asyncDataHandler);
+
+							break;
+						
 							case "randomInput":
 								if(deliveryChannel.match(/#/))
 								{
-									console.log("Sorry, but I am unable to understand you "+jsonData.author);
-									jsonData.message = {ofType:"string", withContent: "Sorry "+jsonData.author+", I am unable to understand you "};
+									console.log("Sorry, but I am unable to understand you "+name);
+									jsonData.message = {ofType:"string", withContent: "Sorry "+name+", I am unable to understand you "};
 								}
 								else
 								{
-									console.log("Sorry, but I am unable to understand you");
-									jsonData.message = {ofType:"string", withContent: "Sorry , I am unable to understand you"};
+									console.log("Sorry "+name+", but I am unable to understand you");
+									jsonData.message = {ofType:"string", withContent: "Sorry "+name+", I am unable to understand you"};
 								}
 								//change Author to Droid
 								jsonData.author = "Droid";

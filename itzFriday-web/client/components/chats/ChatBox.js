@@ -7,6 +7,7 @@ import SortService from './../../services/sort.service.js';
 import ListText from './../others/ListText';
 import LinkText from './../others/LinkText';
 import ListItemsText from './../others/ListItemsText';
+import HelpText from './../others/HelpText';
 
 
 class ChatBox extends Component {
@@ -113,6 +114,8 @@ class ChatBox extends Component {
             messages.message = <LinkText gitLink={messages.message.withContent}/>;
           }else if(messages.message.ofType === 'listItems') {
             messages.message = <ListItemsText items={messages.message.withContent}/>;
+          }else if(messages.message.ofType === 'help') {
+            messages.message = <HelpText commands={messages.message.withContent}/>;
           }
           this.state.chatMessages.push(messages);
           var unreadMessages = {
@@ -148,6 +151,8 @@ class ChatBox extends Component {
             messages.message = <LinkText gitLink={messages.message.withContent}/>;
           }else if(messages.message.ofType === 'listItems') {
             messages.message = <ListItemsText items={messages.message.withContent}/>;
+          }else if(messages.message.ofType === 'help') {
+            messages.message = <HelpText commands={messages.message.withContent}/>;
           }
           this.state.chatMessages.push(messages);
         }else if(names[1] && (users[0].split(' ')[0] === Auth.getNameFromToken()) && (users[1] === (this.props.location.query.name).split(' ')[0]) && (names[0] === this.props.location.query.project) && (users[1] !== 'Droid')){
@@ -205,12 +210,16 @@ filterHistory(arrayOfMessages)
        tempMsg.message = <ListText issues={tempMsg.message.withContent}/>;
      } 
      else if(tempMsg.message.ofType === 'link') 
-     {
+    {
        tempMsg.message = <LinkText gitLink={tempMsg.message.withContent}/>;
      }
      else if(tempMsg.message.ofType === 'listItems') 
      {
        tempMsg.message = <ListItemsText items={tempMsg.message.withContent}/>;
+     }
+     else if(messages.message.ofType === 'help') 
+     {
+        tempMsg.message = <HelpText commands={messages.message.withContent}/>;
      }
      chatMessages.push(tempMsg);
    }
