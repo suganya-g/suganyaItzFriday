@@ -537,8 +537,8 @@ var receiveMessage = function(count, channel, message)
 
 							case "greetings":
 
-								console.log("Hello! How can I help you, "+name+"?");
-								jsonData.message = {ofType:"string", withContent: "Hello! How can I help you, "+name+"?"};
+								console.log("Hello! How can I help you?");
+								jsonData.message = {ofType:"string", withContent: "Hello! How can I help you?"};
 								//change Author to Droid
 								jsonData.author = "Droid";
 								console.log(jsonData);
@@ -546,9 +546,9 @@ var receiveMessage = function(count, channel, message)
 							break;
 
 							case "howAreYou":
-								console.log("I am fine, thanks "+name);
+								console.log("Waiting for your text");
 
-								jsonData.message = {ofType:"string", withContent: "I am fine, thanks "+name};
+								jsonData.message = {ofType:"string", withContent: "Waiting for your text"};
 								//change Author to Droid
 								jsonData.author = "Droid";
 								console.log(jsonData);
@@ -564,19 +564,19 @@ var receiveMessage = function(count, channel, message)
 							case "randomInput":
 								if(deliveryChannel.match(/#/))
 								{
-									console.log("Sorry, but I am unable to understand you "+name);
+									console.log("Sorry, but I am unable to understand you");
 									//change Author to Droid
 									jsonData.author = "Droid";
 									console.log(jsonData);
-									jsonData.message = {ofType:"string", withContent: "Sorry "+name+", I am unable to understand you "};
+									jsonData.message = {ofType:"string", withContent: "Sorry, I am unable to understand you"};
 								}
 								else
 								{
-									console.log("Sorry "+name+", but I am unable to understand you");
+									console.log("Sorry, but I am unable to understand you");
 									//change Author to Droid
 									jsonData.author = "Droid";
 									console.log(jsonData);
-									jsonData.message = {ofType:"string", withContent: "Sorry "+name+", I am unable to understand you"};
+									jsonData.message = {ofType:"string", withContent: "Sorry, I am unable to understand you"};
 								}
 								//change Author to Droid
 								jsonData.author = "Droid";
