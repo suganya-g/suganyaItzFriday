@@ -128,20 +128,19 @@ export default class MessageList extends React.Component
 
 	handleUnreadMessageCount(data) 
 	{
-		let count = 0;
 		let notify = this.state.notify;
 		console.log('In message list notify:::', notify);
 		if(this.state.notify)
 		{
-			console.log('qwerr');
 			for(let index in this.state.groups) 
 			{
-				count = this.state.notify[data.sender.split(' ')[0]];
+				let count = 0;
 				console.log(this.state.currentUser+'::'+data.sender+'::'+count);
 				if(this.state.currentUser !== undefined && data.sender && count !== undefined){
 					if(this.state.currentUser !== data.sender.split(' ')[0] && Auth.getNameFromToken() !== data.sender.split(' ')[0]) {
 						if(this.state.groups[index].name.split(' ')[0] === data.sender.split(' ')[0]) {
-							notify[this.state.groups[index].name.split(' ')[0]] = (++count);
+							count = this.state.notify[data.sender.split(' ')[0]];
+							notify[this.state.groups[index].name.split(' ')[0]] = count + 1;
 							//console.log(notify[data.sender].split(' ')[0]);
 						}	
 					} else {
