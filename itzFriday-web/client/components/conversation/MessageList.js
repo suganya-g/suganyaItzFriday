@@ -76,7 +76,7 @@ export default class MessageList extends React.Component
 		let messages=[];
 		for( let index in this.state.groups)
 		{
-			messages.push(<ListItem key={index} style={styles.linkItem} onTouchTap={() => this.displayMessage(this.state.groups[index].name)} leftAvatar={<Avatar size={30} style={{backgroundColor:'#004D40'}}>{this.state.groups[index].name.substring(0,1)}</Avatar>} rightIcon={<Badge badgeContent={this.state.notify[this.state.groups[index].name]} badgeStyle={{backgroundColor:'#004D40',color:'white',visibility: this.state.notify[this.state.groups[index].name] === 0 ? 'hidden' : 'visible'}} />}>{this.compressName(this.state.groups[index].name)}</ListItem>);
+			messages.push(<ListItem key={index} style={styles.linkItem} onTouchTap={() => this.displayMessage(this.state.groups[index].name)} leftAvatar={<Avatar size={30} style={{backgroundColor:'#004D40'}}>{this.state.groups[index].name.substring(0,1)}</Avatar>} rightIcon={<Badge badgeContent={this.state.notify[this.state.groups[index].name.split(' ')[0]]} badgeStyle={{backgroundColor:'#004D40',color:'white',visibility: this.state.notify[this.state.groups[index].name.split(' ')[0]] === 0 ? 'hidden' : 'visible'}} />}>{this.compressName(this.state.groups[index].name)}</ListItem>);
 		}
 		this.setState({messages})
 	}
@@ -140,15 +140,15 @@ export default class MessageList extends React.Component
 				console.log(this.state.currentUser+'::'+data.sender+'::'+count);
 				if(this.state.currentUser !== undefined && data.sender && count !== undefined){
 					if(this.state.currentUser !== data.sender.split(' ')[0] && Auth.getNameFromToken() !== data.sender.split(' ')[0]) {
-						if(this.state.groups[index].name === data.sender) {
+						if(this.state.groups[index].name.split(' ')[0] === data.sender.split(' ')[0]) {
 							notify[this.state.groups[index].name.split(' ')[0]] = (++count);
-							console.log(notify[data.sender].split(' ')[0]);
+							//console.log(notify[data.sender].split(' ')[0]);
 						}	
 					} else {
-						if(this.state.groups[index].name === data.sender) {
+						if(this.state.groups[index].name.split(' ')[0] === data.sender.split(' ')[0]) {
 							count = 0;
-							notify[this.state.groups[index].name.split(' ')[0]] = count;
-							console.log(notify[data.sender].split(' ')[0]);
+							notify[this.state.groups[index].name.split(' ')[0]] = 0;
+							//console.log(notify[data.sender].split(' ')[0]);
 						}	
 					}
 				}

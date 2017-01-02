@@ -15,7 +15,15 @@ var listOfChannels = {};
 
 function pushChannelMessage(channel, message)
 {
-	chatHistory.rpush(channel,message);
+	if(channel.match(/\/Droid/i)) {
+		console.log('Channel', channel);
+		let newChannel = channel.split('/')[0];
+		console.log('my new channel is ',newChannel);
+		chatHistory.rpush(newChannel,message);
+	} else {
+		chatHistory.rpush(channel,message);
+	}
+	
 	//execute
 	chatHistory.exec(function(errExec, resExec)
 	{

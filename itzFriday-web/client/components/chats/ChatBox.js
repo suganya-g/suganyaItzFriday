@@ -42,6 +42,7 @@ class ChatBox extends Component {
     if(this.props.location.query.project !== nextProps.location.query.project) {
       this.context.socket.emit('user:join', nextProps.location.query.project);
     }
+    //this.setState({chatMessages: []})
   }
   render() {
     return (
@@ -101,7 +102,7 @@ class ChatBox extends Component {
     console.log(messages);
     if(messages && this.props.location.query.identifier === 'channel') {
       var names = messages.destination.split('#');
-      if(names[1] && names[1].match(/Droid/)) {
+      if(names[1] && names[1].match(/Droid/) || messages.author === 'Droid') {
         var channelName = names[1].split('/');
         if(channelName && (channelName[0] === this.props.location.query.name) && (names[0] === this.props.location.query.project)) 
         {
@@ -198,7 +199,7 @@ filterHistory(arrayOfMessages)
  let chatMessages = [];
  for(let item in arrayOfMessages)
  {
-   if(arrayOfMessages[item].author === "Droid")
+   if(arrayOfMessages[item].author === "Droid" || arrayOfMessages[item].destination.match(/Droid/i))
    {
      let tempMsg = arrayOfMessages[item];
      if(tempMsg.message.ofType === 'string') 

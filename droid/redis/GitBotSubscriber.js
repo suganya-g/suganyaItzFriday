@@ -332,7 +332,9 @@ var receiveMessage = function(count, channel, message)
 
 	//fetch the json
 	jsonData = JSON.parse(message);
-	name = jsonData.author;
+	console.log("RECEIVED MESSAGE : ",jsonData);
+	
+	//name = jsonData.author;
 	//fetch the message
 	message = jsonData.message;
 
@@ -528,6 +530,7 @@ var receiveMessage = function(count, channel, message)
 								console.log("Current repository is set to "+projectMap[deliveryChannel]);
 								//change Author to Droid
 								jsonData.author = "Droid";
+								console.log(jsonData);
 								gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
 								//setRepository(jsonObject.repo, asyncDataHandler);
 							break;
@@ -538,6 +541,7 @@ var receiveMessage = function(count, channel, message)
 								jsonData.message = {ofType:"string", withContent: "Hello! How can I help you, "+name+"?"};
 								//change Author to Droid
 								jsonData.author = "Droid";
+								console.log(jsonData);
 								gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
 							break;
 
@@ -547,6 +551,7 @@ var receiveMessage = function(count, channel, message)
 								jsonData.message = {ofType:"string", withContent: "I am fine, thanks "+name};
 								//change Author to Droid
 								jsonData.author = "Droid";
+								console.log(jsonData);
 								gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
 							break;
 						
@@ -560,11 +565,17 @@ var receiveMessage = function(count, channel, message)
 								if(deliveryChannel.match(/#/))
 								{
 									console.log("Sorry, but I am unable to understand you "+name);
+									//change Author to Droid
+									jsonData.author = "Droid";
+									console.log(jsonData);
 									jsonData.message = {ofType:"string", withContent: "Sorry "+name+", I am unable to understand you "};
 								}
 								else
 								{
 									console.log("Sorry "+name+", but I am unable to understand you");
+									//change Author to Droid
+									jsonData.author = "Droid";
+									console.log(jsonData);
 									jsonData.message = {ofType:"string", withContent: "Sorry "+name+", I am unable to understand you"};
 								}
 								//change Author to Droid
@@ -578,9 +589,13 @@ var receiveMessage = function(count, channel, message)
 				else
 				{
 					jsonData.message = {ofType:"string", withContent: "Your account is not linked with GitHub. Please link it with GitHub to avail the droid facilities."};
+					//change Author to Droid
+					jsonData.author = "Droid";
+					console.log(jsonData);
 					gitBotPublisher.publish(publishChannel, JSON.stringify(jsonData));
 
 					jsonData.message = {ofType:"link", withContent: res.message};
+					console.log(jsonData);
 					gitBotPublisher.publish(publishChannel, JSON.stringify(jsonData));
 				}
 			}
