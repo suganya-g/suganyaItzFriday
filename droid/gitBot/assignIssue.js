@@ -37,8 +37,16 @@ const assignIssue = function (repo,authToken,number,assignees,callback)
             callback({ofType:"string", withContent: error.toString()}, null);
             return
         }
-        callback(null, {ofType:"string", withContent: "Issue "+response.body.number+" has been assigned to : "+assignees});
-        return
+        if(response.status === 200)
+        {
+            callback(null, {ofType:"string", withContent: "Issue "+response.body.number+" has been assigned to : "+assignees});
+            return
+        }
+        else
+        {
+            callback(null, {ofType:"string", withContent: "Error: Failed to assign issue"});
+            return
+        }
     });
 }
 module.exports = assignIssue;
