@@ -384,16 +384,10 @@ export default class ProjectLayout extends React.Component{
 		console.log(currentProject);
 		localStorage['project']=projectName;
 		this.setState({appBarTitle: projectName});
-		//this.props.router.replace('chat/?project='+projectName+'&name=Droid&identifier=message');
 		console.log("in openThisProject");
 		console.log(projectID);
-		//this.getChannelsMembers(projectID);
-		// this.getMembers(projectID);
 		this.setCurrentProject(projectID);
-		//console.log("channelState change is called");
-		//this.changeChannelState(projectID);
-		//console.log("messages state is called ");
-		//this.changeMessageState(projectID);
+		this.context.router.push('/project/'+currentProject);
 	}
 
 	setCurrentProject(projectID)
@@ -434,13 +428,6 @@ export default class ProjectLayout extends React.Component{
 	closeMainMenu ()
 	{
 		this.setState({mainMenuOpen: false});
-	}
-
-	componentWillReceiveProps(nextProps) {
-		// TOSO: Check if project is aloready present in state
-		// TODO: If not, retrieve project channels and messages into state
-		// TODO: Change curr state
-		this.changeState(nextProps.projectDetails);
 	}
 	changeState(projects){
 		this.setState({projects:projects});
@@ -489,16 +476,7 @@ export default class ProjectLayout extends React.Component{
 					<MuiThemeProvider>
 					    <div className="wrap container-fluid">
 					            <MediaQuery query='(min-device-width: 769px)'>
-						            <div className="col-xs-2 col-sm-2 col-md-2 col-lg-2" style={{height:'100%'}}>
-										<div className="leftPane" style={styles.leftPane}>
-											<Drawer open={true} docked={true} id="projectList" containerStyle={styles.drawer} zDepth={2}>
-												<List>
-													{projectList}
-												</List>
-											</Drawer>
-										</div>
-									</div>
-					                <div className="col-xs-10 col-sm-10 col-md-10 col-lg-10" style={{width:'100%'}}>
+					                <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12" style={{width:'100%'}}>
 					                    <div className="row">
 					                        <AppBar id='appbar' title={this.state.appBarTitle} titleStyle={{textAlign:'center'}} style={styles.appBar}
 					                            zDepth={2}
@@ -543,12 +521,20 @@ export default class ProjectLayout extends React.Component{
 								                    </IconMenu>
 								                </span>}
 							                    iconStyleLeft={{cursor: 'pointer'}}/>
-																	<div style={{paddingLeft:'230px',width:'100% of viewport width'}}>
+																	<div style={{paddingLeft:'180px',width:'100%'}}>
 							                   {this.props.children}
 																 </div>
 							            </div>
 							        </div>
-
+											<div className="col-xs-2 col-sm-2 col-md-2 col-lg-2" style={{height:'100%'}}>
+ 								 <div className="leftPane" style={styles.leftPane}>
+ 									 <Drawer open={true} docked={true} id="projectList" containerStyle={styles.drawer} zDepth={2}>
+ 										 <List>
+ 											 {projectList}
+ 										 </List>
+ 									 </Drawer>
+ 								 </div>
+ 							 </div>
 							    </MediaQuery>
 
 							    <MediaQuery query='(max-device-width: 768px)' className="leftPane">
@@ -613,5 +599,6 @@ ProjectLayout.childContextTypes = {
 };
 
 ProjectLayout.contextTypes = {
-	projectList:React.PropTypes.object.isRequired
+	projectList:React.PropTypes.object.isRequired,
+	router:React.PropTypes.object.isRequired
 }
