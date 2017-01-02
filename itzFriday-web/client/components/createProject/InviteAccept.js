@@ -9,6 +9,7 @@ import Avatar from 'material-ui/Avatar';
 import {Link} from 'react-router';
 import {Card} from 'material-ui/Card';
 import MediaQuery from 'react-responsive';
+import Request from 'superagent';
 const styles ={
   cardStyle:{
     backgroundColor:blueGrey50,
@@ -27,26 +28,26 @@ export default class InviteAccept extends React.Component
   constructor(props)
   {
     super(props);
-    this.state={canSubmit: false};
-    this.enableButton = this.enableButton.bind(this);
-    this.disableButton = this.disableButton.bind(this);
+    this.state={project:this.props.location.query.project,owner:this.props.location.query.owner,email:this.props.location.query.email},
+    this.redirectInvitedMemberDetails=this.redirectInvitedMemberDetails.bind(this);
+
   }
 
-  enableButton()
+  redirectInvitedMemberDetails()
   {
-   this.setState({canSubmit: true});
- }
-   disableButton()
-   {
-    this.setState({canSubmit: false});
-  }
-  submitForm(data) {
-   alert(JSON.stringify(data, null, 4));
- }
+    console.log(" value to be passed to inviation "+this.state.email+" "+this.state.project)
+    Request.post('/checkInvitation')
+      .send({email:this.state.email,project:this.state.project})
+      .end((err,res)=>{
+        console.log(res)
+        if(res.status==204)
+           this.props.router.replace('userDetails/?email='+this.state.email+'&project='+this.state.project);
+        else if (res.status==206)
+          this.props.router.replace('login/');
+        else
+          alert("some error");
 
-  redirectInvitedMemberDetails(email,title)
-  {
-    this.props.router.replace('/memberDetails/?email='+email+'&title='+title);
+      });
   }
 
   render()
@@ -79,7 +80,16 @@ export default class InviteAccept extends React.Component
              </MediaQuery>
         </Row>
           <Row center="xs">
-          <p>You have been invited to join a project named "Buddy"</p>
+          <p>You have been invited to join a project named</p>
+        </Row>
+        <Row center="xs">
+          <p><strong>{this.state.project}</strong></p>
+        </Row>
+        <Row center="xs">
+          <p>By</p>
+        </Row>
+         <Row center="xs">
+          <p><strong>{this.state.owner}</strong></p>
         </Row>
         <Row center="xs">
            <RaisedButton
@@ -94,7 +104,7 @@ export default class InviteAccept extends React.Component
             </RaisedButton>
           </Row>
           <Row center="xs">
-          <p style={{marginTop:"125px", width:"600px"}}><strong>"ItzFriday"</strong> has been created for the people working in collabration to create ,code and manage their projects at one platform with a friendly environment.</p>
+          <p style={{marginTop:"70px", width:"600px"}}><strong>"ItzFriday"</strong> has been created for the people working in collabration to create ,code and manage their projects at one platform with a friendly environment.</p>
          </Row>
          </Card>
       </Paper>

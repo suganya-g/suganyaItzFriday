@@ -67,7 +67,7 @@ export default class ManageTeam extends React.Component
   }
 	handleClose()
 	{
-		this.props.router.replace('/');
+		this.props.router.replace('/project/'+this.props.params.projectid);
 	}
 	handleAdd(event)
 	{

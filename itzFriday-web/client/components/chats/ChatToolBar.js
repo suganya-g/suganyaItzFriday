@@ -29,8 +29,6 @@ const styles = {
 	toolbarStyle: {
 		margin: '0px 0px 0px 0px',
 		background: "white",
-		width: "100%",
-
 	},
 	toolbarText: {
 		color: "#004d40",

@@ -48,7 +48,7 @@ export default class UserDetails extends React.Component{
 	this.disableButton= this.disableButton.bind(this);
 	this.submitForm = this.submitForm.bind(this);
 	this.notifyFormError = this.notifyFormError.bind(this);
-	this.state = {canSubmit:false,errorMsg:''};
+	this.state = {canSubmit:false,errorMsg:'',project:this.props.location.query.project};
 	this.handleChange=this.handleChange.bind(this);
 	}
 
@@ -71,11 +71,13 @@ export default class UserDetails extends React.Component{
   submitForm(data) {
 console.log(data)
    	localStorage['projecttitle']=data.ProjectTitle;
- Request.post('/db/profile/profileDetails')
-    .send(data)
+ Request.post('/userdetails')
+    .send({data:data,project:this.state.project})
     .end((err, res) => {
-      console.log(res)
-      this.props.router.replace("sendInvite/");
+      if(res.status==200)
+      this.props.router.replace("login/");
+    else
+      alert("failure");
     });
 
   }
@@ -124,7 +126,7 @@ console.log(data)
   			<FormsyText
   					  name="Email"
   				      hintText="Email"
-  				      defaultValue={localStorage['email']}
+  				      defaultValue={this.props.location.query.email}
   				      disabled={true}
   				      floatingLabelText="Email ID"/><br />
   			<FormsyText
@@ -196,7 +198,7 @@ console.log(data)
     			<FormsyText
     					  name="Email"
     				      hintText="Email"
-    				      defaultValue={localStorage['email']}
+    				      defaultValue={this.props.location.query.email}
     				      disabled={true}
     				      floatingLabelText="Email ID"/><br />
     			<FormsyText

@@ -54,6 +54,7 @@ export default class Profile extends React.Component {
     this.disableButton = this.disableButton.bind(this);
     this.changeStateDialogue = this.changeStateDialogue.bind(this);
     this.handleClose = this.handleClose.bind(this);
+    this.previewFile=this.previewFile.bind(this);
   }
   enableButton() {
     this.setState({
@@ -80,9 +81,21 @@ export default class Profile extends React.Component {
     this.setState({
       open: false
     });
-    this.props.router.replace('/');
+    this.props.router.replace('/project/'+this.props.params.projectid);
   }
+  previewFile(event) {
+    var reader  = new FileReader();
+     var file    = event.target.files[0];
+     reader.onload = (upload) => {
+           this.setState({
+             avatarUrl: upload.target.result,
+             filename: file.name,
+             filetype: file.type
+           });
+         };
 
+reader.readAsDataURL(file);
+}
   render() {
     const actions = [
       <FlatButton
@@ -102,6 +115,7 @@ export default class Profile extends React.Component {
             <Paper style={ styles.paperStyle }>
               <div>
                 <Avatar
+                        id='output'
                         size={ 150 }
                         src={this.state.avatarUrl} />
 
@@ -109,7 +123,7 @@ export default class Profile extends React.Component {
                   <FlatButton
                               primary={ true }
                               icon={<ImageAddAPhoto/>}>
-                    <label><input type="file" style={ styles.exampleImageInput }/>Choose a picture</label>
+                    <label><input type="file" style={ styles.exampleImageInput } onChange={this.previewFile}/>Choose a picture</label>
                   </FlatButton>
                 </div>
                 <Formsy.Form

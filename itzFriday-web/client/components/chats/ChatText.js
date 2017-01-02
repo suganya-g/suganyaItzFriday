@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {Grid, Row, Col} from 'react-flexbox-grid';
-
+import {Emoji} from 'emoji-mart';
+import Avatar from 'material-ui/Avatar';
 
 const styles = {
   profilePic: {
@@ -14,7 +15,10 @@ const styles = {
     width: 44,
     borderRadius: "50%",
     display: "block",
-    verticalAlign: "middle"
+    verticalAlign: "middle",
+    backgroundColor:"#004D40",
+    textAlign: "center",
+    fontSize: "230%"
   },
   messageTextDisplay: {
     paddingTop: 0,
@@ -49,20 +53,38 @@ class ChatText extends Component {
 
   render() {
     const message = this.props.chatTextMessages;
-    const avtar = "https://twitter.com/@"+message.author+"/profile_image?size=original";
+    const avtar = message.author.substring(0,1);
+
+      let finalmessage= [];
+      if(message.author !== 'Droid') {
+      let recievedMessage = message.message.split(':');
+      for (let i = 0; i < recievedMessage. length; i = i + 1) {
+        if(i%2 != 0)
+        {
+          finalmessage.push(<Emoji emoji={recievedMessage[i]} size={24}/>);
+         }
+         else if(recievedMessage[i].length !==0) {
+          finalmessage.push(recievedMessage[i]);
+         }
+       }
+     }
+    else {
+       finalmessage.push(message.message);
+    }
+
     return(
       <div>
       { message !== undefined || message !== null ?
       <div>
         <div style = {styles.profilePic}>
-                  <img src={avtar} style = {styles.imageStyle}/>
+            <Avatar size={30} style={styles.imageStyle}>{avtar}</Avatar>
                 </div>
                 <div style={styles.messageTextDisplay}>
                   <div style={styles.messageData}>
                   <span style={styles.author}>{message.author}</span>
                   <span style={styles.timestamp}>{message.timeStamp}</span>
                 </div>
-                  <p style={styles.messageBody}>{message.message}</p>
+                  <p style={styles.messageBody}>{finalmessage}</p>
                 </div>
       </div> : ''
     }

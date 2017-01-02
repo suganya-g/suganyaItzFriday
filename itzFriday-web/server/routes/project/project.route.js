@@ -220,12 +220,14 @@ projectRouter.post('/addProjectDetails/',function(req,res){
 			});
 		},
 		useraccount:function(callback){
-			let userAccountItem = {
-				username:req.body.Email,
-				password:req.body.Password,
-				role:'admin'
-			}
-			let userAccountData = new UserAccounts(userAccountItem);
+			let userAccountData = new UserAccounts();
+
+			let hashCode=userAccountData.generateHash(req.body.Password);
+
+			    userAccountData.username=req.body.Email;
+				userAccountData.password=hashCode;
+				userAccountData.role='admin';
+			
 			userAccountData.save(function(error,createdAccountDetails){
 				if(error){
 					callback(error);

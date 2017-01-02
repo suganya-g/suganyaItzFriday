@@ -19,6 +19,8 @@ import NotificationsBoard from './notificationsBoard/NotificationsBoard';
 import Auth from './../services/auth.service.js';
 import ManageTeam from './team/ManageTeam';
 import InvitePeople from './team/InvitePeople';
+import ProjectLayout from './layout/loggedIn/ProjectLayout';
+
 
 class App extends Component {
 	constructor(props)
@@ -43,7 +45,7 @@ class App extends Component {
 	authenticatedUser(nextState, replace) {
   		if (Auth.loggedIn()) {
     		replace({
-      			pathname: 'notifications/',
+      			pathname: 'project/',
       			state: { nextPathname: nextState.location.pathname }
     		})
   		}
@@ -67,25 +69,29 @@ class App extends Component {
 	render() {
 
 		return (
-				<Router history={hashHistory}>
-					<Route path="/" isLoggedIn={this.state.isLoggedIn} component={LoggedInLayout}>
-						<IndexRoute component={CreateProject} onEnter={this.authenticatedUser.bind(this)}></IndexRoute>
-						<Route path="login/" component={Login} onEnter={this.authenticatedUser.bind(this)}></Route>
-						<Route path="confirmationCode/" component={ConfirmCode}></Route>
-						<Route path="projectDetails/" component={ProjectCreator}></Route>
-						<Route path="sendInvite/" component={SendInvite}></Route>
-						<Route path="ForgotPassword/" component={ForgotPassword}></Route>
-						<Route path="inviteAccept/" component={InviteAccept}></Route>
-						<Route path="userDetails/" component={UserDetails} onEnter={this.requireAuth.bind(this)}></Route>
-						<Route path="notifications/" component={NotificationsBoard} onEnter={this.requireAuth.bind(this)}></Route>
-						<Route path="chat/" component={Chat} onEnter={this.requireAuth.bind(this)}></Route>
-						<Route path="addChannel/" component={AddChannel} onEnter={this.requireAuth.bind(this)}></Route>
-						<Route path="profile/" component={Profile} onEnter={this.requireAuth.bind(this)}></Route>
-						<Route path="buddy/" component={BuddyAvatar} onEnter={this.requireAuth.bind(this)}></Route>
-						<Route path="manageTeam/" component={ManageTeam} onEnter={this.requireAuth.bind(this)}></Route>
-						<Route path="invitePeople/" component={InvitePeople} onEnter={this.requireAuth.bind(this)}></Route>
-					</Route>
-				</Router>
+			<Router history={hashHistory}>
+                    <Route path="/" component={NotLoggedInLayout} style={{height: '100vh'}}>
+                        <IndexRoute component={CreateProject}></IndexRoute>
+                        <Route path="/login" component={Login}></Route>
+                        <Route path="/confirmationCode" component={ConfirmCode}></Route>
+                        <Route path="/createProject" component={ProjectCreator}></Route>
+                        <Route path="/sendInvite" component={SendInvite}></Route>
+                        <Route path="/forgotPassword" component={ForgotPassword}></Route>
+                        <Route path="/inviteAccept" component={InviteAccept}></Route>
+                        <Route path="/userDetails" component={UserDetails}></Route>
+                        <Route path="/project" isLoggedIn={this.state.isLoggedIn} component={LoggedInLayout} style={{height: '100%'}}>
+                            <Route path=':projectid' component={ProjectLayout} style={{height: '100%'}}>
+                                <Route path="/project/:projectid/chat" component={Chat} onEnter={this.requireAuth.bind(this)} style={{height: '100%'}}></Route>
+                                <Route path="/project/:projectid/addChannel" component={AddChannel} onEnter={this.requireAuth.bind(this)} style={{height: '100%'}}></Route>
+                                <Route path="/profile" component={Profile} onEnter={this.requireAuth.bind(this)} style={{height: '100%'}}></Route>
+																<Route path="/notification" component={NotificationsBoard} onEnter={this.requireAuth.bind(this)} style={{height: '100%'}}></Route>
+                                <Route path="/buddy" component={BuddyAvatar} onEnter={this.requireAuth.bind(this)} style={{height: '100%'}}></Route>
+                                <Route path="/project/:projectid/manageTeam" component={ManageTeam} onEnter={this.requireAuth.bind(this)} style={{height: '100%'}}></Route>
+                                <Route path="/project/:projectid/invitePeople" component={InvitePeople} onEnter={this.requireAuth.bind(this)} style={{height: '100%'}}></Route>
+                            </Route>
+                        </Route>
+                    </Route>
+                </Router>
 			)
 
 	}

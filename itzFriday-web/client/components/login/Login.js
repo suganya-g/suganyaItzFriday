@@ -5,6 +5,7 @@ import Formsy from 'formsy-react';
 import RaisedButton from 'material-ui/RaisedButton';
 import { red500 } from 'material-ui/styles/colors';
 import { Grid, Row, Col } from 'react-flexbox-grid';
+import HardwareKeyboardBackspace from 'material-ui/svg-icons/hardware/keyboard-backspace';
 import ActionAccountCircle from 'material-ui/svg-icons/action/account-box';
 import FormsyText from 'formsy-material-ui/lib/FormsyText';
 import Paper from 'material-ui/Paper';
@@ -13,9 +14,9 @@ import { Link } from 'react-router';
 import FlatButton from 'material-ui/FlatButton';
 import ChangePassword from './ChangePassword';
 import Dialog from 'material-ui/Dialog';
-import Request from 'superagent';
 import Auth from '../../services/auth.service.js';
 import MediaQuery from 'react-responsive';
+import Request from 'superagent';
 
 const errorMessages = {
   projectName: "Please enter only characters and number",
@@ -45,6 +46,7 @@ export default class Login extends React.Component {
     this.disableButton = this.disableButton.bind(this);
     this.submitForm = this.submitForm.bind(this);
     this.notifyFormError = this.notifyFormError.bind(this);
+    this.handleClose=this.handleClose.bind(this);
     this.state = {
       canSubmit: false,
       open: false,
@@ -55,6 +57,10 @@ export default class Login extends React.Component {
     this.setState({
       canSubmit: true
     });
+  }
+
+  handleClose() {
+    this.props.router.replace('/');
   }
 
   disableButton() {
@@ -74,7 +80,9 @@ export default class Login extends React.Component {
         if (location.state && location.state.nextPathname) {
           this.props.router.replace(location.state.nextPathname)
         } else {
-          this.props.router.push('notifications/')
+          var userName=Auth.getNameFromToken();
+          localStorage['userName']=userName;
+          this.props.router.push('project/')
         }
       })
   }
@@ -212,8 +220,18 @@ export default class Login extends React.Component {
                                 disabled={ !this.state.canSubmit } />
                   </Col>
                 </Row>
+
               </CardText>
             </Formsy.Form>
+          </Row>
+          <Row end='xs'>
+          <Col
+               xs={ 12 }
+               sm={ 12 }
+               md={ 12 }
+               lg={ 12 }>
+          <FlatButton label="Back To Home" primary={true} icon={<HardwareKeyboardBackspace />} onClick={this.handleClose} style={{paddingTop:'10px'}} />
+             </Col>
           </Row>
         </Card>
         </Col>

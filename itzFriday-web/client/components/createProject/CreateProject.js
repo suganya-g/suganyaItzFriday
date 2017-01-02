@@ -58,7 +58,7 @@ export default class CreateProject extends React.Component
               }
               else{
                 this.props.router.push('confirmationCode/?email='+data.email+"&exist="+res.body.userexist);
-             }   
+             }
         });
 
  }
@@ -74,7 +74,7 @@ export default class CreateProject extends React.Component
      <Grid>
      <Paper style={styles.paperStyle}>
        <Row>
-         <span style={{margin:'auto'}}>
+         <span style={{margin:'auto',paddingTop:'10px'}}>
          <MediaQuery query='(min-device-width: 1024px)'>
          <div className='logo'>
          <Avatar className="logo" style={{backgroundColor:"#004D40"}} src="./../../resources/images/buddy.png" alt="qwerty" size={150}/>
@@ -93,13 +93,13 @@ export default class CreateProject extends React.Component
          <MediaQuery query='(min-device-width: 1024px)'>
          <div className="content">
          <h1 className="tagLine">ItzFriday!</h1>
-         <p className="tagLine">A messaging platform for teams who see through the Earth</p>
+         <h3 className="tagLine">Because together we can do so much. The idea needs to win!</h3>
          </div>
          </MediaQuery>
          <MediaQuery query='(max-device-width: 1023px)'>
          <div className="content">
          <h3 className="tagLine">ItzFriday!</h3>
-         <p className="tagLine">A messaging platform for teams who see through the Earth</p>
+         <h5 className="tagLine">Because together we can do so much. The idea needs to win!</h5>
          </div>
          </MediaQuery>
        </Col>

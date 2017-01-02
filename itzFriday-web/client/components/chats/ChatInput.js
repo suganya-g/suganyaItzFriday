@@ -6,6 +6,7 @@ import FormsyText from 'formsy-material-ui/lib/FormsyText';
 import IconButton from 'material-ui/IconButton';
 import ContentSend from 'material-ui/svg-icons/content/send';
 import Auth from './../../services/auth.service.js'
+import {Emoji, Picker} from 'emoji-mart';
 
 const styles = {
 	inputArea: {
@@ -17,6 +18,8 @@ class ChatInput extends Component {
 		super(props);
 		this.state = {
 			canSubmit: false,
+      showEmoji: false,
+      userTyped: ''
 		}
 	}
 	enableButton() {
@@ -31,16 +34,29 @@ class ChatInput extends Component {
     	});
   	}
 
+    toggleEmojiPicker = () => {
+      this.setState({showEmoji: !this.state.showEmoji});
+    }
+
+    selectedEmoji = (emoji) => {
+      this.setState({userTyped: this.state.userTyped + ':' +emoji.id + ':'});
+    }
+
+    handleChangeText = (event) => {
+        this.setState({userTyped: event.target.value});
+    }
+
   	submitForm(data) {
       var localTime  = moment.utc(new Date()).toDate();
     	var newMessage = {
+          author: this.props.userName,
       		chatTime: moment(localTime).format('llll'),
       		chatText: data.messages,
       		authorAvtar: "https://twitter.com/@"+this.props.userName+"/profile_image?size=original"
     	}
+      this.setState({userTyped: ''});
     	this.props.addChat(newMessage);
-		  this.refs.chat.setState({value: ''});
-  	}                                        
+  	}
   	notifyFormError(data) {
     	console.error('Form error:', data);
   	}
@@ -53,6 +69,7 @@ class ChatInput extends Component {
                     onValidSubmit={this.submitForm.bind(this)}
                     onInvalidSubmit={this.notifyFormError.bind(this)}
                   >
+
             <Grid>
               <Row>
                 <Col xs={12}>
@@ -64,13 +81,27 @@ class ChatInput extends Component {
                   validationError="Type your message"
                   required
                   hintText="Type your message"
-                  ref="chat"
                   autoComplete="off"
                   updateImmediately
                   style = {styles.inputArea}
+                  value = {this.state.userTyped}
+                  onChange = {this.handleChangeText}
                 />
                 </Col>
                 <Col xs={2} sm={2} md={2} lg={2}>
+                <Emoji
+                size = {24}
+                emoji = ':blush:'
+                onClick = {this.toggleEmojiPicker}/>
+                {
+                  this.state.showEmoji ?
+                  <Picker
+                  emojiSize = {24}
+                  perLine = {9}
+                  set = 'apple'
+                  onClick = {this.selectedEmoji}
+                  /> :<span />
+                }
                   <IconButton
                     type="submit"
                     disabled={!this.state.canSubmit}

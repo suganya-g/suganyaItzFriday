@@ -61,7 +61,7 @@ function authenticate (email, pass, callback) {
           token: result.message
         })
       } else {
-        callback({ 
+        callback({
           authenticated: false,
           errMessage: result.message
         })

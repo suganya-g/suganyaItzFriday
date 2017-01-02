@@ -9,6 +9,12 @@ import {teal400} from 'material-ui/styles/colors';
 			}
 		};
 export default class NotLoggedInLayout extends React.Component{
+	getChildContext(){
+console.log(this.props.router);
+return{
+	router:this.props.router
+}
+}
 
 	render(){
 		return(
@@ -17,4 +23,8 @@ export default class NotLoggedInLayout extends React.Component{
 			</div>
 		);
 	}
+}
+
+NotLoggedInLayout.childContextTypes = {
+	router:React.PropTypes.object.isRequired
 }

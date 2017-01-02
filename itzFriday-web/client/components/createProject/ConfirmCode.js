@@ -41,7 +41,7 @@ constructor(props){
   this.disableButton= this.disableButton.bind(this);
   this.submitForm = this.submitForm.bind(this);
   this.handleLinkEvent = this.handleLinkEvent.bind(this);
-  this.state = {canSubmit:false};
+  this.state = {canSubmit:false,error:''};
   }
   enableButton() {
     this.setState({
@@ -66,7 +66,7 @@ constructor(props){
                   })
             }
             else{
-                  this.props.router.replace("projectDetails/?email="+this.props.location.query.email+"&exist="+this.props.location.query.exist+"&role=Admin");
+                  this.props.router.replace("createProject/?email="+this.props.location.query.email+"&exist="+this.props.location.query.exist+"&role=Admin");
             }
        });
   }
@@ -98,6 +98,7 @@ render(){
               required
               floatingLabelText="Enter your confirmation code"
               updateImmediately/><br />
+              <span style={{color:"red"}}>{this.state.error}</span><br/>
             <RaisedButton
                 type="submit"
                 label="Continue"
@@ -133,6 +134,7 @@ render(){
                 required
                 floatingLabelText="Enter your confirmation code"
                 updateImmediately/><br />
+                <span style={{color:"red"}}>{this.state.error}</span><br/>
               <RaisedButton
                   type="submit"
                   label="Continue"

@@ -7,11 +7,8 @@ import MediaQuery from 'react-responsive';
 
 const styles = {
   chatBoxStyle: {
-    width:'100%',
   },
   actionBar: {
-      position: "relative",
-      width: "100%",
       borderTop: "1px solid #dae2e3"
   },
    messageList: {

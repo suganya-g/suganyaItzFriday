@@ -10,6 +10,7 @@ import {Link} from 'react-router';
 import Request from 'superagent';
 import MediaQuery from 'react-responsive';
 
+
 const errorMessages = {
   wordsError: "Please only use letters",
   emailError: "Please enter valid emailID(someone@example.com)",
@@ -55,7 +56,7 @@ export default class ProjectCreator extends React.Component{
 
  handleChange(event)
  {
-  
+
   this.setState({errorMsg:''})
 }
 handleProjectChange(event){
@@ -148,7 +149,7 @@ render(){
 
   <MapsPersonPin style={{color:'#004D40',width:'80px',height:'80px'}} />
   <strong><h2 style={{color:'#004D40'}}>Project Info</h2></strong>
-  <FormsyText 
+  <FormsyText
   name="Email"
   hintText="Email"
   defaultValue={localStorage['email']}

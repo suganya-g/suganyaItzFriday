@@ -9,9 +9,6 @@ let CodeDetails = new Schema({
 });
 
 CodeDetails.methods.compareCode = function(code){
-	console.log("life is shit");
-	console.log(code);
-	console.log(this.code);
 	return (code == this.code);
 };
 module.exports=mongoose.model('CodeDetails',CodeDetails);

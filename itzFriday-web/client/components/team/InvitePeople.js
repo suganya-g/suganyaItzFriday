@@ -124,7 +124,7 @@ export default class InvitePeople extends React.Component
 	}
 	sendInvite()
 	{
-		this.props.router.replace('login/');
+		  this.props.router.replace('/project/'+this.props.params.projectid);
 		// this.props.route.checkLoggedIn(true);
 		// console.log(this.props.route.checkLoggedIn(true));
 

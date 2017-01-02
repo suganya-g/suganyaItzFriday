@@ -12,6 +12,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import Chip from 'material-ui/Chip';
 import Paper from 'material-ui/Paper';
 import SocialPeople from 'material-ui/svg-icons/social/people';
+import request from 'superagent';
 
 const error="";
 var myArray=[];
@@ -31,7 +32,7 @@ export default class AddChannel extends React.Component {
     this.notifyFormError = this.notifyFormError.bind(this);
     this.onNewRequest = this.onNewRequest.bind(this);
     this.onUpdateInput = this.onUpdateInput.bind(this);
-    this.state = {chipData:[],canSubmit:true,err:"",searchText:""};
+    this.state = {chipData:[],canSubmit:true,err:"",searchText:"",member:{memberid:[],membername:[]}};
     this.styles = {
       chip: {
         margin: 4,
@@ -42,26 +43,45 @@ export default class AddChannel extends React.Component {
       }
     }
   }
-  componentWillMount()
+  componentDidMount()
   {
- 	 if(localStorage['project']==='Friday')
- 		{
- 			member=["Gobinda Thakur","Apurv Tiwari","Ruchika Saklani","Suganya Gopal","Ankit Aggarwal","Vikram Marshmallow"];
- 		}
- 		else if(localStorage['project']==='Samarth')
- 		{
- 			member=["Amol Tiwari","Ankit Kumar Vashisht","Shinder Pal Singh","Ritesh","Kumari Devi","Hari Prasad","Prerna Kukreti"];
- 		}
- 		else if(localStorage['project']==='Quiztack')
- 		{
- 			member=["Vishant Sharma","Kirti Jalan","Dhivya Lakshmi","Lal Jose","Srinivasan","Nitin Verma"];
- 		}
- 		else
- 			{
- 			member=["Sreenidhi","Toolika Srivastava","Nanda","Shipra Joshi","Bala","Divyanshu Sharma"];
- 			}
- 			console.log("members are "+member+" from "+localStorage['project']);
+    let projectID= this.props.params.projectid;;
+    request.post('/api/members/')
+              .set('Content-Type','application/json')
+              .send({projectID:projectID})
+              .end((error,res)=>{
+                  this.setDataSource(res.body.members);
+   });
   }
+
+  componentWillReceiveProps(nextProps)
+  {
+  if(this.props.params.projectid!==nextProps.params.projectid){
+      let projectID= nextProps.props.params.projectid;;
+      request.post('/api/members/')
+                .set('Content-Type','application/json')
+                .send({projectID:projectID})
+                .end((error,res)=>{
+                    this.setDataSource(res.body.members);
+     });
+  }
+}
+  setDataSource(members){
+    console.log(members);
+    let obj ={};
+    let memberid=[];
+    let membername=[];
+    for (let index in members){
+      memberid[index]=members[index]._id;
+      membername[index]=members[index].firstname + " " + members[index].lastname;
+    }
+    console.log(memberid);
+    console.log(membername);
+    obj.memberid = memberid;
+    obj.membername=membername;
+    this.setState({member:obj});
+  }
+
    enableCreate() {
     this.setState({
       canSubmit: true
@@ -75,9 +95,35 @@ export default class AddChannel extends React.Component {
   }
 
   submitForm(data) {
+    let projectID = this.props.params.projectid;
+    console.log("this is componentDidMount Method");
+    console.log(projectID);
+    let tokenarray = localStorage['token'].split(".");
+    let userdetails = atob(tokenarray[1]);
+    console.log(userdetails);
+    let userData=JSON.parse(userdetails);
+    console.log(typeof userData);
+    console.log(userData);
+    let obj ={};
+    obj.key = userData.userid,
+    obj.label = userData.name;
   	data.chipData=this.state.chipData;
+    data.chipData.push(obj);
+    data.projectid= this.props.params.projectid;
     console.log(JSON.stringify(data));
-    this.props.router.replace("/");
+    this.state.chipData=[];
+    request.post('/channel/createChannel')
+                .set('Content-Type','application/json')
+                .send(data)
+                .end((error,res)=>{;
+                  console.log(res.body)
+                  if(res.body.error===false){
+                    this.props.router.replace('/project/'+this.props.params.projectid);
+                  }
+                  else{
+
+                  }
+     });
   }
   onNewRequest(data){
       this.setState({err:''});
@@ -101,15 +147,22 @@ export default class AddChannel extends React.Component {
     if(value===""){
      this.setState({err:'Please select a member to add!'});
     }
-  	else if(member.indexOf(value) === -1){
+  	else if(this.state.member.membername.indexOf(value) === -1){
   		this.setState({err:'This member does not belong to project please select from search box suggestion!'});
   	}
   	else{
   	this.setState({err:''});
-  	myArray.push({key:counter,label:value})
-  	this.setState ({chipData:myArray})
-  	counter++;
-  	member = member.filter(item => item !== value);
+    let memberid=this.state.member.memberid;
+    let membername= this.state.member.membername;
+    for(let index in membername){
+      if(membername[index]===value){
+        counter= memberid[index];
+      }
+    }
+  	myArray.push({key:counter,label:value});
+  	this.setState ({chipData:myArray});
+  	this.state.member.membername = this.state.member.membername.filter(item => item !== value);
+    this.state.member.memberid= this.state.member.memberid.filter(item=> item!==counter);
   	}
   }
   notifyFormError(data) {
@@ -119,7 +172,7 @@ export default class AddChannel extends React.Component {
   handleRequestDelete = (key,label) => {
     this.chipData = this.state.chipData;
     const chipToDelete = this.chipData.map((chip) => chip.key).indexOf(key);
-    member.push(label);
+    this.state.member.membername.push(label);
     this.chipData.splice(chipToDelete, 1);
     this.setState({chipData: this.chipData});
   }
@@ -185,7 +238,7 @@ export default class AddChannel extends React.Component {
                       ref="member"
         				      floatingLabelText="Add Members"
         				      filter={AutoComplete.fuzzyFilter}
-        				      dataSource={member}
+        				      dataSource={this.state.member['membername']}
         				      maxSearchResults={5}
                       style={{paddingLeft:'50px'}}
         				      hintText="Search Member Here"
