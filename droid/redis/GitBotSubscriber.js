@@ -1,9 +1,15 @@
 var redis = require("redis");
+var help = require("../help/help.js");
 var createIssue = require("../gitBot/createIssue");
 var assignIssue = require("../gitBot/assignIssue");
 var labelIssue = require("../gitBot/labelIssue");
 var closeIssue = require("../gitBot/closeIssue");
 var listIssues = require("../gitBot/listIssues");
+var currentRepository = require("../gitBot/currentRepository");
+var listCollaborators = require("../gitBot/listCollaborators");
+var inviteCollaborators = require("../gitBot/inviteCollaborators");
+var addCollaborators = require("../gitBot/addCollaborators");
+var removeCollaborators = require("../gitBot/removeCollaborators");
 var commentOnIssue = require("../gitBot/commentOnIssue");
 
 const controller = require('../server/routes/git/git.controller.js');
@@ -69,22 +75,30 @@ var jsonObject = {
 
 function asyncDataHandler(error,result)
 { 
+	//change Author to Droid
+	jsonData.author = "Droid";
+		
 	if(error)
 	{
 		console.log(error);
 		console.log(error.toString());	
 		jsonData.message = error;
-		if(error.content.match(/error: not found/gi))
+
+		if(error.withContent.match(/error: not found/gi))
 		{
 			projectMap[deliveryChannel] = null;
 		}
+		console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
+		console.log(jsonData);
 		gitBotPublisher.publish(publishChannel, JSON.stringify(jsonData));
 	}
 	else
 	{
 		console.log(result);
 		console.log("My Status: Execution completed successfully!");
-		jsonData.message = result;	//send the result..... {result.intent, result.message}
+		jsonData.message = result;
+		console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
+		console.log(jsonData);
 		gitBotPublisher.publish(publishChannel, JSON.stringify(jsonData));
 	}
 }
@@ -98,6 +112,7 @@ function fetchJsonObject(message)
 	"title" : "",
 	"body" : "",
 	"labels" : "",
+	"collaborators" : "",
 	"assignees" : "",
 	"state" : "open",
 	"text" : ""			//use it for commands other than git commands
@@ -169,7 +184,14 @@ function fetchJsonObject(message)
 		}
 		else if(valueString === null)
 		{
-			if(message === "" || message.match(/hello/gi) || message.match(/hi/gi) || message.match(/hey/gi) || message.match(/whats up/gi) || message.match(/sup/gi) || message.match(/wassup/gi))
+			if(message.match(/help/gi))
+			{
+				if(message.match(/-[\w]+/i))
+					json.api = message.match(/-[\w]+/i).toString().replace('-','').trim();
+				else
+					json.api = '';
+			}
+			else if(message === "" || message.match(/hello/gi) || message.match(/hi/gi) || message.match(/hey/gi) || message.match(/whats up/gi) || message.match(/sup/gi) || message.match(/wassup/gi))
 			{
 				json.text=message;
 			}
@@ -181,7 +203,7 @@ function fetchJsonObject(message)
 			{
 				json.text=message;
 			}
-			else
+			else if(intents.toString().match(/randomInput/gi))
 			{
 				json.text = "random input";
 			}
@@ -251,9 +273,17 @@ function getUserIntent(message, keyString)
 	//check for conversation
 	if(intent.length === 0)
 	{
-		if(message === "" || message.match(/hello/gi) || message.match(/hey/gi) || message.match(/hi/gi) || message.match(/whats up/gi) || message.match(/sup/gi) || message.match(/wassup/gi))
+		if(message.match(/help/gi))
+		{
+			intent.push({"intent":"help", "priority":-1});
+		}
+		else if(message === "" || message.match(/hello/gi) || message.match(/hey/gi) || message.match(/hi/gi) || message.match(/whats up/gi) || message.match(/sup/gi) || message.match(/wassup/gi))
 		{
 			intent.push({"intent":"greetings", "priority":0});
+		}
+		else if((message.match(/show/gi) || message.match(/current/gi)) && (message.match(/project/gi) || message.match(/repo/gi)))
+		{
+			intent.push({"intent":"currentRepository", "priority":0});
 		}
 		else if((message.match(/how/) || message.match(/what/)) && message.match(/are/) && message.match(/you/))
 		{
@@ -261,7 +291,8 @@ function getUserIntent(message, keyString)
 		}
 		else
 		{
-			intent.push({"intent":"randomInput", "priority":0});	//default	
+			intent = [];	//reset intents if any random input is found
+			intent.push({"intent":"randomInput", "priority":Number.NEGATIVE_INFINITY});	//default	
 		}
 	}
 	return intent;
@@ -296,186 +327,280 @@ var receiveMessage = function(count, channel, message)
 	valueString = [];
 	deliveryChannel = '';
 	let authToken = '';
+	let name = '';
+	console.log("message received ---------------->>on channel ===>>>>>"+channel+" ############processing ::::::");
 
 	//fetch the json
 	jsonData = JSON.parse(message);
-	//fetch the message
-	message = jsonData.message.replace('Hey Droid, ','');
-	//fetch the keyString
-	keyString = getKeyString(message);
-	//fetch Channel to publish on
-	deliveryChannel = getDeliveryChannel(jsonData.destination);	//or use jsonData.destination
-	console.log("delivering at : "+deliveryChannel);
-	jsonData.destination = deliveryChannel;	//set the destination as publish channel
-
-	if(deliveryChannel.match(/#/)) 
-	{
-		jsonData.message={type:"string", content:jsonData.message};
-		console.log("publishing at : ");
-		console.log(publishChannel);
-		gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
-		console.log(jsonData);
-	}
-
-
-	//change Author to Droid
-	jsonData.author = "Droid";
+	console.log("RECEIVED MESSAGE : ",jsonData);
 	
-	controller.access(jsonData.user, (err, res) => 
+	//name = jsonData.author;
+	//fetch the message
+	message = jsonData.message;
+
+	console.log("message is $$$$$$$$$$$$$$$$$");
+	console.log(message);
+	console.log("type-----++++++++++++++++++++++++++++++-----------");
+	console.log(typeof(message));
+
+	if(message !== undefined && typeof(message)==="string")
 	{
-		if(err)
+		if(message.match(/Hey Droid,/gi))
 		{
-			console.log(err);
+			// console.log("message before replace : "+message);
+			message = message.replace('Hey Droid, ','');
+			// console.log("message after replace : "+message);
 		}
-		else 
+		message = message.trim();
+		//fetch the keyString
+		keyString = getKeyString(message);
+		//fetch Channel to publish on
+		deliveryChannel = getDeliveryChannel(jsonData.destination);	//or use jsonData.destination
+		console.log("delivering at : "+deliveryChannel);
+		jsonData.destination = deliveryChannel;	//set the destination as publish channel
+
+		if(deliveryChannel.match(/#/)) 
 		{
-			console.log(res);
-			if(res.exist)
+			jsonData.message={ofType:"string", withContent:jsonData.message};
+			console.log("publishing at : ");
+			console.log(publishChannel);
+			gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
+			console.log(jsonData);
+		}
+		
+		controller.access(jsonData.user, (err, res) => 
+		{
+			if(err)
 			{
-				console.log(res.message);
-				authToken = res.message;
-				
-				//FETCH USER INTENT
-				intents = getUserIntent(message, keyString);	//will generate keyString
-				keyString = keyString.split('~');
-				keyString.pop();	//remove the trailing ~
-
-				//FETCH JSON DATA
-				jsonObject = fetchJsonObject(message);	//set processFurther to false on error
-
-				// if(message.accessToken !== undefined && message.accessToken !== '')
-				// {
-				jsonObject.authToken = authToken;
-				// }
-
-				//SORT EXECUTION SEQUENCE IN THE ORDER OF CONTEXT
-				intents.sort(function(a,b){
-					return a.priority - b.priority;
-				});
-
-				console.log("intent :");
-				console.log(intents);
-
-				console.log("\nkeys :");
-				console.log(keyString);
-
-				console.log("\nvalues :");
-				console.log(valueString);
-
-				console.log("\njson :");
-				console.log(jsonObject);
-
-				console.log("repo : "+jsonObject.repo);
-				console.log("project : "+deliveryChannel);
-				console.log("projectMap : "+projectMap[deliveryChannel]);
-				console.log(projectMap[deliveryChannel]);
-
-				let intentString = '';
-
-				for(let intent in intents)
+				console.log(err);
+			}
+			else 
+			{
+				console.log(res);
+				if(res.exist)
 				{
-					intentString += intents[intent].intent + " ";
-					if(intentString.match(/listIssues/gi))
+					console.log(res.message);
+					authToken = res.message;
+					
+					//FETCH USER INTENT
+					intents = getUserIntent(message, keyString);	//will generate keyString
+					keyString = keyString.split('~');
+					keyString.pop();	//remove the trailing ~
+
+					//FETCH JSON DATA
+					jsonObject = fetchJsonObject(message);	//set processFurther to false on error
+
+					// if(message.accessToken !== undefined && message.accessToken !== '')
+					// {
+					jsonObject.authToken = authToken;
+					// }
+
+					//SORT EXECUTION SEQUENCE IN THE ORDER OF CONTEXT
+					intents.sort(function(a,b){
+						return a.priority - b.priority;
+					});
+
+					console.log("intent :");
+					console.log(intents);
+
+					console.log("\nkeys :");
+					console.log(keyString);
+
+					console.log("\nvalues :");
+					console.log(valueString);
+
+					console.log("\njson :");
+					console.log(jsonObject);
+
+					console.log("repo : "+jsonObject.repo);
+					console.log("project : "+deliveryChannel);
+					console.log("projectMap : "+projectMap[deliveryChannel]);
+					console.log(projectMap[deliveryChannel]);
+
+					let intentString = '';
+
+					for(let intent in intents)
 					{
-						jsonData.text = '';
-					}
-				}
-				
-				if(jsonObject.repo === '')
-				{
-					if(projectMap[deliveryChannel] !== null && projectMap[deliveryChannel] !== undefined && projectMap[deliveryChannel] !== '')
-					{
-						jsonObject.repo = projectMap[deliveryChannel];
-						console.log("updated json : ");
-						console.log(jsonObject);
-						if(!intentString.match(/randomInput/gi) && jsonData.text === '')
+						intentString += intents[intent].intent + " ";
+						if(intentString.match(/listIssues/gi))
 						{
-							jsonData.message = {type:"string", content:"Operating on project : "+projectMap[deliveryChannel]};
-							gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
+							jsonData.text = '';
 						}
-					}	
+					}
 					
-				}
-				projectMap[deliveryChannel] = jsonObject.repo;
-				
-				for(let intent in intents)
-				{
-					console.log("inside for, intent : " + intents[intent].intent);
-					// let fn = window[intents[intent].intent];
-					// fn.apply(null, jsonObject, asyncDataHandler);
-					switch(intents[intent].intent)
+					if(jsonObject.repo === '')
 					{
-						case "assignIssue":
-							console.log("\ncommand to assign issue ");//NOTE:	//not working cuz of asyn
-							assignIssue(jsonObject.repo, jsonObject.authToken, jsonObject.number, jsonObject.assignees, asyncDataHandler); //(err, res) => {
+						if(projectMap[deliveryChannel] !== null && projectMap[deliveryChannel] !== undefined && projectMap[deliveryChannel] !== '')
+						{
+							jsonObject.repo = projectMap[deliveryChannel];
+							console.log("updated json : ");
+							console.log(jsonObject);
+							if(jsonObject.text === '' && !intentString.match(/currentRepository/gi))
+							{
+								//jsonData.author = "Droid";
+								jsonData.message = {ofType:"string", withContent:"Operating on project " + projectMap[deliveryChannel]};
+								console.log(jsonData.message.withContent);
+								gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
+							}
+						}	
+					}
+					projectMap[deliveryChannel] = jsonObject.repo;
+					jsonData.author = "Droid";
+					for(let intent in intents)
+					{
+						console.log("inside for, intent : " + intents[intent].intent);
+						// let fn = window[intents[intent].intent];
+						// fn.apply(null, jsonObject, asyncDataHandler);
+						switch(intents[intent].intent)
+						{
+							case "currentRepository":
+								console.log("\ncommand to show current repository");
+								currentRepository(jsonObject.repo, asyncDataHandler);
 							
-						break;
-
-						case "commentOnIssue":
-							console.log("\ncommand to comment on issue ");
-							commentOnIssue(jsonObject.repo, jsonObject.authToken, jsonObject.number, jsonObject.comment, asyncDataHandler); //(err, res) => {
-						
-						break;
-
-						case "closeIssue":
-							console.log("\ncommand to close issue ");
-							closeIssue(jsonObject.repo, jsonObject.authToken, jsonObject.number, asyncDataHandler); //(err, res) => {
-						
-						break;
-
-						case "createIssue":
-							console.log("\ncommand to create issue ");
-							createIssue(jsonObject.repo, jsonObject.authToken, jsonObject.title, jsonObject.body, jsonObject.labels, jsonObject.assignees, asyncDataHandler); //(err, res) => {
+							break;
 							
-						break;
-
-						// case "createProject":
-						// 	console.log("Create Project : not yet implemented")	
-						// break;
-
-						case "labelIssue":
-							console.log("\ncommand to label issue");
-							labelIssue(jsonObject.repo, jsonObject.authToken, jsonObject.number, jsonObject.labels, asyncDataHandler); //(err, res) => {
-						
-						break;
-						
-						case "listIssues":
-							console.log("\ncommand to list issues");
-							listIssues(jsonObject.repo, jsonObject.number, asyncDataHandler); //(err, res) => {
-						
-						break;
-						
-						case "greetings":
-							console.log("Hello! How can I help you?");
-							jsonData.message = {type:"string", content: "Hello! How can I help you?"};
-							gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
-						break;
-
-						case "howAreYou":
-							console.log("I am fine, thank you.");
-							jsonData.message = {type:"string", content: "I am fine, thank you."};
-							gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
-						break;
-					
-						case "randomInput":
-							console.log("Sorry, but I am unable to understand you.");
-							jsonData.message = {type:"string", content: "Sorry, I am unable to understand you."};
-							gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
+							case "addCollaborators":
+								console.log("\ncommand to add contributors");
+								addCollaborators(jsonObject.repo, jsonObject.authToken, jsonObject.collaborators, asyncDataHandler);
+							
+							break;
+							
+							case "assignIssue":
+								console.log("\ncommand to assign issue ");//NOTE:	//not working cuz of asyn
+								assignIssue(jsonObject.repo, jsonObject.authToken, jsonObject.number, jsonObject.assignees, asyncDataHandler);
+								
 							break;
 
+							case "commentOnIssue":
+								console.log("\ncommand to comment on issue ");
+								commentOnIssue(jsonObject.repo, jsonObject.authToken, jsonObject.number, jsonObject.comment, asyncDataHandler);
+							
+							break;
+
+							case "closeIssue":
+								console.log("\ncommand to close issue ");
+								closeIssue(jsonObject.repo, jsonObject.authToken, jsonObject.number, asyncDataHandler);
+							
+							break;
+
+							case "createIssue":
+								console.log("\ncommand to create issue ");
+								createIssue(jsonObject.repo, jsonObject.authToken, jsonObject.title, jsonObject.body, jsonObject.labels, jsonObject.assignees, asyncDataHandler);
+								
+							break;
+
+							// case "createProject":
+							// 	console.log("Create Project : not yet implemented")	
+							// break;
+
+							case "inviteCollaborators":
+								console.log("\ncommand to invite contributors");
+								inviteCollaborators(jsonObject.repo, jsonObject.authToken, jsonObject.collaborators, asyncDataHandler);
+							
+							break;
+
+							case "labelIssue":
+								console.log("\ncommand to label issue");
+								labelIssue(jsonObject.repo, jsonObject.authToken, jsonObject.number, jsonObject.labels, asyncDataHandler);
+							
+							break;
+							
+							case "listIssues":
+								console.log("\ncommand to list issues");
+								listIssues(jsonObject.repo, jsonObject.number, asyncDataHandler);
+							
+							break;
+							
+							case "listCollaborators":
+								console.log("\ncommand to list collaborators");
+								listCollaborators(jsonObject.repo, jsonObject.authToken, asyncDataHandler);
+							
+							break;
+							
+							case "removeCollaborators":
+								console.log("\ncommand to remove collaborators");
+								removeCollaborators(jsonObject.repo, jsonObject.authToken, jsonObject.collaborators, asyncDataHandler);
+							
+							break;
+							
+							case "setRepository":
+								console.log("\ncommand to set current repository");
+								projectMap[deliveryChannel] = jsonObject.repo;
+								jsonData.message = {ofType:"string", withContent: "Current repository is set to "+projectMap[deliveryChannel]};
+								console.log("Current repository is set to "+projectMap[deliveryChannel]);
+								//change Author to Droid
+								jsonData.author = "Droid";
+								console.log(jsonData);
+								gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
+								//setRepository(jsonObject.repo, asyncDataHandler);
+							break;
+
+							case "greetings":
+
+								console.log("Hello! How can I help you, "+name+"?");
+								jsonData.message = {ofType:"string", withContent: "Hello! How can I help you, "+name+"?"};
+								//change Author to Droid
+								jsonData.author = "Droid";
+								console.log(jsonData);
+								gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
+							break;
+
+							case "howAreYou":
+								console.log("I am fine, thanks "+name);
+
+								jsonData.message = {ofType:"string", withContent: "I am fine, thanks "+name};
+								//change Author to Droid
+								jsonData.author = "Droid";
+								console.log(jsonData);
+								gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
+							break;
+						
+							case "help":
+								console.log("help");
+								help(jsonObject.api, asyncDataHandler);
+
+							break;
+						
+							case "randomInput":
+								if(deliveryChannel.match(/#/))
+								{
+									console.log("Sorry, but I am unable to understand you "+name);
+									//change Author to Droid
+									jsonData.author = "Droid";
+									console.log(jsonData);
+									jsonData.message = {ofType:"string", withContent: "Sorry "+name+", I am unable to understand you "};
+								}
+								else
+								{
+									console.log("Sorry "+name+", but I am unable to understand you");
+									//change Author to Droid
+									jsonData.author = "Droid";
+									console.log(jsonData);
+									jsonData.message = {ofType:"string", withContent: "Sorry "+name+", I am unable to understand you"};
+								}
+								//change Author to Droid
+								jsonData.author = "Droid";
+								gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
+								break;
+
+						}
 					}
 				}
-			}
-			else
-			{
-				jsonData.message = {type:"string", content: "Your account is not linked with GitHub. Please link it with GitHub to avail the droid facilities."};
-				gitBotPublisher.publish(publishChannel, JSON.stringify(jsonData));
+				else
+				{
+					jsonData.message = {ofType:"string", withContent: "Your account is not linked with GitHub. Please link it with GitHub to avail the droid facilities."};
+					//change Author to Droid
+					jsonData.author = "Droid";
+					console.log(jsonData);
+					gitBotPublisher.publish(publishChannel, JSON.stringify(jsonData));
 
-				jsonData.message = {type:"link", content: res.message};
-				gitBotPublisher.publish(publishChannel, JSON.stringify(jsonData));
+					jsonData.message = {ofType:"link", withContent: res.message};
+					console.log(jsonData);
+					gitBotPublisher.publish(publishChannel, JSON.stringify(jsonData));
+				}
 			}
-		}
-	});
+		});
+	}
 };
 
 module.exports = receiveMessage;

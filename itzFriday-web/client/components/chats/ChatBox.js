@@ -218,9 +218,9 @@ filterHistory(arrayOfMessages)
      {
        tempMsg.message = <ListItemsText items={tempMsg.message.withContent}/>;
      }
-     else if(messages.message.ofType === 'help')
+     else if(tempMsg.message.ofType === 'help')
      {
-        tempMsg.message = <HelpText commands={messages.message.withContent}/>;
+        tempMsg.message = <HelpText commands={tempMsg.message.withContent}/>;
      }
      chatMessages.push(tempMsg);
    }

@@ -57,6 +57,7 @@ class ChatInput extends Component {
       this.setState({userTyped: ''});
     	this.props.addChat(newMessage);
   	}
+
   	notifyFormError(data) {
     	console.error('Form error:', data);
   	}

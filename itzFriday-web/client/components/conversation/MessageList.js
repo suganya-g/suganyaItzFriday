@@ -66,7 +66,7 @@ export default class MessageList extends React.Component
 		this.renderConversation();
 		let notify = this.state.notify;
 		for(let index in this.state.groups) {
-			notify[this.state.groups[index].name.split(' ')[0]] = 0;
+			notify[this.state.groups[index].firstname.split(' ')[0]] = 0;
 		}
 		this.setState({notify});
 	}
@@ -92,7 +92,7 @@ export default class MessageList extends React.Component
 		let notify = this.state.notify;
 		this.renderConversation();
 		for(let index in this.state.groups) {
-			notify[this.state.groups[index].name.split(' ')[0]] = 0;
+			notify[this.state.groups[index].firstname.split(' ')[0]] = 0;
 		}
 		this.setState({notify})
 
@@ -138,15 +138,15 @@ export default class MessageList extends React.Component
 				console.log(this.state.currentUser+'::'+data.sender+'::'+count);
 				if(this.state.currentUser !== undefined && data.sender && count !== undefined){
 					if(this.state.currentUser !== data.sender.split(' ')[0] && Auth.getNameFromToken() !== data.sender.split(' ')[0]) {
-						if(this.state.groups[index].name.split(' ')[0] === data.sender.split(' ')[0]) {
+						if(this.state.groups[index].firstname.split(' ')[0] === data.sender.split(' ')[0]) {
 							count = this.state.notify[data.sender.split(' ')[0]];
-							notify[this.state.groups[index].name.split(' ')[0]] = count + 1;
+							notify[this.state.groups[index].firstname.split(' ')[0]] = count + 1;
 							//console.log(notify[data.sender].split(' ')[0]);
 						}
 					} else {
-						if(this.state.groups[index].name.split(' ')[0] === data.sender.split(' ')[0]) {
+						if(this.state.groups[index].firstname.split(' ')[0] === data.sender.split(' ')[0]) {
 							count = 0;
-							notify[this.state.groups[index].name.split(' ')[0]] = 0;
+							notify[this.state.groups[index].firstname.split(' ')[0]] = 0;
 							//console.log(notify[data.sender].split(' ')[0]);
 						}
 					}

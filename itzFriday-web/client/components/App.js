@@ -71,8 +71,8 @@ class App extends Component {
 		return (
 			<Router history={hashHistory}>
                     <Route path="/" component={NotLoggedInLayout} style={{height: '100vh'}}>
-                        <IndexRoute component={CreateProject}></IndexRoute>
-                        <Route path="/login" component={Login}></Route>
+                        <IndexRoute component={CreateProject} onEnter={this.authenticatedUser.bind(this)}></IndexRoute>
+                        <Route path="/login" component={Login} onEnter={this.authenticatedUser.bind(this)}></Route>
                         <Route path="/confirmationCode" component={ConfirmCode}></Route>
                         <Route path="/createProject" component={ProjectCreator}></Route>
                         <Route path="/sendInvite" component={SendInvite}></Route>
@@ -80,7 +80,7 @@ class App extends Component {
                         <Route path="/inviteAccept" component={InviteAccept}></Route>
                         <Route path="/userDetails" component={UserDetails}></Route>
                         <Route path="/project" isLoggedIn={this.state.isLoggedIn} component={LoggedInLayout} style={{height: '100%'}}>
-                            <Route path=':projectid' component={ProjectLayout} style={{height: '100%'}}>
+                            <Route path=':projectid' component={ProjectLayout} style={{height: '100%'}} onEnter={this.requireAuth.bind(this)}>
                                 <Route path="/project/:projectid/chat" component={Chat} onEnter={this.requireAuth.bind(this)} style={{height: '100%'}}></Route>
                                 <Route path="/project/:projectid/addChannel" component={AddChannel} onEnter={this.requireAuth.bind(this)} style={{height: '100%'}}></Route>
                                 <Route path="/profile" component={Profile} onEnter={this.requireAuth.bind(this)} style={{height: '100%'}}></Route>

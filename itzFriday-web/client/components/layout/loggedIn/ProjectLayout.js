@@ -427,7 +427,7 @@ export default class ProjectLayout extends React.Component{
 
 	handleMessageChange(name)
 	{
-		this.props.router.replace('/chat/?project='+this.state.appBarTitle+'&name='+name+'&identifier=message');
+		this.props.router.replace('project/'+this.props.params.projectid+'/chat/?project='+this.state.appBarTitle+'&name='+name+'&identifier=message');
 		this.closeMainMenu();
 	}
 
@@ -476,10 +476,11 @@ export default class ProjectLayout extends React.Component{
 					onClick={this.openThisProject.bind(this,projects[index]._id,projects[index].title)}
 					nestedItems={[
 							<div style={{backgroundColor:'white'}}>
-								<Link to={'chat/?project='+this.state.appBarTitle+'&name=Droid&identifier=message'} style={styles.listItem} onTouchTap={() => this.handleMessageChange('Droid')}><ListItem key="friday" id="friday" style={styles.listItem} leftAvatar={<Avatar style={{height:'30', backgroundColor:'transparent'}} src='./../../resources/images/buddy.png' alt="Friday" />}><strong>Droid</strong></ListItem></Link>
+								<Link to={'project/'+this.props.params.projectid+'/chat/?project='+this.state.appBarTitle+'&name=Droid&identifier=message'} style={styles.listItem} onTouchTap={() => this.handleMessageChange('Droid')}><ListItem key="friday" id="friday" style={styles.listItem} leftAvatar={<Avatar style={{height:'30', backgroundColor:'transparent'}} src='./../../resources/images/buddy.png' alt="Friday" />}><strong>Droid</strong></ListItem></Link>
 								<Divider />
 									<ChannelList projectid={projects[index]._id} nameCompressor={this.nameCompressor} channels={this.state.projectDetails[projects[index]._id].channels} changeChannel={this.handleChannelChange} appBarTitle={this.state.appBarTitle}/>
 									<MessageList nameCompressor={this.nameCompressor} messages={this.state.projectDetails[projects[index]._id].members} changeMessage={this.handleMessageChange} appBarTitle={this.state.appBarTitle}/>
+
 							 </div>
 							]} />);
 

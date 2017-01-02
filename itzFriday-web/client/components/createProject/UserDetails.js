@@ -71,6 +71,7 @@ export default class UserDetails extends React.Component{
   submitForm(data) {
 console.log(data)
    	localStorage['projecttitle']=data.ProjectTitle;
+
  Request.post('/userdetails')
     .send({data:data,project:this.state.project})
     .end((err, res) => {

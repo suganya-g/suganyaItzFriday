@@ -3,7 +3,8 @@ const listIssues = function (repo,number,callback)
 {
     if(!repo)
     {
-        callback({error: true, type:"string", content: "Error: Repository Not Present"}, null);
+
+        callback({ofType:"string", withContent: "Error: Repository Not Present"}, null);
         return
     }
 
@@ -29,7 +30,7 @@ const listIssues = function (repo,number,callback)
     .end(function(error,response){
         if(error)
         {
-            callback({type:"string", content: error.toString()}, null);
+            callback({ofType:"string", withContent: error.toString()}, null);
             return
         }
         else
@@ -81,7 +82,7 @@ const listIssues = function (repo,number,callback)
             }
 
         }
-        callback(null, {type:"json", content: issues});
+        callback(null, {ofType:"json", withContent: issues});
         return
     });
 }

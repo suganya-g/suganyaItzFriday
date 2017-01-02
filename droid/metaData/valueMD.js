@@ -2,6 +2,7 @@ var valueMD = {
 	repo : 						//repo
 	{
 		priority : 100,
+		syntax : '"owner/repository"',
 		keyPattern : [
 			{
 				keywords : 
@@ -20,8 +21,29 @@ var valueMD = {
 			{
 				keywords : 
 				[
+					{word : "in", want : true},
+					{word : "repo", want : true}
+				]
+			},
+			{
+				keywords : 
+				[
+					{word : "under", want : true},
+					{word : "repo", want : true}
+				]
+			},
+			{
+				keywords : 
+				[
 					{word : "set", want : true},		//when confirming project from user
 					{word : "project", want : true}
+				]
+			},
+			{
+				keywords : 
+				[
+					{word : "set", want : true},		//when confirming project from user
+					{word : "repo", want : true}
 				]
 			},
 		],
@@ -35,6 +57,7 @@ var valueMD = {
 	title : 					//title
 	{
 		priority : 200,
+		syntax : '"title"',
 		keyPattern : [
 			{
 				keywords : 
@@ -74,6 +97,7 @@ var valueMD = {
 	body : 						//body
 	{
 		priority : 300,
+		syntax : '"description"',
 		keyPattern : [
 			{
 				keywords : 
@@ -114,9 +138,103 @@ var valueMD = {
 			replaceWith : ''
 		}
 	},
+	collaborators : 				//assignees
+	{
+		priority : 100,
+		syntax : '@github\'sUsename (separate multiple users by comma(,) or space',
+		keyPattern : [
+			{
+				keywords : 
+				[
+					{word : "add", want : true},
+					{word : "collaborator", want : true}
+				]
+			},
+			{
+				keywords : 
+				[
+					{word : "add", want : true},
+					{word : "contributor", want : true}
+				]
+			},
+			{
+				keywords : 
+				[
+					{word : "add", want : true},
+					{word : "member", want : true}
+				]
+			},
+			{
+				keywords : 
+				[
+					{word : "invite", want : true},
+					{word : "collaborator", want : true}
+				]
+			},
+			{
+				keywords : 
+				[
+					{word : "invite", want : true},
+					{word : "contributor", want : true}
+				]
+			},
+			{
+				keywords : 
+				[
+					{word : "invite", want : true},
+					{word : "member", want : true}
+				]
+			},
+			{
+				keywords : 
+				[
+					{word : "remove", want : true},
+					{word : "member", want : true}
+				]
+			},
+			{
+				keywords : 
+				[
+					{word : "remove", want : true},
+					{word : "collaborator", want : true}
+				]
+			},
+			{
+				keywords : 
+				[
+					{word : "remove", want : true},
+					{word : "contributor", want : true}
+				]
+			},
+			{
+				keywords : 
+				[
+					{word : "delete", want : true},
+					{word : "member", want : true}
+				]
+			},
+			{
+				keywords : 
+				[
+					{word : "delete", want : true},
+					{word : "collaborator", want : true}
+				]
+			},
+			{
+				keywords : 
+				[
+					{word : "delete", want : true},
+					{word : "contributor", want : true}
+				]
+			},
+		],
+		valuePattern : /[\w-_]+/g,
+		replace : null
+	},
 	assignees : 				//assignees
 	{
 		priority : 300,
+		syntax : '@github\'sUsename (separate multiple users by comma(,) or space',
 		keyPattern : [
 			{
 				keywords : 
@@ -146,12 +264,34 @@ var valueMD = {
 	labels : 				//labels
 	{
 		priority : 300,
+		syntax : '"labels separated by comma(,)"',
 		keyPattern : [
 			{
 				keywords : 
 				[
 					{word : "assign", want : true},
 					{word : "label", want : true}
+				]
+			},
+			{
+				keywords : 
+				[
+					{word : "give", want : true},
+					{word : "label", want : true}
+				]
+			},
+			{
+				keywords : 
+				[
+					{word : "assign", want : true},
+					{word : "tag", want : true}
+				]
+			},
+			{
+				keywords : 
+				[
+					{word : "give", want : true},
+					{word : "tag", want : true}
 				]
 			},
 			{
@@ -189,6 +329,7 @@ var valueMD = {
 	number : 				//number
 	{
 		priority : 300,
+		syntax : '#number example: #21',
 		keyPattern : [
 			{
 				keywords : 

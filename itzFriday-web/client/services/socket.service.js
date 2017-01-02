@@ -4,26 +4,27 @@ var socket = null;
 
 export default {
 	getSocketConnection() {
-
-      	var self = this;
-      	// reset the socket
-      	// if it's not the first connect() call this will be triggered
-      	// I hope this is enough to reset a socket
+    if(localStorage.token){
+      var self = this;
+        // reset the socket
+        // if it's not the first connect() call this will be triggered
       if( self.socket ) {
-        self.socket.disconnect();
-        delete self.socket;
-        self.socket = null;
-      }
-      // standard connectiong procedure
-      self.socket = IO.connect({ // adapt to your server
-      	'transports': ['websocket', 'polling'],
-      	'query': 'token=' + localStorage.token,
-        reconnection: true,             // default setting at present
-        reconnectionDelay: 1000,        // default setting at present
-        reconnectionDelayMax : 5000,    // default setting at present
-        reconnectionAttempts: Infinity  // default setting at present
-      } );
+        //self.socket.disconnect();
+        //delete self.socket;
+        return self.socket;
+      }else {
+        // standard connectiong procedure
+        self.socket = IO.connect({ // adapt to your server
+          'transports': ['websocket', 'polling'],
+          'query': 'token=' + localStorage.token,
+          reconnection: true,             // default setting at present
+          reconnectionDelay: 1000,        // default setting at present
+          reconnectionDelayMax : 5000,    // default setting at present
+          reconnectionAttempts: Infinity  // default setting at present
+        } );
 
-      return self.socket;
+        return self.socket;
+      }
+    }
 	}
 }

@@ -82,7 +82,6 @@ console.log("outside if");
                                 res.status(404).json({message:err});
                             else
                             {
-                                console.log(channelData);
                                 let channelMember=new channelMemberShip();
                                 channelMember.channelID=channelData._id;
                                 channelMember.memberID=profileData._id;
@@ -95,9 +94,9 @@ console.log("outside if");
                             }
                         });
                     }
-                });                     
+                });
             });
-                    
+
             }
 
         });
@@ -105,7 +104,7 @@ console.log("outside if");
 
 
 inviteRouter.post('/userdetails',function(req,res){
-    
+
 let useraccount=new userAccount();
 
 let hashCode=useraccount.generateHash(req.body.data.Password);
@@ -126,7 +125,7 @@ useraccount.save(function(err,accountData){
                profile.firstname=req.body.data.FirstName;
               profile.lastname=req.body.data.LastName;
                profile.email=req.body.data.Email;
-        
+
             profile.save(function(err,profileData){
                 console.log("profile data is "+profileData);
                 if(err)
@@ -158,9 +157,10 @@ useraccount.save(function(err,accountData){
                                             res.status(404).json({message:"channel error"});
                                         }
                                         else
-                                            {   
+                                            {
                                                 console.log("inside cahnnel memeber ship callbackl");
                                                 console.log(channeldata);
+
                                                 let channelmember=new channelMemberShip();
                                                     channelmember.channelID=channeldata._id;
                                                     channelmember.memberID=profileData._id;
@@ -170,11 +170,11 @@ useraccount.save(function(err,accountData){
                                                         else
                                                              res.status(200).json({message:"All data inserted"});
                                                     });
-                                            
+
                                             }
-                                       }); 
+                                       });
                                     }
-                                });        
+                                });
                         }
                     });
                 }

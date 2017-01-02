@@ -56,7 +56,7 @@ class ChatWindow extends Component {
     let listView = []
       for(let i=0; i < chats.length; i ++) {
            listView.push(<li key={i} style={styles.listMargin} ref={(ref) => this['_div'+i] = ref}>
-              <ChatText chatTextMessages = {chats[i]}/>
+              <ChatText key={i} chatTextMessages = {chats[i]}/>
             </li>);
           }
 

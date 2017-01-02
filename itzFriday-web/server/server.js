@@ -16,7 +16,6 @@ var cookieParser = require('cookie-parser');
 var confirmCode = require('./routes/confirmcode/user.confirmCode.route.js');
 var projectRoutes = require('./routes/project/project.route.js');
 var projectDataRoutes = require('./routes/project/channel.details.routes.js');
-//var channelDataRoutes= require('./routes/channel/channel.routes.js');
 var inviteRouter=require('./routes/invite/invite.js');
 
 
@@ -83,7 +82,8 @@ io.use(function(sockets, next) {
       } catch (err) {
         console.log(err);
         next(new Error("not valid token"));
-        socket.disconnect();
+        //socket.disconnect();
+        sockets.emit('disconnect', err);
       }
     }
   });

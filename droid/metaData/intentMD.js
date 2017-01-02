@@ -1,6 +1,22 @@
 var intentMD = {
+	setRepository : 
+	{
+		api : 'github',
+		context : 'owner',
+		props : 
+		{
+			required : ['repo']
+		},
+		pattern :
+		{
+			oneOfThese : ['set'],
+			required : ['repo', 'project']
+		}
+	}
+	,
 	createIssue : 
 	{
+		api : 'github',
 		context : 'project',
 		props : 
 		{
@@ -16,6 +32,7 @@ var intentMD = {
 	,
 	assignIssue : 
 	{	
+		api : 'github',
 		context : 'project',
 		props : 
 		{
@@ -30,6 +47,7 @@ var intentMD = {
 	,
 	labelIssue : 
 	{	
+		api : 'github',
 		context : 'project',
 		props : 
 		{
@@ -43,7 +61,8 @@ var intentMD = {
 	}
 	,
 	closeIssue : 
-	{					
+	{
+		api : 'github',		
 		context : 'project',
 		props : 
 		{
@@ -57,6 +76,7 @@ var intentMD = {
 	,
 	listIssues : 
 	{
+		api : 'github',
 		context : 'project',
 		props : 
 		{
@@ -70,8 +90,70 @@ var intentMD = {
 		}
 	}
 	,
+	listCollaborators : 
+	{
+		api : 'github',
+		context : 'owner',
+		props : 
+		{
+			required : ['repo', 'authToken'],
+		},
+		pattern :
+		{
+			oneOfThese : ['list', 'show', 'display'],
+			required : ['collaborator', 'contributor', 'member']
+		}
+	}
+	,
+
+	addCollaborators : //add without sending invite
+	{
+		api : 'github',
+		context : 'owner',
+		props : 
+		{
+			required : ['repo', 'authToken', 'collaborators'],
+		},
+		pattern :
+		{
+			oneOfThese : ['add'],
+			required : ['collaborator', 'contributor', 'member']
+		}
+	}
+	,
+	inviteCollaborators : //send invitation
+	{
+		api : 'github',
+		context : 'owner',
+		props : 
+		{
+			required : ['repo', 'authToken', 'collaborators'],
+		},
+		pattern :
+		{
+			oneOfThese : ['invite'],
+			required : ['collaborator', 'contributor', 'member']
+		}
+	}
+	,
+	removeCollaborators : //send invitation
+	{
+		api : 'github',
+		context : 'owner',
+		props : 
+		{
+			required : ['repo', 'authToken', 'collaborators'],
+		},
+		pattern :
+		{
+			oneOfThese : ['remove', 'delete'],
+			required : ['collaborator', 'contributor', 'member']
+		}
+	}
+	,	
 	commentOnIssue : 
 	{
+		api : 'github',
 		context : 'issue',
 		props : 
 		{

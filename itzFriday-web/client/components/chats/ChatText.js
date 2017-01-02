@@ -54,7 +54,6 @@ class ChatText extends Component {
   render() {
     const message = this.props.chatTextMessages;
     const avtar = message.author.substring(0,1);
-
       let finalmessage= [];
       if(message.author !== 'Droid') {
       let recievedMessage = message.message.split(':');

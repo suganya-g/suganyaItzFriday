@@ -1,0 +1,10 @@
+client/components
+client/jsons
+client/services
+node_modules
+test
+gulpfile.js
+webpack.config.js
+bower.json
+.eslintrc.js
+.htmlhintrc

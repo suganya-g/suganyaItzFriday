@@ -7,12 +7,12 @@ const closeIssue = function (repo,authToken,number,callback)
 
     if(!repo)
     {
-        callback({type:"string", content: "Error: Repository Not Present"}, null);
+        callback({ofType:"string", withContent: "Error: Repository Not Present"}, null);
         return
     }
     else if(!number)
     {
-        callback({type:"string", content: "Error: Issue Number Not Present"}, null);
+        callback({ofType:"string", withContent: "Error: Issue Number Not Present"}, null);
         return
     }
 
@@ -29,10 +29,10 @@ const closeIssue = function (repo,authToken,number,callback)
     .end(function(error,response){
         if(error)
         {
-            callback({type:"string", content: error.toString()}, null);
+            callback({ofType:"string", withContent: error.toString()}, null);
             return
         }
-        callback(null, {type:"string", content: "Issue "+response.body.number+" has been closed!"});
+        callback(null, {ofType:"string", withContent: "Issue "+response.body.number+" has been closed!"});
         return
     });
 }

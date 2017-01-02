@@ -32,6 +32,15 @@ module.exports = function (socket) {
     // socket.emit('init:data', chatData);
   });
   
+  socket.on('chat:count', function(countData) {
+    var countToPublish = JSON.stringify({
+        method: 'chat:count',
+        destination:countData.destination,
+        sender: countData.sender
+      });
+    pub.publish('delivery', countToPublish);
+  });
+
 	// broadcast a user's message to other users
   	socket.on('send:message', function (data) {
       var chatToPublish = JSON.stringify({

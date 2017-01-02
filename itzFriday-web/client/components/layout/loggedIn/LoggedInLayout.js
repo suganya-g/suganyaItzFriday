@@ -1,3 +1,4 @@
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Link} from 'react-router';
@@ -31,8 +32,6 @@ import { Grid, Row, Col } from 'react-flexbox-grid';
 import request from 'superagent';
 import Project from './../../../services/getLoggedInData.js';
 import ProjectLayout from './ProjectLayout';
-
-
 export default class LoggedInLayout extends React.Component
 {
 	constructor(props)
@@ -42,7 +41,7 @@ export default class LoggedInLayout extends React.Component
 			loggedIn: Auth.loggedIn(),
 			projects:[]
 		};
-
+		this.signOut=this.signOut.bind(this);
 		this.handleAccount = this.handleAccount.bind(this);
 		this.closeMainMenu = this.closeMainMenu.bind(this);
 		this.nameCompressor = this.nameCompressor.bind(this);
@@ -64,7 +63,12 @@ export default class LoggedInLayout extends React.Component
 			projectList:React.PropTypes.object
 		}
 	}*/
+	/*static get contextTypes() {
+		return {
+			router:React.PropTypes.object.isRequired
+		}
 
+	}*/
 	getProjects(userID) {
 		request.post('/api/projects/')
 		.set('Content-Type','application/json')
@@ -86,6 +90,9 @@ export default class LoggedInLayout extends React.Component
 		}
 		return compressedName.trim();
 	}
+
+
+
 	componentDidMount(){
 		console.log("in componentDidMount of logged in layout");
 		console.log(localStorage['token']);
@@ -117,6 +124,7 @@ export default class LoggedInLayout extends React.Component
 
 		this.setState({currentProject : projectID});
 	}
+	handleToggle = () => this.setState({open: !this.state.open});
 
 	handleMessageChange(name)
 	{
@@ -132,7 +140,12 @@ export default class LoggedInLayout extends React.Component
 	{
 		this.setState({mainMenuOpen: false});
 	}
-
+	signOut (e)
+	{
+		Auth.logout();
+		localStorage.clear();
+		this.props.router.replace('login/');
+	}
 	render() {
 		console.log("in render of Logged in layout");
 		console.log(this.state.projects);
@@ -149,6 +162,7 @@ LoggedInLayout.childContextTypes = {
 	projectList:React.PropTypes.object.isRequired,
 	router:React.PropTypes.object.isRequired
 }
+
 LoggedInLayout.contextTypes = {
 	router:React.PropTypes.object.isRequired
 }

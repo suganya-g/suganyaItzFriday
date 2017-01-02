@@ -46,7 +46,6 @@ export default class InviteAccept extends React.Component
           this.props.router.replace('login/');
         else
           alert("some error");
-
       });
   }
 
