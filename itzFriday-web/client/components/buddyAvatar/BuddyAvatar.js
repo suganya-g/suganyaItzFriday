@@ -17,8 +17,8 @@ const styles={
   	height: 150
   },
   stylePaper: {
-    width: '100%',
     margin: 'auto',
+		width:'100%',
     textAlign: 'center',
     display: 'inline-block',
   },
@@ -56,20 +56,16 @@ render()
 	{
 		return(
 			<div>
-        <Grid>
-          <Row>
-            <Col xs={12} sm={12} md={12} lg={12}>
+        <div clasname="col-xs-12 col-sm-12 col-md-12 col-lg-12">
               <Paper style={styles.stylePaper}>
                 <Avatar size={150} src="./../../resources/images/buddy.png" style={styles.styleAvatar} />
                 <br /><br/>
                 <FlatButton label="Change Avatar" backgroundColor="#4CAF50" icon={<ImageAddAPhoto/>} labelStyle={styles.styleButton} hoverColor="#1B5E20" onClick={this.handleOpen} />
+								<br />
               </Paper>
-            </Col>
-          </Row>
-        </Grid>
-        <Grid>
-          <Row>
-            <Col xs={12} sm={12} md={12} lg={12}>
+				</div>
+
+        <div clasname="col-xs-12 col-sm-12 col-md-12 col-lg-12">
               <Dialog
                title="Choose Avatar"
                modal={true}
@@ -99,9 +95,7 @@ render()
                  style={styles.styleSubmit}
                  backgroundColor="#4CAF50" />
               </Dialog>
-            </Col>
-          </Row>
-        </Grid>
+            </div>
       </div>
 		);
 	}

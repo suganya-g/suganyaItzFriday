@@ -7,6 +7,7 @@ import MediaQuery from 'react-responsive';
 
 const styles = {
   chatBoxStyle: {
+
   },
   actionBar: {
       borderTop: "1px solid #dae2e3"
@@ -95,7 +96,7 @@ class ChatWindow extends Component {
         </MediaQuery>
 
         <MediaQuery minDeviceWidth={415} maxDeviceWidth={1023}>
-          <ul style={{height:'850px',listStyle: "none",overflowY: "scroll"}}>
+          <ul style={{height:'800px',listStyle: "none",overflowY: "scroll"}}>
                 {listView}
           </ul>
         </MediaQuery>

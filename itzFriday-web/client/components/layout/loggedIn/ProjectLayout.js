@@ -47,7 +47,6 @@ const styles = {
 	drawer : {
 		backgroundColor: "#004D40",
 		overflowY : 'auto',
-		width:'250px',
 		margin: '0px 0px 0px 0px'
 	},
 	appBar : {
@@ -77,36 +76,10 @@ export default class ProjectLayout extends React.Component{
 
 		let messages = [];
 		let channels = [];
-		let projects = [
-		{
-			title:'Friday',
-			_id:"21908309238209381",
-			channels:[{title:"General",_id: 0},{title:"Acolyte",_id:1}],
-			messages:[{firstname:"Gobinda Thakur",id:0},{firstname:"Apurv Tiwari",id:1},{firstname:"Ruchika Saklani",id:2},{firstname:"Suganya Gopal",id:3},{firstname:"Ankit Aggarwal",id:4},{firstname:"Vikram Marshmallow",id:5}]
-		},
-		{
-			title:'Samarth',
-			_id:"219083092382093248",
-			channels:[{title:"General",id:0},{title:"Developers",id:1}],
-			messages:[{firstname:"Amol Tiwari",id:0},{firstname:"Ankit Kumar Vashisht",id:1},{firstname:"Shinder Pal Singh",id:2},{firstname:"Ritesh",id:3},{firstname:"Kumari Devi",id:4},{firstname:"Hari Prasad",id:5},{firstname:"Prerna Kukreti",id:6}]
-		},
-		{
-			title:'Quiztack',
-			_id:"21908309238209538",
-			channels:[{title:"General",id:0},{title:"Backend",id:1}],
-			messages:[{firstname:"Vishant Sharma",id:0},{firstname:"Kirti Jalan",id:1},{firstname:"Dhivya Lakshmi",id:2},{firstname:"Lal Jose",id:3},{firstname:"Srinivasan",id:4},{firstname:"Nitin Verma",id:5}]
-		},
-		{
-			title:'Oxygen',
-			_id:"21908309238204938",
-			channels:[{title:'General',id:0},{title:'Designers',id:1}],
-			messages:[{firstname:"Sreenidhi",id:0},{firstname:"Toolika Srivastava",id:1},{firstname:"Nanda",id:2},{firstname:"Shipra Joshi",id:3},{firstname:"Bala",id:4},{firstname:"Divyanshu Sharma",id:5}]
-		},
-		];
+
 		let currentProject = 'Friday';
 		let project=[];
 		project=this.props.projectDetails;
-		//console.log(project);
 		this.state = {
 			projectDetails:{},
 			abc: {projectName:'', projectId:'', channels: [], members: []},
@@ -128,7 +101,6 @@ export default class ProjectLayout extends React.Component{
 
 		};
 		let projectss = this.context.projectList;
-		//console.log(projectss);
 		let obj ={};
 		for (let index in projectss){
 			let id=projectss[index]._id;
@@ -144,8 +116,6 @@ export default class ProjectLayout extends React.Component{
 		}
 		console.log("printing state in constructor project layout");
 		console.log(JSON.stringify(this.state));
-		//console.log("in constructor of project layout");
-		//console.log(JSON.stringify(this.state.projects));
     	this.signOut=this.signOut.bind(this);
 		this.handleChannelChange = this.handleChannelChange.bind(this);
 		this.handleMessageChange = this.handleMessageChange.bind(this);
@@ -154,63 +124,58 @@ export default class ProjectLayout extends React.Component{
 		this.changeMessageState = this.changeMessageState.bind(this);
 		this.nameCompressor = this.nameCompressor.bind(this);
 		this.handleOpenList=this.handleOpenList.bind(this);
-		//this.getProjects= this.getProjects.bind(this);
-		//this.getChannels = this.getChannels.bind(this);
 		this.setChannelsState=this.setChannelsState.bind(this);
 		this.setCurrentProject = this.setCurrentProject.bind(this);
 		this.changeState = this.changeState.bind(this);
 		this.setProjectDetailsState = this.setProjectDetailsState.bind(this);
 
 		console.log(this.props);
+
+		if(this.props.params.projectid!==null && this.props.params.projectid!=='' && this.props.params.projectid!==undefined)
+		{
+				console.log(this.props.params.projectid);
+				console.log(this.context);
+				let projectID = this.props.params.projectid;
+				console.log("this is componentDidMount Method");
+				console.log(projectID);
+				let tokenarray = localStorage['token'].split(".");
+			 let userdetails = atob(tokenarray[1]);
+			 console.log(userdetails);
+			 let userData=JSON.parse(userdetails);
+			 console.log(typeof userData);
+			 console.log(userData);
+				async.parallel({
+						channels:function(callback){
+										request.post('/api/channelDetails/')
+										.set('Content-Type','application/json')
+										.send({projectID:projectID,userID:userData.userid})
+										.end((error,res)=>{
+												console.log("in get channels");
+												console.log(res.body.channels)
+												callback(null,res.body.channels);
+								});
+						},
+						members:function(callback){
+										request.post('/api/members/')
+											.set('Content-Type','application/json')
+											.send({projectID:projectID})
+											.end((error,res)=>{
+												 //this.setMemberState(res.body.members);
+												 callback(null,res.body.members);
+								});
+						}
+				},(error,results)=>{
+						console.log("Did mount of project Layout is called here");
+						console.log(results);
+						this.setProjectDetailsState(results,projectID);
+				})
+		}
 	}
 	getChildContext() {
   		return {
     		socket: SocketConnection.getSocketConnection()
   		}
 	}
-/*	static get childContextTypes(){
-		return{
-			projectList:React.PropTypes.object.isRequired
-
-		}
-	}*/
-	/*static get contextTypes() {
-		return {
-			router:React.PropTypes.object.isRequired
-		}
-
-	}*/
-	// static get contextTypes(){
-	// 	return {
-	// 		projectList:React.PropTypes.object.isRequired
-	// 	}
-	// }
-	// getChannelsMembers(projectID){
-	// 	async.parallel({
-	// 		channels:function(callback){
-	// 				request.post(config.resturl+'/api/channelDetails/')
-	// 				.set('Content-Type','application/json')
-	// 				.send({projectID:projectID})
-	// 				.end((error,res)=>{
-	// 					console.log("in get channels");
-	// 					console.log(res.body.channels)
-	// 					callback(null,res.body.channels);
-	// 	});
-	// 		},
-	// 		members:function(callback){
-	// 				request.post(config.resturl+'/api/members/')
-	// 				  .set('Content-Type','application/json')
-	// 				  .send({projectID:projectID})
-	// 				  .end((error,res)=>{
-	// 				 	//this.setMemberState(res.body.members);
-	// 				 	callback(null,res.body.members);
- // 				});
-	// 		}
-	// 	},(error,results)=>{
-	// 		console.log(results);
-	// 		this.setProjectDetailsState(results);
-	// 	})
-	// }
 	componentWillMount()
 	{
 		this.context.router.replace("project/"+this.props.params.projectid+"/droid");
@@ -255,7 +220,11 @@ export default class ProjectLayout extends React.Component{
             console.log("Did mount of project Layout is called here");
             console.log(results);
             this.setProjectDetailsState(results,projectID);
-        })
+        });
+	}
+	componentWillMount()
+	{
+		this.props.router.replace("project/"+this.props.params.projectid+"/droid");
 	}
 	componentWillReceiveProps(nextProps)
 	{
@@ -280,8 +249,6 @@ export default class ProjectLayout extends React.Component{
 						.set('Content-Type','application/json')
 						.send({projectID:projectID,userID:userData.userid})
 						.end((error,res)=>{
-							//console.log("in get channels");
-							//console.log(res.body.channels)
 							callback(null,res.body.channels);
 					});
 				},
@@ -290,7 +257,6 @@ export default class ProjectLayout extends React.Component{
 						  .set('Content-Type','application/json')
 						  .send({projectID:projectID})
 						  .end((error,res)=>{
-						 	//this.setMemberState(res.body.members);
 						 	callback(null,res.body.members);
 	 				});
 				}
@@ -302,24 +268,22 @@ export default class ProjectLayout extends React.Component{
 		}
 
 	}
+
 	setProjectDetailsState(results,projectID){
 		let projectid = projectID;
-		//console.log(projectID);
-		//console.log(results);
-		//console.log("channels");
-		//console.log(results.channels);
-		//console.log("members");
-		//console.log(results.members);
 		const obj = this.state.projectDetails || {};
-		obj[projectid] = {channels:results.channels,members:results.members}
-		//console.log(obj);
+		obj[projectid] = {channels:results.channels,members:results.members};
 		console.log("in setting state");
 		console.log(obj);
 		this.setState({projectDetails:obj});
+		this.setMemberState(results.members);
+		this.setChannelsState(results.channels);
 	}
+
 	setChannelsState(channels){
 		this.setState({channels:channels});
 	}
+
 	setMemberState(members){
 		this.setState({
 			members:members
@@ -358,11 +322,12 @@ export default class ProjectLayout extends React.Component{
 		let currentProject = projectID ;
 		console.log(currentProject);
 		localStorage['project']=projectName;
-		console.log("in openThisProject");
-		console.log(projectID);
-		this.setCurrentProject(projectID);
-		this.context.router.push('/project/'+currentProject+'/droid');
+		
 		this.setState({appBarTitle: projectName});
+		console.log("in openThisProject");
+		console.log(projectID);		
+		this.setCurrentProject(projectID);
+		this.context.router.replace("project/"+currentProject+"/chat/?project="+projectName+"&name=general&identifier=channel");
 	}
 
 	setCurrentProject(projectID)
@@ -386,9 +351,9 @@ export default class ProjectLayout extends React.Component{
 		this.setState({messageskey: "value", messages});
 	}
 
-	handleChannelChange(name)
+	handleChannelChange(name,id)
 	{
-		this.props.router.replace('project/'+this.props.params.projectid+'/chat/?project='+this.state.appBarTitle+'&name='+name+'&identifier=channel');
+		this.props.router.replace('project/'+this.props.params.projectid+'/chat/?project='+this.state.appBarTitle+'&name='+name+'&identifier=channel&channelid='+id);
 		this.closeMainMenu();
 	}
   	handleToggle = () => this.setState({open: !this.state.open});
@@ -407,16 +372,6 @@ export default class ProjectLayout extends React.Component{
 	changeState(projects){
 		this.setState({projects:projects});
 	}
-	// getChildContext() {
-	// 	return {
-	// 		projectDetails: this.state
-	// 	}
-	// }
-	// getChildContextTypes() {
-	// 	return {
-	// 		projectDetails: React.PropTypes.object.isRequired
-	// 	}
-	// }
 	render()
 	{		console.log("getting the context here");
 			console.log(this.context);
@@ -427,9 +382,10 @@ export default class ProjectLayout extends React.Component{
 			let projectList=[];
 
 			for (let index in projects)
-			{	//console.log(projects[index].title)
+			{	
 				projectList.push(
 					<ListItem id={index} leftIcon={<FileFolder />} rightIcon={<span />}  primaryText={projects[index].title}
+
 					onNestedListToggle={this.handleNestedListToggle.bind(this,index)}
 					value={index+1}
 					open={this.state.openIndex===index}
@@ -439,7 +395,7 @@ export default class ProjectLayout extends React.Component{
 					nestedItems={[
 							<div style={{backgroundColor:'white'}}>
 									<ChannelList projectid={projects[index]._id} nameCompressor={this.nameCompressor} channels={this.state.projectDetails[projects[index]._id].channels} changeChannel={this.handleChannelChange} appBarTitle={this.state.appBarTitle}/>
-									<MessageList nameCompressor={this.nameCompressor} messages={this.state.projectDetails[projects[index]._id].members} changeMessage={this.handleMessageChange} appBarTitle={this.state.appBarTitle}/>
+									<MessageList nameCompressor={this.nameCompressor} messages={this.state.projectDetails[projects[index]._id].members} changeMessage={this.handleMessageChange} appBarTitle={this.state.appBarTitle} messagesList={this.state.messages}/>
 
 							 </div>
 							]} />);
@@ -449,8 +405,8 @@ export default class ProjectLayout extends React.Component{
 					<MuiThemeProvider>
 					    <div className="wrap container-fluid">
 					            <MediaQuery query='(min-device-width: 769px)'>
-					                <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12" style={{width:'100%'}}>
-					                    <div className="row">
+					                <div className="row">
+					                    <div className="row"  style={{width:'100% of viewport width'}}>
 					                        <AppBar id='appbar' title={this.state.appBarTitle} titleStyle={{textAlign:'center'}} style={styles.appBar}
 					                            zDepth={2}
 					                            iconElementLeft ={<span/>}
@@ -460,23 +416,21 @@ export default class ProjectLayout extends React.Component{
 						                                anchorOrigin={{horizontal: 'left', vertical: 'top'}}
 						                                targetOrigin={{horizontal: 'left', vertical: 'top'}}>
 						                                <List>
-																						   <ListItem leftIcon={<SocialPerson color="#004D40" />} primaryText={localStorage['userName']} style={{fontWeight:'bold',color:'#004D40'}} />
-																							 <Divider />
-						                                    <ListItem leftIcon={<AVRecentActors color="#004D40"/>} primaryText="Account Settings" id="accountSettings" key="accountSettings" primaryTogglesNestedList={true} style={styles.listItem}
-						                                       nestedItems={[
 							                                        <Link to={"profile/"} style={{textDecoration:"none"}}>
 							                                            <ListItem
 							                                               key={1}
-							                                               primaryText="Profile"
+																														 style={styles.listItem}
+							                                               primaryText={localStorage['userName']}
 							                                               leftIcon={<ActionAccountBox color="#004D40" />} />
-							                                        </Link>,
+							                                        </Link>
+																											<Divider/>
 							                                        <Link to={"buddy/"} style={{textDecoration:"none"}}>
 							                                            <ListItem
 							                                               key={2}
+																														 style={styles.listItem}
 							                                               primaryText="Droid settings"
 							                                               leftAvatar={<Avatar style={{backgroundColor:'transparent',width:'30px'}} src='./../../resources/images/buddy.png' alt="Friday" />} />
 							                                        </Link>
-							                                               ]} />
 
 							                                <ListItem leftIcon={<FileFolderShared color="#004D40"/>} primaryText="Manage Project Team" id="manageTeam" key="manageTeam" style={styles.listItem} onTouchTap={this.closeMainMenu} primaryTogglesNestedList={true} nestedItems={[
 								                              <Link to={'/project/'+this.props.params.projectid+'/invitePeople'} style={{textDecoration:'none'}}>
@@ -494,20 +448,20 @@ export default class ProjectLayout extends React.Component{
 								                    </IconMenu>
 								                </span>}
 							                    iconStyleLeft={{cursor: 'pointer'}}/>
-																	<div style={{paddingLeft:'180px',width:'100%'}}>
-							                   {this.props.children}
+																	</div>
+																	<div className="row" style={{width:'100% of viewport width'}}>
+																	     <div className="col-xs-2 col-sm-2 col-md-2 col-lg-2" style={{minWidth:'200px'}}>
+																			 <Drawer open={true} docked={true} id="projectList" containerStyle={styles.drawer} zDepth={2}>
+										                           <List>
+											                           {projectList}
+										                           </List>
+									                     </Drawer>
+																			 </div>
+																			 <div clasname="col-xs-12 col-sm-12 col-md-12 col-lg-12" style={{marginLeft:'260px',marginTop:'5px'}} >
+							                              {this.props.children}
+																			 </div>
 																 </div>
 							            </div>
-							        </div>
-											<div className="col-xs-2 col-sm-2 col-md-2 col-lg-2" style={{height:'100%'}}>
- 								 <div className="leftPane" style={styles.leftPane}>
- 									 <Drawer open={true} docked={true} id="projectList" containerStyle={styles.drawer} zDepth={2}>
- 										 <List>
- 											 {projectList}
- 										 </List>
- 									 </Drawer>
- 								 </div>
- 							 </div>
 							    </MediaQuery>
 
 							    <MediaQuery query='(max-device-width: 768px)' className="leftPane">
@@ -533,18 +487,18 @@ export default class ProjectLayout extends React.Component{
 							    	                    <IconMenu iconButtonElement={<IconButton onTouchTap={this.toggleMainMenu}>	<ImageDehaze color={grey50} /></IconButton>}
 							    	                                                anchorOrigin={{horizontal: 'left', vertical: 'top'}}
 							    	                                                targetOrigin={{horizontal: 'left', vertical: 'top'}}>
-							    	                        <List>
-																						    <ListItem leftIcon={<SocialPerson color="#004D40" />} primaryText={localStorage['userName']} style={{fontWeight:'bold',color:'#004D40'}} />
-																					      <Divider />
-							    	                            <ListItem leftIcon={<AVRecentActors color="#004D40"/>} primaryText="Account Settings" id="accountSettings" key="accountSettings" primaryTogglesNestedList={true} style={styles.listItem}
-							    	                                nestedItems={[
-							    		                            <Link to={"profile/"} style={{textDecoration:"none"}}>
-							    		                                <ListItem key={1} primaryText="Profile" leftIcon={<ActionAccountBox color="#004D40"/>} />
-							    		                            </Link>,
+																								<List>
+																			            <Link to={"profile/"} style={{textDecoration:"none"}}>
+																			                    <ListItem
+																			                    key={1}
+																													style={styles.listItem}
+																			                    primaryText={localStorage['userName']}
+																			                    leftIcon={<ActionAccountBox color="#004D40" />} />
+																			            </Link>
+																									<Divider/>
 							    		                            <Link to={"buddy/"} style={{textDecoration:"none"}}>
-							    		                                <ListItem key={2} primaryText="Droid settings" leftAvatar={<Avatar style={{backgroundColor:'transparent',width:'30px'}} src='./../../resources/images/buddy.png' alt="Friday" />} />
+							    		                                <ListItem key={2} style={styles.listItem} primaryText="Droid settings" leftAvatar={<Avatar style={{backgroundColor:'transparent',width:'30px'}} src='./../../resources/images/buddy.png' alt="Friday" />} />
 							    		                            </Link>
-							    		                                        ]} />
 
 							    		                        <ListItem leftIcon={<FileFolderShared color="#004D40"/>} primaryText="Manage Project Team" id="manageTeam" key="manageTeam" style={styles.listItem} onTouchTap={this.closeMainMenu} primaryTogglesNestedList={true} nestedItems={[
 							    			                        <Link to={'/project/'+this.props.params.projectid+'/invitePeople/'} style={{textDecoration:'none'}}>

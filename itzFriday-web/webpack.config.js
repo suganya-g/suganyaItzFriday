@@ -7,7 +7,7 @@ module.exports = {
 	output: {
 		path: path.resolve('./client/assets/'),
 		filename: 'bundle.js',
-		publicPath: '/' 
+		publicPath: '/'
 	},
 	plugins: [
     	new webpack.optimize.DedupePlugin(),

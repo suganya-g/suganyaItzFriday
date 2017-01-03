@@ -32,7 +32,6 @@ const styles = {
       },
       paperStyle:{
     	margin:'auto',
-      width:'100%',
       textAlign:'center',
       display:'inline-block'
 		}
