@@ -10,9 +10,8 @@ var userAccount=require('./../../model/useraccount/useraccount.schema.js');
 
 inviteRouter.post('/sendInvite', function(req, res) {
 
-console.log(req);
-console.log(req.body.project);
-console.log(req.body.email);
+
+
 
 var transporter = nodemailer.createTransport({
         service: 'Gmail',
@@ -48,7 +47,7 @@ var transporter = nodemailer.createTransport({
 inviteRouter.post('/checkInvitation',function(req,res){
 
 console.log("outside if");
-    console.log(req.body.email);
+    
         userProfile.findOne({email:req.body.email},function(err,profileData){
         if (err)
         {
@@ -57,15 +56,14 @@ console.log("outside if");
         }
         else if (profileData == null)
           {
-            console.log("inside invite doc is "+profileData);
+            
             res.status(204).json({ idExist: false });
           }
           else
           {
-            console.log("Profile data is "+profileData);
-            console.log("title is "+req.body.project);
+         
             projectDetails.findOne({title:req.body.project},function(err,projectData){
-                console.log("projectdata is "+projectData);
+                
 
                 let projectMember=new projectMemberShip();
                 projectMember.memberID=profileData._id;
@@ -76,7 +74,7 @@ console.log("outside if");
                         res.status(404).json({message:"eror in one db"});
                     else
                     {
-                        console.log("saved data is "+data);
+                        
                         channelDetails.findOne({title:'general',projectID:projectData._id},function(err,channelData){
                             if(err)
                                 res.status(404).json({message:err});
@@ -114,7 +112,7 @@ let hashCode=useraccount.generateHash(req.body.data.Password);
   useraccount.role="user";
 
 useraccount.save(function(err,accountData){
-    console.log("account data is "+accountData);
+    
         if(err)
             res.status(404).json({message:"Account DB error"});
         else
@@ -127,19 +125,19 @@ useraccount.save(function(err,accountData){
                profile.email=req.body.data.Email;
 
             profile.save(function(err,profileData){
-                console.log("profile data is "+profileData);
+                
                 if(err)
                     res.status(404).json({message:"Profile Db error"});
                 else
                 {
                     console.log("inside profile callback");
-                    console.log("title is "+req.body.project);
+                    
                     projectDetails.findOne({title:req.body.project},function(err,projectData){
                         if(err)
                             res.status(404).json({message:"project error"});
                         else
                         {
-                            console.log("projectdata is "+projectData);
+                            
                             let projectMember=new projectMemberShip();
 
                             projectMember.memberID=profileData._id;
@@ -151,7 +149,7 @@ useraccount.save(function(err,accountData){
                                     else
                                     {
                                         console.log("inside projectmemver callback")
-                                        console.log(projectData._id);
+                                        
                                        channelDetails.findOne({title:"general",projectID:projectData._id},function(err,channeldata){
                                         if(err){
                                             console.log('err');
@@ -160,7 +158,7 @@ useraccount.save(function(err,accountData){
                                         else
                                             {
                                                 console.log("inside cahnnel memeber ship callbackl");
-                                                console.log(channeldata);
+                                                
 
                                                 let channelmember=new channelMemberShip();
                                                     channelmember.channelID=channeldata._id;

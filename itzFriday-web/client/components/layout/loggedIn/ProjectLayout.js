@@ -97,7 +97,8 @@ export default class ProjectLayout extends React.Component{
 			projectID:[{channels:[],members:[]}],
 			channels:[],
 			members:[],
-			currentProject : ''		//stores current project ID only
+			currentProject : '',	//stores current project ID only
+			manageTeam : false,
 
 		};
 		let projectss = this.context.projectList;
@@ -127,6 +128,7 @@ export default class ProjectLayout extends React.Component{
 		this.setCurrentProject = this.setCurrentProject.bind(this);
 		this.changeState = this.changeState.bind(this);
 		this.setProjectDetailsState = this.setProjectDetailsState.bind(this);
+		this.allowManageTeam = this.allowManageTeam.bind(this);
 
 		console.log(this.props);
 
@@ -167,6 +169,7 @@ export default class ProjectLayout extends React.Component{
 						console.log("Did mount of project Layout is called here");
 						console.log(results);
 						this.setProjectDetailsState(results,projectID);
+						console.log('project id ' +projectID);
 				})
 		}
 	}
@@ -214,6 +217,31 @@ export default class ProjectLayout extends React.Component{
         });
 		
 	}
+
+	allowManageTeam(projectID)
+	{
+		console.log(".....................");
+		let payload=JSON.parse(atob(localStorage['token'].split('.')[1]));
+		let getRoles=payload['role'];
+		console.log("payload ",payload);
+		console.log("getroles ",getRoles);
+		for(let project in getRoles)
+		{
+			console.log("??????????????????????");
+			console.log(getRoles['projectID']);
+				
+			if(getRoles[project]['projectID'] === projectID)
+			{
+				console.log("Inside if?????????????????/");
+				if(getRoles[project]['role'] === "admin")
+					this.setState({manageTeam : true});
+				else
+					this.setState({manageTeam : false});
+				console.log("+++++++++++++++",this.state.manageTeam);
+			}
+		}
+	}
+
 	componentWillMount()
 	{
 		this.props.router.replace("project/"+this.props.params.projectid+"/droid");
@@ -348,6 +376,7 @@ export default class ProjectLayout extends React.Component{
 	openThisProject (projectID,projectName)
 	{
 		this.context.socket.emit('user:join', projectName);
+		this.allowManageTeam(projectID);
 		let currentProject = projectID ;
 		localStorage['project']=projectName;
 		this.setState({appBarTitle: projectName});
@@ -462,8 +491,8 @@ export default class ProjectLayout extends React.Component{
 							                                               primaryText="Droid settings"
 							                                               leftAvatar={<Avatar style={{backgroundColor:'transparent',width:'30px'}} src='./../../resources/images/buddy.png' alt="Friday" />} />
 							                                        </Link>
-
-							                                <ListItem leftIcon={<FileFolderShared color="#004D40"/>} primaryText="Manage Project Team" id="manageTeam" key="manageTeam" style={styles.listItem} onTouchTap={this.closeMainMenu} primaryTogglesNestedList={true} nestedItems={[
+							                                {(this.state.manageTeam) 
+							                                ? (<ListItem leftIcon={<FileFolderShared color="#004D40"/>} primaryText="Manage Project Team" id="manageTeam" key="manageTeam" style={styles.listItem} onTouchTap={this.closeMainMenu} primaryTogglesNestedList={true} nestedItems={[
 								                              <Link to={'/project/'+this.props.params.projectid+'/invitePeople'} style={{textDecoration:'none'}}>
 																							 <ListItem
 								                                   key={1}
@@ -473,7 +502,11 @@ export default class ProjectLayout extends React.Component{
 								                                <Link to={'/project/'+this.props.params.projectid+"/manageTeam"} style={{textDecoration:'none'}}>
 								                                   <ListItem key={2} primaryText="Remove People" leftIcon={<ContentRemoveCircle color="#004D40"/>} />
 								                                </Link>
-								                                          ]}/>
+								                                          ]}/>)
+								                                          :
+								                                          <span/>
+
+								                            }
 								                           <ListItem leftIcon={<ActionPowerSettingsNew color="#004D40"/>} primaryText="Sign Out" id="signOut" key="signOut" style={styles.listItem} onTouchTap={this.signOut} />
 								                        </List>
 								                    </IconMenu>
@@ -531,13 +564,17 @@ export default class ProjectLayout extends React.Component{
 							    		                                <ListItem key={2} style={styles.listItem} primaryText="Droid settings" leftAvatar={<Avatar style={{backgroundColor:'transparent',width:'30px'}} src='./../../resources/images/buddy.png' alt="Friday" />} />
 							    		                            </Link>
 
-							    		                        <ListItem leftIcon={<FileFolderShared color="#004D40"/>} primaryText="Manage Project Team" id="manageTeam" key="manageTeam" style={styles.listItem} onTouchTap={this.closeMainMenu} primaryTogglesNestedList={true} nestedItems={[
+							    		                        {this.state.manageTeam ? 
+							                                	<ListItem leftIcon={<FileFolderShared color="#004D40"/>} primaryText="Manage Project Team" id="manageTeam" key="manageTeam" style={styles.listItem} onTouchTap={this.closeMainMenu} primaryTogglesNestedList={true} nestedItems={[
 							    			                        <Link to={'/project/'+this.props.params.projectid+'/invitePeople/'} style={{textDecoration:'none'}}>
 																								<ListItem key={1} primaryText="Invite People" leftIcon={<ContentDrafts color="#004D40"/>} />
 																								</Link>,
 							    			                        <Link to={'/project/'+this.props.params.projectid+"/manageTeam/"} style={{textDecoration:'none'}}>
 							    			                            <ListItem key={2} primaryText="Remove People" leftIcon={<ContentRemoveCircle color="#004D40"/>} />
 							    			                        </Link> ]}/>
+							    			                        :
+							    			                        <span/>
+							    			                    }	
 							    			                    <ListItem leftIcon={<ActionPowerSettingsNew color="#004D40"/>} primaryText="Sign Out" id="signOut" key="signOut" style={styles.listItem} onTouchTap={this.signOut} />
 							    			                </List>
 							    			            </IconMenu>
