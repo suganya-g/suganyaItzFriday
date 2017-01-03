@@ -71,6 +71,7 @@ export default class CreateProject extends React.Component
   render()
   {
     return(
+    <div className="autofill">
      <Grid>
      <Paper style={styles.paperStyle}>
        <Row>
@@ -143,6 +144,8 @@ export default class CreateProject extends React.Component
        </Col>
        </Row>
      </Paper>
-     </Grid>);
+     </Grid>
+     </div>
+     );
  }
 }

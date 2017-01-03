@@ -33,7 +33,9 @@ const styles = {
       paperStyle:{
     	margin:'auto',
       textAlign:'center',
-      display:'inline-block'
+			width:'100%',
+      display:'inline-block',
+			paddingBottom:'5px'
 		}
     };
 export default class InvitePeople extends React.Component
@@ -130,7 +132,7 @@ export default class InvitePeople extends React.Component
 	}
 	render()
 	{
-		return(<Grid>
+		return(
 		<Paper style={styles.paperStyle}>
 			<div style={{textAlign:'center',marginTop:'20px'}}>
 			<Row center="xs">
@@ -214,6 +216,6 @@ export default class InvitePeople extends React.Component
 			</Row>
 			</div>
         </Paper>
-				</Grid>);
+			);
 	}
 }

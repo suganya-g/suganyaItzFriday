@@ -133,6 +133,7 @@ submitForm(data) {
 
 render(){
  return(
+   <div className="autofill">
   <Grid>
   <MediaQuery query='(min-device-width: 1024px)'>
   <Paper style={styles.paperStyle}>
@@ -255,6 +256,7 @@ render(){
   </Paper>
   </MediaQuery>
   </Grid>
+  </div>
   );
 }
 }
