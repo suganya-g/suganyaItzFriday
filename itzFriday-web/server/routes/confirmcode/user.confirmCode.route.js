@@ -6,7 +6,7 @@ var UserProfile = require('./../../model/userprofile/userprofile.schema.js');
 var async = require('async');
 router.post('/user/storeConfirmCode/',function(req, res){
 	var email =  req.body.email;
-	console.log(email);
+	
 	let userexist=false;
 	async.waterfall([
 		function(callback){
@@ -38,14 +38,14 @@ router.post('/user/storeConfirmCode/',function(req, res){
 					if(codeData)
 					{	
 						//if(codeData.verified===true){
-							console.log(codeData);
+							
 							var randomNum=Math.floor(Math.random() * 10);
 							for(var i=1;i<=5;i++)
 							{
 								num=Math.floor(Math.random() * 10);
 								randomNum=randomNum+""+num;
 							}
-							console.log(randomNum);
+							
 
 							sendMail(email,randomNum);
 							console.log("After send email");
@@ -75,7 +75,7 @@ router.post('/user/storeConfirmCode/',function(req, res){
 							num=Math.floor(Math.random() * 10);
 							randomNum=randomNum+""+num;
 						}
-						console.log(randomNum);
+						
 						let code=randomNum;
 
 						sendMail(email,randomNum);
@@ -113,17 +113,17 @@ router.post('/user/storeConfirmCode/',function(req, res){
 
 router.post('/user/confirmCode',function(req,res){
 		let confirmationCode = req.body.confirmCode;
-		console.log(confirmationCode);
-		console.log(req.body);
+		
+		
 		let userstatus=false;
 		CodeDetails.findOne({email:req.body.email},function(err,data){
-			console.log("data is" + data);
+			
 			if(err){
 				console.log("database error");
 				throw err;
 			}
 			else{
-				console.log(data);
+				
 				if(data.compareCode(confirmationCode)){
 					if(data.verified===true){
 						console.log("getting verified");
@@ -140,7 +140,6 @@ router.post('/user/confirmCode',function(req,res){
 						}
 						else{
 							console.log("Abc");
-							console.log(result);
 							res.status(200).json({message:"Thank you for confirmation",
 								userexist:userstatus,
 								error:false});

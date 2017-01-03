@@ -32,7 +32,6 @@ import { Grid, Row, Col } from 'react-flexbox-grid';
 import request from 'superagent';
 import Project from './../../../services/getLoggedInData.js';
 import async from 'async';
-import SocketConnection from './../../../services/socket.service.js';
 
 const styles = {
 	rootContainer : {
@@ -70,8 +69,7 @@ const styles = {
 
 
 export default class ProjectLayout extends React.Component{
-	constructor(props,context)
-	{
+	constructor(props,context){
 		super(props,context);
 
 		let messages = [];
@@ -171,17 +169,15 @@ export default class ProjectLayout extends React.Component{
 				})
 		}
 	}
-	getChildContext() {
-  		return {
-    		socket: SocketConnection.getSocketConnection()
-  		}
-	}
 	componentWillMount()
 	{
 		this.context.router.replace("project/"+this.props.params.projectid+"/droid");
 	}
 
 	componentDidMount(){
+		this.context.socket.on('error', this._socketConnectionError.bind(this));
+    	this.context.socket.on('connected', this._getConnectedUser.bind(this));
+    	this.context.socket.on('user:join',this._getJoinedUser.bind(this));
 		console.log("in componentDidMount of ProjectLayout");
        console.log(this.props.params.projectid);
         console.log(this.context);
@@ -212,7 +208,7 @@ export default class ProjectLayout extends React.Component{
                       .end((error,res)=>{
                          //this.setMemberState(res.body.members);
                          console.log("in get memebers");
-                         console.log(res.body.memebrs);
+                         console.log(res.body.members);
                          callback(null,res.body.members);
                 });
             }
@@ -221,10 +217,7 @@ export default class ProjectLayout extends React.Component{
             console.log(results);
             this.setProjectDetailsState(results,projectID);
         });
-	}
-	componentWillMount()
-	{
-		this.props.router.replace("project/"+this.props.params.projectid+"/droid");
+		
 	}
 	componentWillReceiveProps(nextProps)
 	{
@@ -318,9 +311,8 @@ export default class ProjectLayout extends React.Component{
 	}
 	openThisProject (projectID,projectName)
 	{
-		console.log("in openThisProject");
+		this.context.socket.emit('user:join', projectName);
 		let currentProject = projectID ;
-		console.log(currentProject);
 		localStorage['project']=projectName;
 		
 		this.setState({appBarTitle: projectName});
@@ -395,7 +387,7 @@ export default class ProjectLayout extends React.Component{
 					nestedItems={[
 							<div style={{backgroundColor:'white'}}>
 									<ChannelList projectid={projects[index]._id} nameCompressor={this.nameCompressor} channels={this.state.projectDetails[projects[index]._id].channels} changeChannel={this.handleChannelChange} appBarTitle={this.state.appBarTitle}/>
-									<MessageList nameCompressor={this.nameCompressor} messages={this.state.projectDetails[projects[index]._id].members} changeMessage={this.handleMessageChange} appBarTitle={this.state.appBarTitle} messagesList={this.state.messages}/>
+									<MessageList nameCompressor={this.nameCompressor} messages={this.state.projectDetails[projects[index]._id].members} changeMessage={this.handleMessageChange} appBarTitle={this.state.appBarTitle}/>
 
 							 </div>
 							]} />);
@@ -521,13 +513,20 @@ export default class ProjectLayout extends React.Component{
 			);
 	}
 
-	static get contextTypes() {
-		return {
-			projectList:React.PropTypes.object.isRequired,
-			router:React.PropTypes.object.isRequired
-		}
-	}
+	_socketConnectionError(err){
+    	console.log(err)
+  	}
+  	_getConnectedUser(user) {
+    	console.log('user join', user);
+  	}
+  	_getJoinedUser(joinedUser){
+    	console.log(joinedUser.user+' has joined to '+joinedUser.destination);
+  	}
 }
-ProjectLayout.childContextTypes = {
-	socket: React.PropTypes.object.isRequired
-};
+
+ProjectLayout.contextTypes = {
+	projectList:React.PropTypes.object.isRequired,
+	socket: React.PropTypes.object.isRequired,
+	router:React.PropTypes.object.isRequired
+
+}

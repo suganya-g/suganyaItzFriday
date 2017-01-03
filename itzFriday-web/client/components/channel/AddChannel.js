@@ -193,10 +193,8 @@ export default class AddChannel extends React.Component {
   }
   render() {
     return (
-      <Grid>
-      <Paper>
-
-
+       <div className="autofill">
+      <Paper style={{width:'100%'}}>
           <Formsy.Form
                        onValid={ this.enableCreate }
                        onInvalid={ this.disableCreate }
@@ -271,7 +269,7 @@ export default class AddChannel extends React.Component {
     			</Row>
           </Formsy.Form>
         </Paper>
-      </Grid>
+        </div>
       );
   }
 }
