@@ -100,7 +100,8 @@ projectRouter.post('/createProject/',function(req,res){
 						projectmembership:function(callback){
 							let projectMemberShipItem={
 								projectID:results.projectID,
-								memberID:userID
+								memberID:userID,
+								role:'admin'
 							}
 							let projectMembershipData = new projectMemberShip(projectMemberShipItem);
 							projectMembershipData.save(function(error,createdprojectmembership){
@@ -270,7 +271,8 @@ projectRouter.post('/addProjectDetails/',function(req,res){
 				projectmembership:function(callback){
 					let projectMemberShipItem={
 						projectID:results.projectID,
-						memberID:results.userID
+						memberID:results.userID,
+						role:'admin'
 					}
 					let projectMembershipData = new projectMemberShip(projectMemberShipItem);
 					projectMembershipData.save(function(error,createdprojectmembership){

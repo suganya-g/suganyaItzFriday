@@ -70,7 +70,7 @@ console.log("outside if");
                 let projectMember=new projectMemberShip();
                 projectMember.memberID=profileData._id;
                 projectMember.projectID=projectData._id;
-
+                projectMember.role="user";
                 projectMember.save(function(err,data){
                     if(err)
                         res.status(404).json({message:"eror in one db"});
@@ -144,6 +144,7 @@ useraccount.save(function(err,accountData){
 
                             projectMember.memberID=profileData._id;
                              projectMember.projectID=projectData._id;
+                             projectMember.role="user";
                                 projectMember.save(function(err,data){
                                     if(err)
                                         res.status(404).json({message:"Data not saved in membership"});
