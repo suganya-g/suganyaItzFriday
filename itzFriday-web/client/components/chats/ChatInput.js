@@ -80,7 +80,7 @@ class ChatInput extends Component {
                   hintText="Type your message"
                   autoComplete="off"
                   updateImmediately
-                  style={{width:'80%'}}
+                  style={{width:'80%',textIndent: '20px'}}
                   value = {this.state.userTyped}
                   onChange = {this.handleChangeText}
                 />

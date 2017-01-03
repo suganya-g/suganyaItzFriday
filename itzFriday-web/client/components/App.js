@@ -84,7 +84,8 @@ class App extends Component {
                                 <Route path="/project/:projectid/chat" component={Chat} onEnter={this.requireAuth.bind(this)} style={{height: '100%'}}></Route>
                                 <Route path="/project/:projectid/addChannel" component={AddChannel} onEnter={this.requireAuth.bind(this)} style={{height: '100%'}}></Route>
                                 <Route path="/profile" component={Profile} onEnter={this.requireAuth.bind(this)} style={{height: '100%'}}></Route>
-																<Route path="/notification" component={NotificationsBoard} onEnter={this.requireAuth.bind(this)} style={{height: '100%'}}></Route>
+																<Route path="/droid" component={NotificationsBoard} onEnter={this.requireAuth.bind(this)} style={{height: '100%'}}></Route>
+																<Route path="/project/:projectid/droid" component={NotificationsBoard} onEnter={this.requireAuth.bind(this)} style={{height: '100%'}}></Route>
                                 <Route path="/buddy" component={BuddyAvatar} onEnter={this.requireAuth.bind(this)} style={{height: '100%'}}></Route>
                                 <Route path="/project/:projectid/manageTeam" component={ManageTeam} onEnter={this.requireAuth.bind(this)} style={{height: '100%'}}></Route>
                                 <Route path="/project/:projectid/invitePeople" component={InvitePeople} onEnter={this.requireAuth.bind(this)} style={{height: '100%'}}></Route>
