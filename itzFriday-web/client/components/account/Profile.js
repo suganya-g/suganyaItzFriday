@@ -26,6 +26,8 @@ const styles = {
     width:'100%',
     textAlign: 'center',
     display: 'inline-block',
+    paddingBottom:'5px',
+    paddingTop:'5px'
   },
 
   styleButtonSubmit: {

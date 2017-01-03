@@ -189,8 +189,8 @@ export default class AddChannel extends React.Component {
   }
   render() {
     return (
-      <Grid>
-      <Paper>
+
+      <Paper style={{width:'100%'}}>
 
 
           <Formsy.Form
@@ -267,7 +267,7 @@ export default class AddChannel extends React.Component {
     			</Row>
           </Formsy.Form>
         </Paper>
-      </Grid>
+
       );
   }
 }
