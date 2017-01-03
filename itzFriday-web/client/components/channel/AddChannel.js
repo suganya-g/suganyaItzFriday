@@ -32,7 +32,7 @@ export default class AddChannel extends React.Component {
     this.notifyFormError = this.notifyFormError.bind(this);
     this.onNewRequest = this.onNewRequest.bind(this);
     this.onUpdateInput = this.onUpdateInput.bind(this);
-    this.state = {chipData:[],canSubmit:true,err:"",searchText:"",member:{memberid:[],membername:[]}};
+    this.state = {error:'',chipData:[],canSubmit:true,err:"",searchText:"",member:{memberid:[],membername:[]}};
     this.styles = {
       chip: {
         margin: 4,
@@ -104,7 +104,7 @@ export default class AddChannel extends React.Component {
     let userData=JSON.parse(userdetails);
     console.log(typeof userData);
     console.log(userData);
-    let obj ={};
+    let obj = {};
     obj.key = userData.userid,
     obj.label = userData.name;
   	data.chipData=this.state.chipData;
@@ -118,12 +118,16 @@ export default class AddChannel extends React.Component {
                 .end((error,res)=>{;
                   console.log(res.body)
                   if(res.body.error===false){
-                    this.props.router.replace('/project/'+this.props.params.projectid);
+                    this.setState({chipData:[],member:{memberid:[],membername:[]}});
+                    console.log('###################################################');
+                    this.context.router.replace('/project/'+this.props.params.projectid);
+                    this.setState({error:''});
                   }
                   else{
-
+                    this.setState({error:res.body.error});
                   }
      });
+    data.title='';  
   }
   onNewRequest(data){
       this.setState({err:''});
@@ -213,7 +217,7 @@ export default class AddChannel extends React.Component {
                             type="text"
                             name="title"
                             validations="isWords"
-                            validationError={ error.messages }
+                            validationError={ this.state.error}
                             required
                             hintText="Enter a name for Channel"
                             floatingLabelText="Title"
@@ -268,4 +272,7 @@ export default class AddChannel extends React.Component {
         </div>
       );
   }
+}
+AddChannel.contextTypes = {
+  router:React.PropTypes.object.isRequired
 }

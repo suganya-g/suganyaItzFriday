@@ -74,7 +74,7 @@ export default class ChannelList extends React.Component
 		let channels=[];
 		for( let index in this.state.groups)
 		{
-			channels.push(<ListItem key={index} style={styles.linkItem} onTouchTap={() => this.displayChannel(this.state.groups[index].title)} rightIcon={<Badge badgeContent={this.state.notify[this.state.groups[index].title]} badgeStyle={{backgroundColor:'#004D40',color:'white',visibility: this.state.notify[this.state.groups[index].title] === 0 ? 'hidden' : 'visible'}} />} leftIcon={<SocialGroup color='#004D40'/>}>{this.compressName(this.state.groups[index].title)}</ListItem>);
+			channels.push(<ListItem key={index} style={styles.linkItem} onTouchTap={() => this.displayChannel(this.state.groups[index].title,this.state.groups[index]._id)} rightIcon={<Badge badgeContent={this.state.notify[this.state.groups[index].title]} badgeStyle={{backgroundColor:'#004D40',color:'white',visibility: this.state.notify[this.state.groups[index].title] === 0 ? 'hidden' : 'visible'}} />} leftIcon={<SocialGroup color='#004D40'/>}>{this.compressName(this.state.groups[index].title)}</ListItem>);
 		}
 		channels.push(<Divider />);
 		channels.push(<Link to={"project/"+this.props.projectid+"/addChannel"} style={styles.linkItem} ><ListItem key={-1} style={styles.linkItem} leftIcon={<ContentAddCircle color='#004D40'/>}>Create channel</ListItem></Link>);
@@ -100,10 +100,10 @@ export default class ChannelList extends React.Component
 
 	}
 
-	displayChannel(name)
+	displayChannel(name,id)
 	{
 		this.setState({currentChannel: name});
-		this.props.changeChannel(name);
+		this.props.changeChannel(name,id);
 
 	}
 

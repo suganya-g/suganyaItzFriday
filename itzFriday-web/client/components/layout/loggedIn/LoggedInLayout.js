@@ -1,4 +1,3 @@
-
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Link} from 'react-router';
@@ -49,13 +48,12 @@ export default class LoggedInLayout extends React.Component
 		this.nameCompressor = this.nameCompressor.bind(this);
 		this.setProjectState = this.setProjectState.bind(this);
 		this.getProjects= this.getProjects.bind(this);
-		this.setCurrentProject = this.setCurrentProject.bind(this);
-		console.log(this.props);
+		//console.log(this.props);
 	}
 
 	getChildContext(){
-		console.log("get context method");
-		console.log(this.state.projects);
+		//console.log("get context method");
+		//console.log(this.state.projects);
 		return {
 			projectList:this.state.projects,
 			socket: SocketConnection.getSocketConnection()
@@ -87,35 +85,29 @@ export default class LoggedInLayout extends React.Component
 
 
 	componentDidMount(){
-		console.log("in componentDidMount of logged in layout");
-		console.log(localStorage['token']);
+		//console.log("in componentDidMount of logged in layout");
+		//console.log(localStorage['token']);
         let tokenarray = localStorage['token'].split(".");
         let userdetails = atob(tokenarray[1]);
-        console.log(userdetails);
+        //console.log(userdetails);
         let userData=JSON.parse(userdetails);
-        console.log(typeof userData);
+        //console.log(typeof userData);
         console.log(userData);
 
           request.post('/api/projects/')
 		  .set('Content-Type','application/json')
 		  .send({userID:userData.userid})
 		  .end((error,res)=>{
-		      console.log(res.body);
-		      console.log("in service of projects");
+		      //console.log(res.body);
+		     // console.log("in service of projects");
 		      this.setProjectState(res.body);
 		      this.context.router.push('/project/'+res.body[0]._id);
   		});
 	}
 	setProjectState(projects){
-		console.log("in setting state method");
+		console.log("in setting state method of Logged in layout");
 		console.log(projects);
 		this.setState({projects:projects})
-	}
-
-	setCurrentProject(projectID)
-	{
-
-		this.setState({currentProject : projectID});
 	}
 	handleToggle = () => this.setState({open: !this.state.open});
 
@@ -140,8 +132,8 @@ export default class LoggedInLayout extends React.Component
 		this.props.router.replace('login/');
 	}
 	render() {
-		console.log("in render of Logged in layout");
-		console.log(this.state.projects);
+		//console.log("in render of Logged in layout");
+		//console.log(this.state.projects);
 		const isLogged = Auth.loggedIn();
 		let projectList =[];
 		return (
@@ -150,10 +142,15 @@ export default class LoggedInLayout extends React.Component
 			</div>
 		);
 	}
+	// static get childContextTypes(){
+	// 	return{
+	// 			projectList:React.PropTypes.object.isRequired,
+	// 			router:React.PropTypes.object.isRequired
+	// 	}
+	// }
 }
 LoggedInLayout.childContextTypes = {
 	projectList:React.PropTypes.object.isRequired,
-	router:React.PropTypes.object.isRequired,
 	socket: React.PropTypes.object.isRequired
 }
 

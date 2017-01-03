@@ -10,7 +10,7 @@ import {teal400} from 'material-ui/styles/colors';
 		};
 export default class NotLoggedInLayout extends React.Component{
 	getChildContext(){
-console.log(this.props.router);
+//console.log(this.props.router);
 return{
 	router:this.props.router
 }

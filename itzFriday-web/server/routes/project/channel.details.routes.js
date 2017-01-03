@@ -174,7 +174,6 @@ router.post('/api/members',function(req,res){
 			console.log(error)
 		}
 		else{
-		//console.log(finalmemberdata);
 		res.json({members:finalmemberdata});
 		}
 
@@ -189,6 +188,21 @@ router.post('/channel/createChannel',function(req,res){
 	let projectId=req.body.projectid;
 	async.waterfall([
 		function(callback){
+			ChannelDetails.findOne({title:channelTitle,projectID:projectId},function(error,channel){
+				if(error){
+					callback(error);
+				}
+				else{
+					if(channel){
+						callback('error',null);
+					}
+					else{
+						callback(null,'');
+					}
+				}
+			});
+		},
+		function(data,callback){
 			let channelItem = {
 				title:channelTitle,
 				projectID:projectId,
@@ -205,11 +219,11 @@ router.post('/channel/createChannel',function(req,res){
 					}
 					else{
 
-					}				}
+					}			
+				}
 			});
 		},
 		function(channelid,callback){
-			
 			let count =0;
 			let channelMemberShipItem ={}
 			for(let index in members){
@@ -219,25 +233,35 @@ router.post('/channel/createChannel',function(req,res){
 				channelMemberShipItem={};
 				channelMemberShipData.save(function(error,cmd){
 					if(error){
-
+						callback(error);
 					}
 					else{
 						if(cmd){
+							console.log("inside if of counting created members");
+							console.log("count:"+count);
 							count++;
 						}
 						else{
+							console.log("inside else of counter of created members");
+							count++;
 							console.log("error while creating membership");
 						}
 					}
 				});
-			}
-			if(count === members.length){
-				callback(null,'members are added');
+				console.log("count" + count);
+				if(count===members.length){
+					callback(null,'members are added');
+				}
 			}
 		}],
 		function(error,results){
-			console.log(results)
-			res.json({error:false,message:"members are successfully added to created channel"});
+				console.log(results);
+				if(error){
+					res.json({error:true,message:"channel name already exist"});
+				}
+				else{
+				res.json({error:false,message:"members are successfully added to created channel"});
+			}
 	});
 })
 module.exports=router;
