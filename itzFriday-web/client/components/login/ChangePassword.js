@@ -49,6 +49,7 @@ export default class ChangePassword extends React.Component {
     ];
 
     return(
+      <div className="autofill">
         <Formsy.Form
         	onValid={this.enableConfirmButton}
         	onInvalid={this.disableConfirmButton}
@@ -112,6 +113,7 @@ export default class ChangePassword extends React.Component {
             </Col>
           </Row>
         </Formsy.Form>
+        </div>
 	);
   }
 }

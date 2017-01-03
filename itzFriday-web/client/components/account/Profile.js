@@ -26,6 +26,8 @@ const styles = {
     width:'100%',
     textAlign: 'center',
     display: 'inline-block',
+    paddingBottom:'5px',
+    paddingTop:'5px'
   },
 
   styleButtonSubmit: {
@@ -104,6 +106,7 @@ reader.readAsDataURL(file);
                   onTouchTap={ this.handleClose } />
     ];
     return (
+      <div className="autofill">
       <div clasname="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <Paper style={ styles.paperStyle }>
               <div>
@@ -194,6 +197,7 @@ reader.readAsDataURL(file);
                 </Formsy.Form>
               </div>
             </Paper>
+            </div>
             </div>
       );
   }

@@ -19,7 +19,7 @@ userRouter.post('/login', function(req, res) {
       });
   	}
   	if(user){
-      console.log(user);
+      
   		if(user.validatePassword(password)){
         userProfile.findOne({email:email},function(error,userdetails){
           if(error){
@@ -28,7 +28,7 @@ userRouter.post('/login', function(req, res) {
           }
           else{
             if(userdetails){
-              console.log(userdetails);
+              
               authenticateToken=jwt.sign({user:email,name:userdetails.firstname,userid:userdetails._id,role:user.role}, appConst.jwtSecret);
               res.status(200).json({
                 message:authenticateToken,
