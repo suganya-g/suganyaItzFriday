@@ -76,32 +76,7 @@ export default class ProjectLayout extends React.Component{
 
 		let messages = [];
 		let channels = [];
-		let projects = [
-		{
-			title:'Friday',
-			_id:"21908309238209381",
-			channels:[{title:"General",_id: 0},{title:"Acolyte",_id:1}],
-			messages:[{firstname:"Gobinda Thakur",id:0},{firstname:"Apurv Tiwari",id:1},{firstname:"Ruchika Saklani",id:2},{firstname:"Suganya Gopal",id:3},{firstname:"Ankit Aggarwal",id:4},{firstname:"Vikram Marshmallow",id:5}]
-		},
-		{
-			title:'Samarth',
-			_id:"219083092382093248",
-			channels:[{title:"General",id:0},{title:"Developers",id:1}],
-			messages:[{firstname:"Amol Tiwari",id:0},{firstname:"Ankit Kumar Vashisht",id:1},{firstname:"Shinder Pal Singh",id:2},{firstname:"Ritesh",id:3},{firstname:"Kumari Devi",id:4},{firstname:"Hari Prasad",id:5},{firstname:"Prerna Kukreti",id:6}]
-		},
-		{
-			title:'Quiztack',
-			_id:"21908309238209538",
-			channels:[{title:"General",id:0},{title:"Backend",id:1}],
-			messages:[{firstname:"Vishant Sharma",id:0},{firstname:"Kirti Jalan",id:1},{firstname:"Dhivya Lakshmi",id:2},{firstname:"Lal Jose",id:3},{firstname:"Srinivasan",id:4},{firstname:"Nitin Verma",id:5}]
-		},
-		{
-			title:'Oxygen',
-			_id:"21908309238204938",
-			channels:[{title:'General',id:0},{title:'Designers',id:1}],
-			messages:[{firstname:"Sreenidhi",id:0},{firstname:"Toolika Srivastava",id:1},{firstname:"Nanda",id:2},{firstname:"Shipra Joshi",id:3},{firstname:"Bala",id:4},{firstname:"Divyanshu Sharma",id:5}]
-		},
-		];
+
 		let currentProject = 'Friday';
 		let project=[];
 		project=this.props.projectDetails;
@@ -161,6 +136,46 @@ export default class ProjectLayout extends React.Component{
 		this.setProjectDetailsState = this.setProjectDetailsState.bind(this);
 
 		console.log(this.props);
+
+		if(this.props.params.projectid!==null && this.props.params.projectid!=='' && this.props.params.projectid!==undefined)
+		{
+				console.log(this.props.params.projectid);
+				console.log(this.context);
+				let projectID = this.props.params.projectid;
+				console.log("this is componentDidMount Method");
+				console.log(projectID);
+				let tokenarray = localStorage['token'].split(".");
+			 let userdetails = atob(tokenarray[1]);
+			 console.log(userdetails);
+			 let userData=JSON.parse(userdetails);
+			 console.log(typeof userData);
+			 console.log(userData);
+				async.parallel({
+						channels:function(callback){
+										request.post('/api/channelDetails/')
+										.set('Content-Type','application/json')
+										.send({projectID:projectID,userID:userData.userid})
+										.end((error,res)=>{
+												console.log("in get channels");
+												console.log(res.body.channels)
+												callback(null,res.body.channels);
+								});
+						},
+						members:function(callback){
+										request.post('/api/members/')
+											.set('Content-Type','application/json')
+											.send({projectID:projectID})
+											.end((error,res)=>{
+												 //this.setMemberState(res.body.members);
+												 callback(null,res.body.members);
+								});
+						}
+				},(error,results)=>{
+						console.log("Did mount of project Layout is called here");
+						console.log(results);
+						this.setProjectDetailsState(results,projectID);
+				})
+		}
 	}
 	getChildContext() {
   		return {
@@ -247,7 +262,11 @@ export default class ProjectLayout extends React.Component{
             console.log("Did mount of project Layout is called here");
             console.log(results);
             this.setProjectDetailsState(results,projectID);
-        })
+        });
+	}
+	componentWillMount()
+	{
+		this.props.router.replace("project/"+this.props.params.projectid+"/droid");
 	}
 	componentWillReceiveProps(nextProps)
 	{
@@ -389,6 +408,7 @@ export default class ProjectLayout extends React.Component{
 		//this.getChannelsMembers(projectID);
 		// this.getMembers(projectID);
 		this.setCurrentProject(projectID);
+		this.props.router.replace("project/"+currentProject+"/chat/?project="+projectName+"&name=general&identifier=channel");
 		//console.log("channelState change is called");
 		//this.changeChannelState(projectID);
 		//console.log("messages state is called ");
@@ -538,7 +558,7 @@ export default class ProjectLayout extends React.Component{
 										                           </List>
 									                     </Drawer>
 																			 </div>
-																			 <div clasname="col-xs-10 col-sm-10 col-md-10 col-lg-10" style={{marginLeft:'250px'}} >
+																			 <div clasname="col-xs-12 col-sm-12 col-md-12 col-lg-12" style={{marginLeft:'260px',marginTop:'5px'}} >
 							                              {this.props.children}
 																			 </div>
 																 </div>

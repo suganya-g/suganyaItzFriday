@@ -169,8 +169,8 @@ export default class ManageTeam extends React.Component
 	}
 	render()
 	{
-		return(<Grid>
-		<Paper>
+		return(
+		<Paper style={{width:'100%'}}>
 		<br />
 		<Row center="xs">
 	<SocialPeopleOutline style={{color:'#607D8B',width:'100px',height:'100px'}} />
@@ -223,7 +223,6 @@ export default class ManageTeam extends React.Component
 
       </Row>
   <br />
-        </Paper>
-				</Grid>);
+        </Paper>);
 	}
 }
