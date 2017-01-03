@@ -104,6 +104,7 @@ reader.readAsDataURL(file);
                   onTouchTap={ this.handleClose } />
     ];
     return (
+      <div className="autofill">
       <Grid>
         <Row>
           <Col
@@ -205,6 +206,7 @@ reader.readAsDataURL(file);
           </Col>
         </Row>
       </Grid>
+      </div>
       );
   }
 }

@@ -189,6 +189,7 @@ export default class AddChannel extends React.Component {
   }
   render() {
     return (
+      <div className="autofill">
       <Grid>
       <Paper>
 
@@ -268,6 +269,7 @@ export default class AddChannel extends React.Component {
           </Formsy.Form>
         </Paper>
       </Grid>
+      </div>
       );
   }
 }

@@ -144,6 +144,7 @@ body
 }
 
 .emoji-mart-preview {
+  visibility:hidden;
   position: relative;
   height: 70px;
 }
@@ -269,3 +270,7 @@ body
 .emoji-mart-skin-tone-5 { background-color: #9b643d }
 .emoji-mart-skin-tone-6 { background-color: #594539 }
 
+.autofill input:-webkit-autofill {
+ -webkit-box-shadow: 0 0 0 1000px #ECEFF1 inset;
+ -webkit-text-fill-color: #000000
+}
