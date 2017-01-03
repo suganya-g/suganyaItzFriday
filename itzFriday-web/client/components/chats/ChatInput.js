@@ -91,9 +91,11 @@ class ChatInput extends Component {
                 {
                   this.state.showEmoji ?
                   <Picker
+                  style={{float:'left', right: '25px', bottom: '100px', position: 'fixed', cursor: 'pointer'}}
                   emojiSize = {24}
                   perLine = {9}
                   set = 'apple'
+                  
                   onClick = {this.selectedEmoji}
                   /> :<span />
                 }

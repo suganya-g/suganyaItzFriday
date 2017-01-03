@@ -21,9 +21,12 @@ const styles={
 		width:'100%',
     textAlign: 'center',
     display: 'inline-block',
+		paddingBottom:'5px',
+		paddingTop:'5px'
   },
   styleAvatar: {
-  	margin: 'auto'
+  	margin: 'auto',
+
   },
   styleSubmit: {
     width: '50%',

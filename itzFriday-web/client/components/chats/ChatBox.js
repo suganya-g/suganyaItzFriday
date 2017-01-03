@@ -23,9 +23,6 @@ class ChatBox extends Component {
     this.filterHistory = this.filterHistory.bind(this);
   }
   componentDidMount() {
-    this.context.socket.on('error', this._socketConnectionError.bind(this));
-    this.context.socket.on('connected', this._getConnectedUser.bind(this));
-    this.context.socket.on('user:join',this._getJoinedUser.bind(this));
     this.context.socket.on('send:message', this._recieveMessage.bind(this));
     this.context.socket.on('init:data', this._getDataOnLoad.bind(this));
     this.context.socket.on('disconnect', this._disconnectSocket.bind(this));
@@ -58,6 +55,7 @@ class ChatBox extends Component {
   }
 
   _recieveMessage(message) {
+    console.log('get message from socket', message);
     this._filterMessages(message);
   }
   joinConversation(userJoined) {
@@ -167,24 +165,7 @@ class ChatBox extends Component {
       this.context.socket.emit('chat:count', unreadMessages);
     }
   }
-
-  _getConnectedUser(user) {
-    this.context.socket.emit('user:join', this.props.location.query.project);
-  }
-  _getJoinedUser(joinedUser) {
-    console.log(joinedUser.user+' has joined to '+joinedUser.destination);
-  }
-  _socketConnectionError(err) {
-    console.log(err)
-  }
   _getDataOnLoad(chatMessages) {
-    //this.setState({chatMessages: chatMessages});
-    /*console.log(chatMessages.length);
-    if(chatMessages.length !== 0) {
-      for(let index in chatMessages ) {
-        this._filterMessages(chatMessages[index]);
-      }
-    }*/
     this.filterHistory(chatMessages);
   }
 

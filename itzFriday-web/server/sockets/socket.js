@@ -12,6 +12,11 @@ module.exports = function (socket) {
         console.log("Subscribed to channels of project" + pattern + ". Now subscribed to " + count + " channel(s).");
     });
 
+  sub.on('pmessage', function(pattern, channel, message) {
+        var chatData = JSON.parse(message);
+        socket.emit(chatData.method, chatData);
+  });
+
 	socket.on('user:join', function(project) {
     sub.punsubscribe();
     console.log("in user joined"+project);
@@ -28,8 +33,6 @@ module.exports = function (socket) {
         socket.emit('init:data', res); 
       }
     });
-    // console.log(chatData);
-    // socket.emit('init:data', chatData);
   });
   
   socket.on('chat:count', function(countData) {
@@ -57,10 +60,5 @@ module.exports = function (socket) {
         pub.publish('delivery', chatToPublish);
       }
   	});
-
-  sub.on('pmessage', function(pattern, channel, message) {
-        var chatData = JSON.parse(message);
-        socket.emit(chatData.method, chatData);
-  });
 
 }
