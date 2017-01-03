@@ -32,6 +32,8 @@ import { Grid, Row, Col } from 'react-flexbox-grid';
 import request from 'superagent';
 import Project from './../../../services/getLoggedInData.js';
 import ProjectLayout from './ProjectLayout';
+import SocketConnection from './../../../services/socket.service.js';
+
 export default class LoggedInLayout extends React.Component
 {
 	constructor(props)
@@ -55,20 +57,11 @@ export default class LoggedInLayout extends React.Component
 		console.log("get context method");
 		console.log(this.state.projects);
 		return {
-			projectList:this.state.projects
+			projectList:this.state.projects,
+			socket: SocketConnection.getSocketConnection()
 		}
 	}
-	/*static get childContextTypes(){
-		return{
-			projectList:React.PropTypes.object
-		}
-	}*/
-	/*static get contextTypes() {
-		return {
-			router:React.PropTypes.object.isRequired
-		}
-
-	}*/
+	
 	getProjects(userID) {
 		request.post('/api/projects/')
 		.set('Content-Type','application/json')
@@ -160,7 +153,8 @@ export default class LoggedInLayout extends React.Component
 }
 LoggedInLayout.childContextTypes = {
 	projectList:React.PropTypes.object.isRequired,
-	router:React.PropTypes.object.isRequired
+	router:React.PropTypes.object.isRequired,
+	socket: React.PropTypes.object.isRequired
 }
 
 LoggedInLayout.contextTypes = {

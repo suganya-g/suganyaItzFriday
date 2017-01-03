@@ -32,7 +32,6 @@ import { Grid, Row, Col } from 'react-flexbox-grid';
 import request from 'superagent';
 import Project from './../../../services/getLoggedInData.js';
 import async from 'async';
-import SocketConnection from './../../../services/socket.service.js';
 
 const styles = {
 	rootContainer : {
@@ -116,10 +115,6 @@ export default class ProjectLayout extends React.Component{
 				projectDetails:obj
 			}
 		}
-		console.log("printing state in constructor");
-		console.log(JSON.stringify(this.state));
-		console.log("in constructor of project layout");
-		console.log(JSON.stringify(this.state.projects));
     this.signOut=this.signOut.bind(this);
 		this.handleChannelChange = this.handleChannelChange.bind(this);
 		this.handleMessageChange = this.handleMessageChange.bind(this);
@@ -128,8 +123,6 @@ export default class ProjectLayout extends React.Component{
 		this.changeMessageState = this.changeMessageState.bind(this);
 		this.nameCompressor = this.nameCompressor.bind(this);
 		this.handleOpenList=this.handleOpenList.bind(this);
-		//this.getProjects= this.getProjects.bind(this);
-		//this.getChannels = this.getChannels.bind(this);
 		this.setChannelsState=this.setChannelsState.bind(this);
 		this.setCurrentProject = this.setCurrentProject.bind(this);
 		this.changeState = this.changeState.bind(this);
@@ -177,55 +170,11 @@ export default class ProjectLayout extends React.Component{
 				})
 		}
 	}
-	getChildContext() {
-  		return {
-    		socket: SocketConnection.getSocketConnection()
-  		}
-	}
-/*	static get childContextTypes(){
-		return{
-			projectList:React.PropTypes.object.isRequired
 
-		}
-	}*/
-	/*static get contextTypes() {
-		return {
-			router:React.PropTypes.object.isRequired
-		}
-
-	}*/
-	// static get contextTypes(){
-	// 	return {
-	// 		projectList:React.PropTypes.object.isRequired
-	// 	}
-	// }
-	// getChannelsMembers(projectID){
-	// 	async.parallel({
-	// 		channels:function(callback){
-	// 				request.post(config.resturl+'/api/channelDetails/')
-	// 				.set('Content-Type','application/json')
-	// 				.send({projectID:projectID})
-	// 				.end((error,res)=>{
-	// 					console.log("in get channels");
-	// 					console.log(res.body.channels)
-	// 					callback(null,res.body.channels);
-	// 	});
-	// 		},
-	// 		members:function(callback){
-	// 				request.post(config.resturl+'/api/members/')
-	// 				  .set('Content-Type','application/json')
-	// 				  .send({projectID:projectID})
-	// 				  .end((error,res)=>{
-	// 				 	//this.setMemberState(res.body.members);
-	// 				 	callback(null,res.body.members);
- // 				});
-	// 		}
-	// 	},(error,results)=>{
-	// 		console.log(results);
-	// 		this.setProjectDetailsState(results);
-	// 	})
-	// }
 	componentDidMount(){
+		this.context.socket.on('error', this._socketConnectionError.bind(this));
+    	this.context.socket.on('connected', this._getConnectedUser.bind(this));
+    	this.context.socket.on('user:join',this._getJoinedUser.bind(this));
 		console.log("in componentDidMount of ProjectLayout");
         console.log(this.props.params.projectid);
         console.log(this.context);
@@ -263,6 +212,7 @@ export default class ProjectLayout extends React.Component{
             console.log(results);
             this.setProjectDetailsState(results,projectID);
         });
+		
 	}
 	componentWillMount()
 	{
@@ -397,22 +347,12 @@ export default class ProjectLayout extends React.Component{
 	}
 	openThisProject (projectID,projectName)
 	{
-		console.log("in openThisProject");
+		this.context.socket.emit('user:join', projectName);
 		let currentProject = projectID ;
-		console.log(currentProject);
 		localStorage['project']=projectName;
 		this.setState({appBarTitle: projectName});
-		//this.props.router.replace('chat/?project='+projectName+'&name=Droid&identifier=message');
-		console.log("in openThisProject");
-		console.log(projectID);
-		//this.getChannelsMembers(projectID);
-		// this.getMembers(projectID);
 		this.setCurrentProject(projectID);
 		this.props.router.replace("project/"+currentProject+"/chat/?project="+projectName+"&name=general&identifier=channel");
-		//console.log("channelState change is called");
-		//this.changeChannelState(projectID);
-		//console.log("messages state is called ");
-		//this.changeMessageState(projectID);
 	}
 
 	setCurrentProject(projectID)
@@ -464,16 +404,6 @@ export default class ProjectLayout extends React.Component{
 	changeState(projects){
 		this.setState({projects:projects});
 	}
-	// getChildContext() {
-	// 	return {
-	// 		projectDetails: this.state
-	// 	}
-	// }
-	// getChildContextTypes() {
-	// 	return {
-	// 		projectDetails: React.PropTypes.object.isRequired
-	// 	}
-	// }
 	render()
 	{		console.log("getting the context here");
 			console.log(this.context);
@@ -621,11 +551,19 @@ export default class ProjectLayout extends React.Component{
 					</MuiThemeProvider>
 			);
 	}
+
+	_socketConnectionError(err) {
+    	console.log(err)
+  	}
+  	_getConnectedUser(user) {
+    	console.log('user join', user);
+  	}
+  	_getJoinedUser(joinedUser) {
+    	console.log(joinedUser.user+' has joined to '+joinedUser.destination);
+  	}
 }
-ProjectLayout.childContextTypes = {
-	socket: React.PropTypes.object.isRequired
-};
 
 ProjectLayout.contextTypes = {
-	projectList:React.PropTypes.object.isRequired
+	projectList:React.PropTypes.object.isRequired,
+	socket: React.PropTypes.object.isRequired
 }

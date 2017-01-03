@@ -21,7 +21,7 @@ export default {
           reconnectionDelay: 1000,        // default setting at present
           reconnectionDelayMax : 5000,    // default setting at present
           reconnectionAttempts: Infinity  // default setting at present
-        } );
+        });
 
         return self.socket;
       }
