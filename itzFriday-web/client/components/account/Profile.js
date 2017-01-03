@@ -22,7 +22,6 @@ const styles = {
     opacity: '0',
   },
   paperStyle: {
-    width: '100%',
     margin: 'auto',
     textAlign: 'center',
     display: 'inline-block',
@@ -112,6 +111,7 @@ reader.readAsDataURL(file);
                sm={ 12 }
                md={ 12 }
                lg={ 12 }>
+        <div clasname="col-xs-12 col-sm-12 col-md-12 col-lg-12" >
           <div style={ styles.stylePage }>
             <Paper style={ styles.paperStyle }>
               <div>
@@ -202,6 +202,7 @@ reader.readAsDataURL(file);
                 </Formsy.Form>
               </div>
             </Paper>
+          </div>
           </div>
           </Col>
         </Row>

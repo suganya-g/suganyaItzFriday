@@ -3,7 +3,7 @@ body
 	margin: 0px 0px 0px 0px;
 	padding: 0px 0px 0px 0px;
 	background: #C8E6C9;
-	overflow:'hidden';
+	overflow:'none';
 }
 .emoji-mart,
 .emoji-mart * {
@@ -144,9 +144,7 @@ body
 }
 
 .emoji-mart-preview {
-  visibility:hidden;
-  position: relative;
-  height: 70px;
+  display: none;
 }
 
 .emoji-mart-preview-emoji,

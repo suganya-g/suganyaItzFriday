@@ -46,18 +46,14 @@ class ChatBox extends Component {
   }
   render() {
     return (
-        <Grid>
-              <Row>
-                  <Col xs={12} sm={12} md={12} lg={12}>
-                        <ChatToolBar project={this.props.location.query.project} name={this.props.location.query.name} identifier={this.props.location.query.identifier} participants={this.state.participants} joinUser={this.joinConversation.bind(this)}/>
-                  </Col>
-              </Row>
-              <Row>
-                  <Col xs={12} sm={12} md={12} lg={12}>
+      <div>
+              <div clasname="col-xs-12 col-sm-12 col-md-12 col-lg-12" >
+                    <ChatToolBar project={this.props.location.query.project} name={this.props.location.query.name} identifier={this.props.location.query.identifier} participants={this.state.participants} joinUser={this.joinConversation.bind(this)}/>
+              </div>
+              <div clasname="col-xs-12 col-sm-12 col-md-12 col-lg-12" >
                     <ChatWindow project={this.props.location.query.project} identifierName={this.props.location.query.name} chatMessages={this.state.chatMessages} identifier={this.props.location.query.identifier} addMessage={this.addChatMessages.bind(this)} />
-                  </Col>
-              </Row>
-        </Grid>
+              </div>
+      </div>
       )
   }
 

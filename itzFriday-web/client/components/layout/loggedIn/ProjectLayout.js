@@ -47,7 +47,6 @@ const styles = {
 	drawer : {
 		backgroundColor: "#004D40",
 		overflowY : 'auto',
-		width:'250px',
 		margin: '0px 0px 0px 0px'
 	},
 	appBar : {
@@ -384,10 +383,16 @@ export default class ProjectLayout extends React.Component{
 		console.log(currentProject);
 		localStorage['project']=projectName;
 		this.setState({appBarTitle: projectName});
+		//this.props.router.replace('chat/?project='+projectName+'&name=Droid&identifier=message');
 		console.log("in openThisProject");
 		console.log(projectID);
+		//this.getChannelsMembers(projectID);
+		// this.getMembers(projectID);
 		this.setCurrentProject(projectID);
-		this.context.router.push('/project/'+currentProject);
+		//console.log("channelState change is called");
+		//this.changeChannelState(projectID);
+		//console.log("messages state is called ");
+		//this.changeMessageState(projectID);
 	}
 
 	setCurrentProject(projectID)
@@ -429,6 +434,13 @@ export default class ProjectLayout extends React.Component{
 	{
 		this.setState({mainMenuOpen: false});
 	}
+
+	componentWillReceiveProps(nextProps) {
+		// TOSO: Check if project is aloready present in state
+		// TODO: If not, retrieve project channels and messages into state
+		// TODO: Change curr state
+		this.changeState(nextProps.projectDetails);
+	}
 	changeState(projects){
 		this.setState({projects:projects});
 	}
@@ -454,7 +466,7 @@ export default class ProjectLayout extends React.Component{
 			for (let index in projects)
 			{	console.log(projects[index].title)
 				projectList.push(
-					<ListItem id={index} leftIcon={<FileFolder />} rightIcon={ <Badge badgeStyle={{visibility: this.state.badgeContent === 0 ? 'hidden' : 'visible'}} badgeContent={this.state.badgeContent} />}  primaryText={projects[index].title}
+					<ListItem id={index} leftIcon={<FileFolder />} rightIcon={ <span />}  primaryText={projects[index].title}
 					onNestedListToggle={this.handleNestedListToggle.bind(this,index)}
 					value={index+1}
 					open={this.state.openIndex===index}
@@ -463,8 +475,6 @@ export default class ProjectLayout extends React.Component{
 					onClick={this.openThisProject.bind(this,projects[index]._id,projects[index].title)}
 					nestedItems={[
 							<div style={{backgroundColor:'white'}}>
-								<Link to={'project/'+this.props.params.projectid+'/chat/?project='+this.state.appBarTitle+'&name=Droid&identifier=message'} style={styles.listItem} onTouchTap={() => this.handleMessageChange('Droid')}><ListItem key="friday" id="friday" style={styles.listItem} leftAvatar={<Avatar style={{height:'30', backgroundColor:'transparent'}} src='./../../resources/images/buddy.png' alt="Friday" />}><strong>Droid</strong></ListItem></Link>
-								<Divider />
 									<ChannelList projectid={projects[index]._id} nameCompressor={this.nameCompressor} channels={this.state.projectDetails[projects[index]._id].channels} changeChannel={this.handleChannelChange} appBarTitle={this.state.appBarTitle}/>
 									<MessageList nameCompressor={this.nameCompressor} messages={this.state.projectDetails[projects[index]._id].members} changeMessage={this.handleMessageChange} appBarTitle={this.state.appBarTitle}/>
 
@@ -476,8 +486,8 @@ export default class ProjectLayout extends React.Component{
 					<MuiThemeProvider>
 					    <div className="wrap container-fluid">
 					            <MediaQuery query='(min-device-width: 769px)'>
-					                <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12" style={{width:'100%'}}>
-					                    <div className="row">
+					                <div className="row">
+					                    <div className="row"  style={{width:'100% of viewport width'}}>
 					                        <AppBar id='appbar' title={this.state.appBarTitle} titleStyle={{textAlign:'center'}} style={styles.appBar}
 					                            zDepth={2}
 					                            iconElementLeft ={<span/>}
@@ -487,23 +497,21 @@ export default class ProjectLayout extends React.Component{
 						                                anchorOrigin={{horizontal: 'left', vertical: 'top'}}
 						                                targetOrigin={{horizontal: 'left', vertical: 'top'}}>
 						                                <List>
-																						   <ListItem leftIcon={<SocialPerson color="#004D40" />} primaryText={localStorage['userName']} style={{fontWeight:'bold',color:'#004D40'}} />
-																							 <Divider />
-						                                    <ListItem leftIcon={<AVRecentActors color="#004D40"/>} primaryText="Account Settings" id="accountSettings" key="accountSettings" primaryTogglesNestedList={true} style={styles.listItem}
-						                                       nestedItems={[
 							                                        <Link to={"profile/"} style={{textDecoration:"none"}}>
 							                                            <ListItem
 							                                               key={1}
-							                                               primaryText="Profile"
+																														 style={styles.listItem}
+							                                               primaryText={localStorage['userName']}
 							                                               leftIcon={<ActionAccountBox color="#004D40" />} />
-							                                        </Link>,
+							                                        </Link>
+																											<Divider/>
 							                                        <Link to={"buddy/"} style={{textDecoration:"none"}}>
 							                                            <ListItem
 							                                               key={2}
+																														 style={styles.listItem}
 							                                               primaryText="Droid settings"
 							                                               leftAvatar={<Avatar style={{backgroundColor:'transparent',width:'30px'}} src='./../../resources/images/buddy.png' alt="Friday" />} />
 							                                        </Link>
-							                                               ]} />
 
 							                                <ListItem leftIcon={<FileFolderShared color="#004D40"/>} primaryText="Manage Project Team" id="manageTeam" key="manageTeam" style={styles.listItem} onTouchTap={this.closeMainMenu} primaryTogglesNestedList={true} nestedItems={[
 								                              <Link to={'/project/'+this.props.params.projectid+'/invitePeople'} style={{textDecoration:'none'}}>
@@ -521,20 +529,20 @@ export default class ProjectLayout extends React.Component{
 								                    </IconMenu>
 								                </span>}
 							                    iconStyleLeft={{cursor: 'pointer'}}/>
-																	<div style={{paddingLeft:'180px',width:'100%'}}>
-							                   {this.props.children}
+																	</div>
+																	<div className="row" style={{width:'100% of viewport width'}}>
+																	     <div className="col-xs-2 col-sm-2 col-md-2 col-lg-2" style={{minWidth:'200px'}}>
+																			 <Drawer open={true} docked={true} id="projectList" containerStyle={styles.drawer} zDepth={2}>
+										                           <List>
+											                           {projectList}
+										                           </List>
+									                     </Drawer>
+																			 </div>
+																			 <div clasname="col-xs-10 col-sm-10 col-md-10 col-lg-10" style={{marginLeft:'250px'}} >
+							                              {this.props.children}
+																			 </div>
 																 </div>
 							            </div>
-							        </div>
-											<div className="col-xs-2 col-sm-2 col-md-2 col-lg-2" style={{height:'100%'}}>
- 								 <div className="leftPane" style={styles.leftPane}>
- 									 <Drawer open={true} docked={true} id="projectList" containerStyle={styles.drawer} zDepth={2}>
- 										 <List>
- 											 {projectList}
- 										 </List>
- 									 </Drawer>
- 								 </div>
- 							 </div>
 							    </MediaQuery>
 
 							    <MediaQuery query='(max-device-width: 768px)' className="leftPane">
@@ -560,18 +568,18 @@ export default class ProjectLayout extends React.Component{
 							    	                    <IconMenu iconButtonElement={<IconButton onTouchTap={this.toggleMainMenu}>	<ImageDehaze color={grey50} /></IconButton>}
 							    	                                                anchorOrigin={{horizontal: 'left', vertical: 'top'}}
 							    	                                                targetOrigin={{horizontal: 'left', vertical: 'top'}}>
-							    	                        <List>
-																						    <ListItem leftIcon={<SocialPerson color="#004D40" />} primaryText={localStorage['userName']} style={{fontWeight:'bold',color:'#004D40'}} />
-																					      <Divider />
-							    	                            <ListItem leftIcon={<AVRecentActors color="#004D40"/>} primaryText="Account Settings" id="accountSettings" key="accountSettings" primaryTogglesNestedList={true} style={styles.listItem}
-							    	                                nestedItems={[
-							    		                            <Link to={"profile/"} style={{textDecoration:"none"}}>
-							    		                                <ListItem key={1} primaryText="Profile" leftIcon={<ActionAccountBox color="#004D40"/>} />
-							    		                            </Link>,
+																								<List>
+																			            <Link to={"profile/"} style={{textDecoration:"none"}}>
+																			                    <ListItem
+																			                    key={1}
+																													style={styles.listItem}
+																			                    primaryText={localStorage['userName']}
+																			                    leftIcon={<ActionAccountBox color="#004D40" />} />
+																			            </Link>
+																									<Divider/>
 							    		                            <Link to={"buddy/"} style={{textDecoration:"none"}}>
-							    		                                <ListItem key={2} primaryText="Droid settings" leftAvatar={<Avatar style={{backgroundColor:'transparent',width:'30px'}} src='./../../resources/images/buddy.png' alt="Friday" />} />
+							    		                                <ListItem key={2} style={styles.listItem} primaryText="Droid settings" leftAvatar={<Avatar style={{backgroundColor:'transparent',width:'30px'}} src='./../../resources/images/buddy.png' alt="Friday" />} />
 							    		                            </Link>
-							    		                                        ]} />
 
 							    		                        <ListItem leftIcon={<FileFolderShared color="#004D40"/>} primaryText="Manage Project Team" id="manageTeam" key="manageTeam" style={styles.listItem} onTouchTap={this.closeMainMenu} primaryTogglesNestedList={true} nestedItems={[
 							    			                        <Link to={'/project/'+this.props.params.projectid+'/invitePeople/'} style={{textDecoration:'none'}}>
@@ -599,6 +607,5 @@ ProjectLayout.childContextTypes = {
 };
 
 ProjectLayout.contextTypes = {
-	projectList:React.PropTypes.object.isRequired,
-	router:React.PropTypes.object.isRequired
+	projectList:React.PropTypes.object.isRequired
 }

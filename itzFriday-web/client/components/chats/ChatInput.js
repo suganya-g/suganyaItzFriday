@@ -10,7 +10,6 @@ import {Emoji, Picker} from 'emoji-mart';
 
 const styles = {
 	inputArea: {
-		width: "100%"
 	}
 }
 class ChatInput extends Component {
@@ -64,6 +63,7 @@ class ChatInput extends Component {
 
 	render() {
 		return(
+				<div clasname="col-xs-12 col-sm-12 col-md-12 col-lg-12" >
 			<Formsy.Form
                     onValid={this.enableButton.bind(this)}
                     onInvalid={this.disableButton.bind(this)}
@@ -71,11 +71,7 @@ class ChatInput extends Component {
                     onInvalidSubmit={this.notifyFormError.bind(this)}
                   >
 
-            <Grid>
-              <Row>
-                <Col xs={12}>
-                <Row center="xs">
-                <Col xs={10} sm={10} md={10} lg={10}>
+
                 <FormsyText
                   name="messages"
                   validations="minLength:1"
@@ -84,22 +80,22 @@ class ChatInput extends Component {
                   hintText="Type your message"
                   autoComplete="off"
                   updateImmediately
-                  style = {styles.inputArea}
+                  style={{width:'80%'}}
                   value = {this.state.userTyped}
                   onChange = {this.handleChangeText}
                 />
-                </Col>
-                <Col xs={2} sm={2} md={2} lg={2}>
-                <Emoji
+              <Emoji
                 size = {24}
                 emoji = ':blush:'
                 onClick = {this.toggleEmojiPicker}/>
                 {
                   this.state.showEmoji ?
                   <Picker
+                  style={{float:'left', right: '25px', bottom: '100px', position: 'fixed', cursor: 'pointer'}}
                   emojiSize = {24}
                   perLine = {9}
                   set = 'apple'
+                  
                   onClick = {this.selectedEmoji}
                   /> :<span />
                 }
@@ -107,12 +103,9 @@ class ChatInput extends Component {
                     type="submit"
                     disabled={!this.state.canSubmit}
                   ><ContentSend/></IconButton>
-                </Col>
-                </Row>
-                </Col>
-              </Row>
-            </Grid>
+
             </Formsy.Form>
+						  </div>
 			)
 	}
 
