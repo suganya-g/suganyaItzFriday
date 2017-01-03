@@ -106,7 +106,7 @@ export default class ProjectLayout extends React.Component{
 		let currentProject = 'Friday';
 		let project=[];
 		project=this.props.projectDetails;
-		console.log(project);
+		//console.log(project);
 		this.state = {
 			projectDetails:{},
 			abc: {projectName:'', projectId:'', channels: [], members: []},
@@ -128,7 +128,7 @@ export default class ProjectLayout extends React.Component{
 
 		};
 		let projectss = this.context.projectList;
-		console.log(projectss);
+		//console.log(projectss);
 		let obj ={};
 		for (let index in projectss){
 			let id=projectss[index]._id;
@@ -142,11 +142,11 @@ export default class ProjectLayout extends React.Component{
 				projectDetails:obj
 			}
 		}
-		console.log("printing state in constructor");
+		console.log("printing state in constructor project layout");
 		console.log(JSON.stringify(this.state));
-		console.log("in constructor of project layout");
-		console.log(JSON.stringify(this.state.projects));
-    this.signOut=this.signOut.bind(this);
+		//console.log("in constructor of project layout");
+		//console.log(JSON.stringify(this.state.projects));
+    	this.signOut=this.signOut.bind(this);
 		this.handleChannelChange = this.handleChannelChange.bind(this);
 		this.handleMessageChange = this.handleMessageChange.bind(this);
 		this.closeMainMenu = this.closeMainMenu.bind(this);
@@ -211,18 +211,23 @@ export default class ProjectLayout extends React.Component{
 	// 		this.setProjectDetailsState(results);
 	// 	})
 	// }
+	componentWillMount()
+	{
+		this.context.router.replace("project/"+this.props.params.projectid+"/droid");
+	}
+
 	componentDidMount(){
 		console.log("in componentDidMount of ProjectLayout");
-        console.log(this.props.params.projectid);
+       console.log(this.props.params.projectid);
         console.log(this.context);
         let projectID = this.props.params.projectid;
-        console.log("this is componentDidMount Method");
-        console.log(projectID);
-        let tokenarray = localStorage['token'].split(".");
+        //console.log("this is componentDidMount Method");
+       // console.log(projectID);
+       let tokenarray = localStorage['token'].split(".");
        let userdetails = atob(tokenarray[1]);
-       console.log(userdetails);
+       //console.log(userdetails);
        let userData=JSON.parse(userdetails);
-       console.log(typeof userData);
+       //console.log(typeof userData);
        console.log(userData);
         async.parallel({
             channels:function(callback){
@@ -241,6 +246,8 @@ export default class ProjectLayout extends React.Component{
                       .send({projectID:projectID})
                       .end((error,res)=>{
                          //this.setMemberState(res.body.members);
+                         console.log("in get memebers");
+                         console.log(res.body.memebrs);
                          callback(null,res.body.members);
                 });
             }
@@ -258,9 +265,7 @@ export default class ProjectLayout extends React.Component{
 		if(this.props.params.projectid!==nextProps.params.projectid)
 		{
 			let projectID = nextProps.params.projectid;
-			console.log("this is componentDidMount Method");
-			console.log(projectID);
-			console.log("this is componentDidMount Method");
+			console.log("this is componentWillReceiveProps Method");
 			console.log(projectID);
 			let tokenarray = localStorage['token'].split(".");
 	        let userdetails = atob(tokenarray[1]);
@@ -275,8 +280,8 @@ export default class ProjectLayout extends React.Component{
 						.set('Content-Type','application/json')
 						.send({projectID:projectID,userID:userData.userid})
 						.end((error,res)=>{
-							console.log("in get channels");
-							console.log(res.body.channels)
+							//console.log("in get channels");
+							//console.log(res.body.channels)
 							callback(null,res.body.channels);
 					});
 				},
@@ -299,55 +304,25 @@ export default class ProjectLayout extends React.Component{
 	}
 	setProjectDetailsState(results,projectID){
 		let projectid = projectID;
-		console.log(projectID);
-		console.log(results);
-		console.log(results.channels);
-		console.log(results.members);
+		//console.log(projectID);
+		//console.log(results);
+		//console.log("channels");
+		//console.log(results.channels);
+		//console.log("members");
+		//console.log(results.members);
 		const obj = this.state.projectDetails || {};
 		obj[projectid] = {channels:results.channels,members:results.members}
-		console.log(obj);
+		//console.log(obj);
 		console.log("in setting state");
 		console.log(obj);
 		this.setState({projectDetails:obj});
 	}
-	getChannels(projectID) {
-		console.log("in get Channels" + projectID);
-		request.post('/api/channelDetails/')
-		.set('Content-Type','application/json')
-		.send({projectID:projectID})
-		.end((error,res)=>{
-			console.log("in get channels");
-			console.log(res.body.channels)
-		   this.setChannelsState(res.body.channels);
-		});
-	}
 	setChannelsState(channels){
 		this.setState({channels:channels});
-	}
-
-	getMembers(projectID){;
-		console.log("in get members"+ projectID);
-		request.post('/api/members/')
-		  .set('Content-Type','application/json')
-		  .send({projectID:projectID})
-		  .end((error,res)=>{
-		   this.setMemberState(res.body.members);
- 		})
 	}
 	setMemberState(members){
 		this.setState({
 			members:members
-		})
-	}
-
-	getProjects(userID) {
-		request.post('/api/projects/')
-		.set('Content-Type','application/json')
-		.send({userID:userID})
-		.end((error,res)=>{
-			console.log(res.body);
-			projects=res.body;
-			this.setState({projects:res.body})
 		})
 	}
 	nameCompressor(name)
@@ -383,11 +358,11 @@ export default class ProjectLayout extends React.Component{
 		let currentProject = projectID ;
 		console.log(currentProject);
 		localStorage['project']=projectName;
-		this.setState({appBarTitle: projectName});
 		console.log("in openThisProject");
 		console.log(projectID);
 		this.setCurrentProject(projectID);
-		this.context.router.push('/project/'+currentProject);
+		this.context.router.push('/project/'+currentProject+'/droid');
+		this.setState({appBarTitle: projectName});
 	}
 
 	setCurrentProject(projectID)
@@ -416,7 +391,7 @@ export default class ProjectLayout extends React.Component{
 		this.props.router.replace('project/'+this.props.params.projectid+'/chat/?project='+this.state.appBarTitle+'&name='+name+'&identifier=channel');
 		this.closeMainMenu();
 	}
-  handleToggle = () => this.setState({open: !this.state.open});
+  	handleToggle = () => this.setState({open: !this.state.open});
 
 
 	handleMessageChange(name)
@@ -452,9 +427,9 @@ export default class ProjectLayout extends React.Component{
 			let projectList=[];
 
 			for (let index in projects)
-			{	console.log(projects[index].title)
+			{	//console.log(projects[index].title)
 				projectList.push(
-					<ListItem id={index} leftIcon={<FileFolder />} rightIcon={ <Badge badgeStyle={{visibility: this.state.badgeContent === 0 ? 'hidden' : 'visible'}} badgeContent={this.state.badgeContent} />}  primaryText={projects[index].title}
+					<ListItem id={index} leftIcon={<FileFolder />} rightIcon={<span />}  primaryText={projects[index].title}
 					onNestedListToggle={this.handleNestedListToggle.bind(this,index)}
 					value={index+1}
 					open={this.state.openIndex===index}
@@ -463,8 +438,6 @@ export default class ProjectLayout extends React.Component{
 					onClick={this.openThisProject.bind(this,projects[index]._id,projects[index].title)}
 					nestedItems={[
 							<div style={{backgroundColor:'white'}}>
-								<Link to={'project/'+this.props.params.projectid+'/chat/?project='+this.state.appBarTitle+'&name=Droid&identifier=message'} style={styles.listItem} onTouchTap={() => this.handleMessageChange('Droid')}><ListItem key="friday" id="friday" style={styles.listItem} leftAvatar={<Avatar style={{height:'30', backgroundColor:'transparent'}} src='./../../resources/images/buddy.png' alt="Friday" />}><strong>Droid</strong></ListItem></Link>
-								<Divider />
 									<ChannelList projectid={projects[index]._id} nameCompressor={this.nameCompressor} channels={this.state.projectDetails[projects[index]._id].channels} changeChannel={this.handleChannelChange} appBarTitle={this.state.appBarTitle}/>
 									<MessageList nameCompressor={this.nameCompressor} messages={this.state.projectDetails[projects[index]._id].members} changeMessage={this.handleMessageChange} appBarTitle={this.state.appBarTitle}/>
 
@@ -593,12 +566,14 @@ export default class ProjectLayout extends React.Component{
 					</MuiThemeProvider>
 			);
 	}
+
+	static get contextTypes() {
+		return {
+			projectList:React.PropTypes.object.isRequired,
+			router:React.PropTypes.object.isRequired
+		}
+	}
 }
 ProjectLayout.childContextTypes = {
 	socket: React.PropTypes.object.isRequired
 };
-
-ProjectLayout.contextTypes = {
-	projectList:React.PropTypes.object.isRequired,
-	router:React.PropTypes.object.isRequired
-}

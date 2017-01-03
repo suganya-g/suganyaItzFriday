@@ -141,7 +141,7 @@ router.post('/user/confirmCode',function(req,res){
 						else{
 							console.log("Abc");
 							console.log(result);
-							res.status(200).json({message:"Thank you for confirmation",error:false,
+							res.status(200).json({message:"Thank you for confirmation",
 								userexist:userstatus,
 								error:false});
 							console.log("code matches");
