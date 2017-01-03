@@ -14,7 +14,7 @@ var parallel = require('async/parallel');
 var each = require('async/');
 
 router.post('/api/projects/',function(req,res){
-	console.log(req.body);
+	
 	let projectIDs=[];
 	async.waterfall([function(callback){
 		projectMembership.find({memberID:req.body.userID},function(error,projectmembershiparray){
@@ -51,7 +51,7 @@ router.post('/api/projects/',function(req,res){
 
 router.post('/api/channelDetails/',function(req,res){
 	console.log("getting channels");
-	console.log(req.body);
+	
 	let projectid = req.body.projectID;
 	let userID = req.body.userID;
 	let channelIDsByProjects = [];
@@ -68,14 +68,14 @@ router.post('/api/channelDetails/',function(req,res){
 			}
 			else{
 				if(channels){
-					console.log(channels);
+					
 					for ( let index in channels){
 						channelIDsByProjects[index] = channels[index]._id; 
 					}
 
 					// res.json({channels:channels});
 					console.log("in getting channels by  projects");
-					console.log(channelIDsByProjects);
+					
 					callback(null,channelIDsByProjects);
 				}
 				else{
@@ -92,7 +92,7 @@ router.post('/api/channelDetails/',function(req,res){
 			else{
 				if(userchannelmembership){
 					for(let index in userchannelmembership){
-						console.log(userchannelmembership);
+						
 						channelIDsByMemberShip[index] = userchannelmembership[index].channelID;
 					}
 					callback(null,channelIDsByMemberShip)
@@ -102,7 +102,7 @@ router.post('/api/channelDetails/',function(req,res){
 	},
 	function(channelList,callback){
 		console.log("getting into final callback");
-		console.log(channelList);
+		
 		ChannelDetails.find({_id:{$in:channelList},projectID:projectid},function(error,finalChannelList){
 			if(error){
 				callback(error);
@@ -117,7 +117,7 @@ router.post('/api/channelDetails/',function(req,res){
 			}
 	});
 	}],function(error,finalresults){
-		console.log(finalresults);
+		
 		res.json({channels:finalresults});
 	});
 	// ChannelDetails.find({projectID:req.body.projectID},function(error,channels){
@@ -183,7 +183,7 @@ router.post('/api/members',function(req,res){
 
 router.post('/channel/createChannel',function(req,res){
 	console.log("in add channel routes");
-	console.log(req.body);
+	
 	let channelTitle= req.body.title;
 	let members= req.body.chipData;
 	let projectId=req.body.projectid;
@@ -209,7 +209,7 @@ router.post('/channel/createChannel',function(req,res){
 			});
 		},
 		function(channelid,callback){
-			console.log(channelid);
+			
 			let count =0;
 			let channelMemberShipItem ={}
 			for(let index in members){

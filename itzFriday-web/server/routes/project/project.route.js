@@ -18,7 +18,7 @@ var channelIDs = [];
 var userIDs = [];
 var projectIDs = [];
 projectRouter.post('/checkProject/',function(req,res){
-	console.log(req.body);
+	
 	console.log("in checkProject");
 	ProjectDetails.findOne({title:req.body.projectTitle},function(error,projectResult){
 		if(error){
@@ -38,7 +38,7 @@ projectRouter.post('/checkProject/',function(req,res){
 });
 
 projectRouter.post('/createProject/',function(req,res){
-	console.log(req.body);
+	
 	let userID='',firstName='';
 	UserProfiles.findOne({email:req.body.Email},function(error,userprofiledata){
 		if(error){
@@ -85,7 +85,7 @@ projectRouter.post('/createProject/',function(req,res){
 						}
 						else{
 							if(createdChannelDetails){
-								console.log("ChanneID : "+callback);
+								
 								callback(null,createdChannelDetails._id);
 							}
 							else{
@@ -95,7 +95,7 @@ projectRouter.post('/createProject/',function(req,res){
 					});
 				}
 			},function(error,results){
-					console.log(results);
+					
 					async.parallel({
 						projectmembership:function(callback){
 							let projectMemberShipItem={
@@ -153,7 +153,7 @@ projectRouter.post('/createProject/',function(req,res){
 							})
 						}
 					},function(error,results){
-						console.log(results);
+						
 						if(error){
 							res.status(404).json({message:'failed to create data',error:true});
 						}
@@ -173,7 +173,7 @@ projectRouter.post('/createProject/',function(req,res){
 });
 
 projectRouter.post('/addProjectDetails/',function(req,res){
-	console.log(req.body);
+	
 	console.log("in addProjectDetails");
 	async.parallel(
 	{
@@ -265,7 +265,7 @@ projectRouter.post('/addProjectDetails/',function(req,res){
 			});
 		}},function(error,results){
 			console.log("results");
-			console.log(results);
+			
 			async.parallel({
 				projectmembership:function(callback){
 					let projectMemberShipItem={
@@ -323,7 +323,7 @@ projectRouter.post('/addProjectDetails/',function(req,res){
 					})
 				}
 			},function(error,results){
-				console.log(results);
+				
 				if(error){
 					res.status(404).json({message:'failed to create data',error:true});
 				}
