@@ -3,11 +3,11 @@ var webpack = require('webpack');
 
 module.exports = {
 	devtool: 'inline-source-map',
-	entry: ['./client/client'],
+	entry: {app: ['./client/client']},
 	output: {
 		path: path.resolve('./client/assets/'),
 		filename: 'bundle.js',
-		publicPath: '/' 
+		publicPath: '/'
 	},
 	plugins: [
     	new webpack.optimize.DedupePlugin(),

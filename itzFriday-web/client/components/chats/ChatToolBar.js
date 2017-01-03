@@ -68,7 +68,7 @@ class ChatToolBar extends Component {
 		const viewName = "View "+this.state.name+ "'s profile";
 		const viewChanel = "View "+this.state.name+ "'s channels";
 		return (
-			<Paper zDepth={1}>
+			<Paper zDepth={1} >
 				<Toolbar style={styles.toolbarStyle}>
 					<ToolbarGroup firstChild={true}>
 						<ToolbarTitle text={this.props.name} style={styles.toolbarText}/>
@@ -103,7 +103,8 @@ class ChatToolBar extends Component {
     							targetOrigin={{horizontal: 'left', vertical: 'top'}}
   							>
 
-  							<MenuItem leftIcon={<ActionGroupWork />} primaryText="Channel Members" id="channelMembers" key="channelMembers"/>
+
+								<MenuItem leftIcon={<ActionGroupWork />} primaryText="Channel Members" id="channelMembers" key="channelMembers"/>
 								<Divider />
 								<MenuItem primaryText="Ankit" rightIcon={<CommunicationChatBubble />}/>
 								<MenuItem primaryText="Apurv" rightIcon={<CommunicationChatBubble />}/>
@@ -114,6 +115,7 @@ class ChatToolBar extends Component {
     						</IconMenu> :
     						''
     					}
+
     					<ToolbarSeparator />
     					<IconMenu
     						iconButtonElement={<IconButton><MoreVertIcon /></IconButton>}

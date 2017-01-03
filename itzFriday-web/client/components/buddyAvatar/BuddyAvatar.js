@@ -17,7 +17,6 @@ const styles={
   	height: 150
   },
   stylePaper: {
-    width: '100%',
     margin: 'auto',
     textAlign: 'center',
     display: 'inline-block',

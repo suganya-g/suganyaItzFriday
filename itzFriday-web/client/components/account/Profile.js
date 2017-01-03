@@ -22,7 +22,6 @@ const styles = {
     opacity: '0',
   },
   paperStyle: {
-    width: '100%',
     margin: 'auto',
     textAlign: 'center',
     display: 'inline-block',
@@ -104,13 +103,7 @@ reader.readAsDataURL(file);
                   onTouchTap={ this.handleClose } />
     ];
     return (
-      <Grid>
-        <Row>
-          <Col
-               xs={ 12 }
-               sm={ 12 }
-               md={ 12 }
-               lg={ 12 }>
+        <div clasname="col-xs-12 col-sm-12 col-md-12 col-lg-12" >
           <div style={ styles.stylePage }>
             <Paper style={ styles.paperStyle }>
               <div>
@@ -202,9 +195,7 @@ reader.readAsDataURL(file);
               </div>
             </Paper>
           </div>
-          </Col>
-        </Row>
-      </Grid>
+      </div>
       );
   }
 }
