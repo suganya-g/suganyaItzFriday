@@ -437,7 +437,7 @@ var receiveMessage = function(count, channel, message)
 							console.log(jsonObject);
 							if(jsonObject.text === '' && !intentString.match(/currentRepository/gi))
 							{
-								//jsonData.author = "Droid";
+								jsonData.author = "Droid";
 								jsonData.message = {ofType:"string", withContent:"Operating on project " + projectMap[deliveryChannel]};
 								console.log(jsonData.message.withContent);
 								gitBotPublisher.publish(publishChannel,JSON.stringify(jsonData));
