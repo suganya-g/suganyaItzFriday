@@ -96,21 +96,15 @@ export default class AddChannel extends React.Component {
 
   submitForm(data) {
     let projectID = this.props.params.projectid;
-    console.log("this is componentDidMount Method");
-    console.log(projectID);
     let tokenarray = localStorage['token'].split(".");
     let userdetails = atob(tokenarray[1]);
-    console.log(userdetails);
     let userData=JSON.parse(userdetails);
-    console.log(typeof userData);
-    console.log(userData);
     let obj = {};
     obj.key = userData.userid,
     obj.label = userData.name;
   	data.chipData=this.state.chipData;
     data.chipData.push(obj);
     data.projectid= this.props.params.projectid;
-    console.log(JSON.stringify(data));
     this.state.chipData=[];
     request.post('/channel/createChannel')
                 .set('Content-Type','application/json')
@@ -128,6 +122,10 @@ export default class AddChannel extends React.Component {
                   }
      });
     data.title='';  
+  }
+  componentWillUnmount(){
+    console.log('componentWillUnmount in add channenl is called');
+    this.setState({chipData:[],member:{memberid:[],membername:[]}}); 
   }
   onNewRequest(data){
       this.setState({err:''});
@@ -217,7 +215,7 @@ export default class AddChannel extends React.Component {
                             type="text"
                             name="title"
                             validations="isWords"
-                            validationError={ this.state.error}
+                            validationError={this.state.error}
                             required
                             hintText="Enter a name for Channel"
                             floatingLabelText="Title"

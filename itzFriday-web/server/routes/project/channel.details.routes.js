@@ -186,6 +186,7 @@ router.post('/channel/createChannel',function(req,res){
 	let channelTitle= req.body.title;
 	let members= req.body.chipData;
 	let projectId=req.body.projectid;
+	console.log(req.body);
 	async.waterfall([
 		function(callback){
 			ChannelDetails.findOne({title:channelTitle,projectID:projectId},function(error,channel){
@@ -194,9 +195,11 @@ router.post('/channel/createChannel',function(req,res){
 				}
 				else{
 					if(channel){
+						console.log("creating channnels");
 						callback('error',null);
 					}
 					else{
+						console.log("in else of creating channels");
 						callback(null,'');
 					}
 				}
@@ -215,53 +218,58 @@ router.post('/channel/createChannel',function(req,res){
 				}
 				else{
 					if(createdChannel){
+						console.log("in if of creating channel of new channels");
 						callback(null,createdChannel._id);
 					}
 					else{
-
+						callback(null,'');
 					}			
 				}
 			});
 		},
 		function(channelid,callback){
 			let count =0;
-			let channelMemberShipItem ={}
-			for(let index in members){
-				channelMemberShipItem.channelID=channelid;
-				channelMemberShipItem.memberID=members[index].key;
-				channelMemberShipData = new channelMemberShip(channelMemberShipItem);
-				channelMemberShipItem={};
-				channelMemberShipData.save(function(error,cmd){
-					if(error){
-						callback(error);
-					}
-					else{
-						if(cmd){
-							console.log("inside if of counting created members");
-							console.log("count:"+count);
-							count++;
+			let channelMemberShipItem ={};
+			async.each(members,function(item,incallback){
+				async.series([function(internalcallback){
+					channelMemberShipItem.channelID=channelid;
+					channelMemberShipItem.memberID=item.key;
+					channelMemberShipData = new channelMemberShip(channelMemberShipItem);
+					channelMemberShipItem={};
+					channelMemberShipData.save(function(error,cmd){
+						if(error){
+							internalcallback(error);
 						}
 						else{
-							console.log("inside else of counter of created members");
-							count++;
-							console.log("error while creating membership");
+							if(cmd){
+								count++;
+								internalcallback(null,count);
+							}
+							else{
+								count++;
+								internalcallback(null,count)
+							}
 						}
+					});
+				}],
+				function(err,count){
+					if(count == members.length){
+						callback(null,count);
 					}
 				});
-				console.log("count" + count);
-				if(count===members.length){
-					callback(null,'members are added');
-				}
-			}
-		}],
+			},function(err,count){
+				callback(null,count);
+			});
+			}],
 		function(error,results){
+			console.log("prining error in final callback" + error);
 				console.log(results);
-				if(error){
+				if(results===null || error){
 					res.json({error:true,message:"channel name already exist"});
 				}
 				else{
-				res.json({error:false,message:"members are successfully added to created channel"});
-			}
+					res.json({error:false,message:"members are successfully added to created channel"});
+				}
 	});
 })
 module.exports=router;
