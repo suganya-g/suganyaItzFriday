@@ -26,7 +26,7 @@ var transporter = nodemailer.createTransport({
     to: req.body.email, // list of receivers
     subject: 'Welcome!!!!! to Itzzfriday ', // Subject line
     text: "You have been invited to the project "+req.body.project,//, // plaintext body
-    html: '<a href="http://172.23.238.196/#/inviteAccept/?owner='+req.body.owner+'&project='+req.body.project+'&email='+req.body.email+'"><b>Click to accept invite</b></a>' // You can choose to send an HTML body instead
+    html: '<a href="http://itzfriday.blr.stackroute.in/#/inviteAccept/?owner='+req.body.owner+'&project='+req.body.project+'&email='+req.body.email+'"><b>Click to accept invite</b></a>' // You can choose to send an HTML body instead
 	};
 
 
